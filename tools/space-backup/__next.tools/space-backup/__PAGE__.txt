@@ -1,0 +1,42 @@
+1:"$Sreact.fragment"
+2:"/_next/static/chunks/1q596a61ldkdm.js"
+3:"/_next/static/chunks/0wyf-2hw2987x.js"
+4:"/_next/static/chunks/2ln-dhq8dq7--.js"
+5:"/_next/static/chunks/1w79_-_8lk8y6.js"
+6:"/_next/static/chunks/294jq9e3mq9n-.js"
+7:I[63506,["$2","$3","$4","$5","$6"],""]
+8:I[65367,["$2","$3"],"Image"]
+9:I[84573,["$2","$3"],"default"]
+a:I[45771,["$2","$3"],"default"]
+b:I[51945,["$2","$3"],"default"]
+14:I[42550,["$2","$3","$4","$5","$6"],"default"]
+1b:"ViewportBoundary"
+1c:I[95950,["$2","$3"],"$1b"]
+1d:"MetadataBoundary"
+1e:I[95950,["$2","$3"],"$1d"]
+1f:"$Sreact.suspense"
+20:I[92355,["$2","$3"],"IconMark"]
+:HL["/_next/static/chunks/3uubacf741w9x.css","style"]
+d:X
+10:X
+10:C
+13:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$1","c",{"children":[["$","div",null,{"className":"tool-page container","children":[["$","div",null,{"className":"breadcrumb","children":[["$","$L7",null,{"href":"/","children":"홈"}],["$","span",null,{"aria-hidden":"true","children":"/"}],["$","span",null,{"children":"내 공간 백업·복원"}]]}],["$","div",null,{"className":"tool-page-heading","children":[["$","p",null,{"className":"section-kicker","children":"MY SPACE / BACKUP"}],["$","h1",null,{"children":"내 공간 백업·복원"}],["$","p",null,{"children":"이 브라우저에 저장한 파일·사이트·문구를 ZIP으로 보관하고 필요할 때 되돌리세요."}]]}],["$","$L14",null,{}],["$","section",null,{"className":"tool-info","aria-labelledby":"backup-info-heading","children":[["$","h2",null,{"id":"backup-info-heading","children":"사용 전 알아두세요"}],["$","div",null,{"className":"info-grid","children":[["$","div",null,{"children":[["$","span",null,{"children":"01"}],["$","h3",null,{"children":"기기 안에서 처리"}],["$","p",null,{"children":"백업과 복원은 브라우저에서만 실행됩니다. ZIP 파일과 저장 데이터는 서버로 전송되지 않습니다."}]]}],["$","div",null,{"children":[["$","span",null,{"children":"02"}],["$","h3",null,{"children":"전체 교체"}],["$","p",null,{"children":"복원하면 현재 내 공간 전체가 백업 내용으로 바뀝니다. 다른 기기의 자료와 자동으로 합쳐지지 않습니다."}]]}],"$L15"]}]]}]]}],["$L16","$L17","$L18"],"$L19"]}],"p":"$@1a","v":null,"s":"$d"}}]]
+11:[["children",{"s":"space-backup","h":96,"d":{"r":["$","$1","c",{"children":[null,["$","$La",null,{"parallelRouterKey":"children","template":["$","$Lb",null,{}]}]]}],"p":"$@12","v":"$10","s":"$d"},"c":"$Q13"}]]
+e:[["children",{"s":"tools","h":96,"d":{"r":["$","$1","c",{"children":[null,["$","$La",null,{"parallelRouterKey":"children","template":["$","$Lb",null,{}]}]]}],"p":"$@f","v":"$10","s":"$d"},"c":"$Q11"}]]
+0:{"t":{"t":{"s":"","h":80,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/3uubacf741w9x.css","precedence":"next"}],["$","script","script-0",{"src":"/_next/static/chunks/1q596a61ldkdm.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/0wyf-2hw2987x.js","async":true}]],["$","html",null,{"lang":"ko","children":["$","body",null,{"children":[["$","a",null,{"className":"skip-link","href":"#main","children":"본문으로 바로가기"}],["$","div",null,{"className":"site-shell","children":[["$","header",null,{"className":"site-header","children":["$","div",null,{"className":"container header-inner","children":[["$","$L7",null,{"href":"/","className":"brand","aria-label":"Roky's Workit 홈","children":[["$","$L8",null,{"src":"/icon.svg","width":44,"height":44,"alt":"","className":"brand-icon","priority":true}],["$","span",null,{"className":"brand-name","children":[["$","span",null,{"className":"brand-owner","children":"roky's"}],["$","span",null,{"className":"brand-product","children":["workit",["$","span",null,{"className":"brand-period","children":"."}]]}]]}]]}],["$","nav",null,{"aria-label":"주 메뉴","className":"main-nav","children":[["$","$L7",null,{"href":"/#tools","children":"도구 둘러보기"}],["$","$L7",null,{"href":"/feature-map","children":"기능 맵"}],["$","$L7",null,{"href":"/#principles","children":"서비스 소개"}]]}],["$","$L9",null,{}],["$","nav",null,{"aria-label":"내 공간 바로가기","className":"header-personal","children":[["$","$L7",null,{"href":"/tools/my-files","children":[["$","span",null,{"aria-hidden":"true","children":"▣"}]," 내 파일"]}],["$","$L7",null,{"href":"/tools/bookmarks","children":[["$","span",null,{"aria-hidden":"true","children":"☆"}]," 내 사이트"]}],["$","$L7",null,{"href":"/tools/snippets","children":[["$","span",null,{"aria-hidden":"true","children":"❝"}]," 내 문구"]}]]}]]}]}],["$","main",null,{"id":"main","children":["$","$La",null,{"parallelRouterKey":"children","template":["$","$Lb",null,{}],"notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]]}]}],["$","footer",null,{"className":"site-footer","children":["$","div",null,{"className":"container footer-inner","children":[["$","div",null,{"children":[["$","strong",null,{"children":"roky's workit."}],["$","p",null,{"children":"반복되는 작은 업무를 가볍게."}]]}],["$","p",null,{"children":["현재 제공 중인 도구는 브라우저 안에서 처리됩니다. ",["$","$L7",null,{"href":"/feature-map","children":"기능 맵 보기 ↗"}]]}]]}]}]]}]]}]}]]}],"p":"$@c","v":null,"s":"$d"},"c":"$Qe"},"h":{"r":["$","$1","h",{"children":[null,["$","$L1c",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","$L1e",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$1f",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"내 공간 백업·복원 | Roky's Workit"}],["$","meta","1",{"name":"description","content":"내 파일·사이트·문구를 브라우저에서 ZIP으로 백업하고 복원하세요."}],["$","link","2",{"rel":"icon","href":"/icon.svg"}],["$","$L20","3",{}]]}]}],null]}],null]}],"p":"$@21","v":null,"s":"$d"}},"a":"$@22","u":"$@23","b":"3or7PgsRQR1QqZV52-EHt"}
+24:I[95950,["$2","$3"],"OutletBoundary"]
+15:["$","div",null,{"children":[["$","span",null,{"children":"03"}],["$","h3",null,{"children":"용량과 보관"}],["$","p",null,{"children":"백업 ZIP은 최대 220 MB까지 읽습니다. 대용량 파일은 브라우저 메모리와 저장 공간이 필요합니다. ZIP에는 개인 문서 원본이 들어 있으므로 안전하게 보관하세요."}]]}]
+16:["$","script","script-0",{"src":"/_next/static/chunks/2ln-dhq8dq7--.js","async":true}]
+17:["$","script","script-1",{"src":"/_next/static/chunks/1w79_-_8lk8y6.js","async":true}]
+18:["$","script","script-2",{"src":"/_next/static/chunks/294jq9e3mq9n-.js","async":true}]
+19:["$","$L24",null,{"children":["$","$1f",null,{"name":"Next.MetadataOutlet","children":"$@25"}]}]
+d:300
+25:null
+23:true
+d:C
+22:0
+12:"$undefined"
+f:"$undefined"
+c:"$undefined"
+21:"$undefined"
+1a:"$undefined"
