@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f7f2">
+  <title>나갈때 · 출발 시간 계산기</title>
+  <meta name="description" content="약속 시각에서 준비 시간, 이동 시간, 도착 여유를 거꾸로 계산해 나만의 출발 티켓을 만드세요.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="나갈때 · 언제 나가야 할까?">
+  <meta property="og:description" content="약속 시간 하나로 준비 시작부터 출발까지. 나만의 출발 티켓을 만들어 보세요.">
+  <meta property="og:url" content="https://mcroky.github.io/nagalttae/">
+  <meta property="og:image" content="https://mcroky.github.io/nagalttae/preview.jpg">
+  <link rel="canonical" href="https://mcroky.github.io/nagalttae/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="나갈때 · 언제 나가야 할까?">
+  <meta name="twitter:description" content="준비 시간과 이동 시간을 입력하고 출발 티켓을 받아보세요.">
+  <meta name="twitter:image" content="https://mcroky.github.io/nagalttae/preview.jpg">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="studio.css">
+  <script defer src="planner.js"></script>
+  <script defer src="session-plan.js"></script>
+  <script defer src="calendar.js"></script>
+  <script defer src="locale.js"></script>
+  <script defer src="studio.js"></script>
+  <script defer src="ticket-image.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+    <symbol id="i-out" viewBox="0 0 24 24"><path d="M6 18 18 6M7 6h11v11"/></symbol>
+    <symbol id="i-controls" viewBox="0 0 24 24"><path d="M3 7h6m4 0h8M3 17h10m4 0h4"/><circle cx="11" cy="7" r="2"/><circle cx="15" cy="17" r="2"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 2 8M4 4v6h6"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="2.5"/><path d="M9 8V6a3 3 0 0 1 6 0v2M4 12q8 5 16 0m-8 0v3"/></symbol>
+    <symbol id="i-train" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="15" rx="4"/><path d="M5 11h14M12 4v7M8 18l-2 3m10-3 2 3M9 15h.01M15 15h.01"/></symbol>
+    <symbol id="i-cup" viewBox="0 0 24 24"><path d="M4 8h12v5a6 6 0 0 1-12 0V8Zm12 0h2a3 3 0 0 1 0 6h-2M3 21h16M8 3v2m4-2v2"/></symbol>
+    <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 5h18v5a2 2 0 0 0 0 4v5H3v-5a2 2 0 0 0 0-4V5Z"/><path d="M15 7.5v1m0 3v1m0 3v1"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="18.5" cy="6.5" r="2.5"/><path d="M8 17.5h6a3 3 0 0 0 0-6h-4a2.5 2.5 0 0 1 0-5h6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M4 4h4l12 16h-4L4 4Zm15 0-6 7M5 20l6-7"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2"/><path d="M7.5 3v5m9-5v5M4 10.5h16"/></symbol>
+  </svg>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="wordmark" href="./index.html" aria-label="나갈때"><img src="icon.svg" width="34" height="34" alt=""><b data-text="appName">나갈때</b></a>
+      <nav class="nav-end" aria-label="Roky Studio">
+        <a class="studio-home" href="https://mcroky.github.io/roky-studio/"><span data-text="studio">Roky Studio</span><svg class="ic"><use href="#i-out"/></svg></a>
+        <label class="language"><svg class="ic"><use href="#i-globe"/></svg><select id="language" aria-label="언어"><option value="ko">한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh">简体中文</option></select><svg class="ic caret"><use href="#i-chevron"/></svg></label>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="intro">
+      <div class="intro-content">
+        <h1 data-text="heading">언제 나가야 할까?</h1>
+        <p class="intro-text" data-text="intro">약속 시간에 맞춰 준비할 때와 나갈 때를 확인하세요.</p>
+      </div>
+      <div class="still-life" aria-hidden="true"><img src="morning.webp" alt="" fetchpriority="high"></div>
+    </section>
+    <div class="workspace">
+      <section class="settings panel" aria-labelledby="settings-title">
+        <div class="section-head"><h2 id="settings-title"><svg class="ic"><use href="#i-controls"/></svg><span data-text="settings">일정 설정</span></h2><button id="reset" class="quiet" type="button"><svg class="ic"><use href="#i-reset"/></svg><span data-text="reset">초기화</span></button></div>
+        <dl class="mobile-summary" aria-live="polite" aria-atomic="true">
+          <div><dt data-text="ready">준비 시작</dt><dd id="mobile-ready"><small class="summary-offset"></small><time>--:--</time></dd></div>
+          <div><dt data-text="leaveShort">출발</dt><dd id="mobile-leave"><small class="summary-offset"></small><time>--:--</time></dd></div>
+        </dl>
+        <form id="settings-form" novalidate>
+          <div class="when">
+            <label class="field-label" for="target" data-text="target">약속 시간</label>
+            <input id="target" type="time" value="10:00" step="60" required>
+            <p id="target-error" class="field-error" data-text="invalidTime" role="alert" hidden></p>
+            <div class="date-row">
+              <div class="days" role="group" aria-label="약속 날짜">
+                <button type="button" data-day="0" data-text="today">오늘</button><button type="button" data-day="1" data-text="tomorrow">내일</button>
+              </div>
+              <label class="date-picker">
+                <svg class="ic"><use href="#i-calendar"/></svg>
+                <span id="date-label"></span>
+                <svg class="ic date-caret"><use href="#i-chevron"/></svg>
+                <input id="date" type="date" min="0001-01-01" max="9999-12-31" required aria-label="날짜 선택">
+              </label>
+            </div>
+            <p id="date-error" class="field-error" data-text="invalidDate" role="alert" hidden></p>
+          </div>
+          <div class="durations" id="durations"></div>
+        </form>
+      </section>
+      <div class="results">
+        <section class="ticket" aria-labelledby="ticket-title">
+          <div class="ticket-main">
+            <h2 id="ticket-title"><svg class="ic"><use href="#i-ticket"/></svg><span data-text="ticket">출발 티켓</span></h2>
+            <div class="departure-label" id="departure-label"><span data-text="leave">출발 시각</span><span id="offset-tag" hidden></span></div>
+            <output id="depart-time" class="depart-time" aria-labelledby="departure-label" for="target date prep travel buffer">--:--</output>
+            <p class="phase" id="phase-line" hidden><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg><span id="phase-text"></span></p>
+          </div>
+          <div class="ticket-stub"><span id="stub-month"></span><strong id="stub-day">–</strong><span id="stub-weekday"></span><div class="barcode" aria-hidden="true"></div></div>
+        </section>
+        <section class="timeline panel" aria-labelledby="timeline-title">
+          <div class="section-head"><h2 id="timeline-title"><svg class="ic"><use href="#i-route"/></svg><span data-text="timeline">내 타임라인</span></h2><span class="total"><span data-text="total">총 소요</span> <strong id="total">–</strong></span></div>
+          <ol class="stops" id="stops"></ol>
+        </section>
+        <div class="actions">
+          <button id="calendar" type="button" aria-haspopup="dialog"><svg class="ic"><use href="#i-calendar"/></svg><span data-text="calendarAction">캘린더에 담기</span></button>
+          <button id="download" type="button"><svg class="ic"><use href="#i-download"/></svg><span data-text="saveTicket">티켓 이미지 저장</span></button>
+          <button id="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span data-text="copy">일정 복사</span></button>
+          <button id="share" type="button"><svg class="ic"><use href="#i-x"/></svg><span data-text="share">X에 공유</span></button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer id="studio-footer"></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog id="calendar-dialog" aria-labelledby="calendar-title">
+    <form id="calendar-form">
+      <div class="dialog-heading"><h2 id="calendar-title" data-text="calendarAction">캘린더에 담기</h2><button class="icon-button" id="close-calendar" type="button" aria-label="닫기"><svg class="ic"><use href="#i-close"/></svg></button></div>
+      <p id="calendar-date"></p>
+      <label class="field-label" for="event-name" data-text="calendarName">약속 이름</label>
+      <input id="event-name" type="text" maxlength="80" autocomplete="off" autofocus>
+      <label class="reminder-option"><input id="event-alarms" type="checkbox" checked><span data-text="reminders">준비·출발 알림 포함</span></label>
+      <p class="alarm-times" id="alarm-times"></p>
+      <p class="calendar-hint" data-text="calendarHint"></p>
+      <p class="field-error" id="calendar-feedback" role="alert"></p>
+      <button id="save-calendar" type="submit"><svg class="ic"><use href="#i-download"/></svg><span data-text="calendarSave">.ics 파일 저장</span></button>
+    </form>
+  </dialog>
+  <dialog id="copy-dialog" aria-labelledby="copy-title"><div class="dialog-heading"><h2 id="copy-title" data-text="manualCopy">직접 복사</h2><button class="icon-button" id="close-copy" type="button"><svg class="ic"><use href="#i-close"/></svg></button></div><textarea id="copy-text" rows="6" readonly aria-labelledby="copy-title"></textarea></dialog>
+</body>
+</html>

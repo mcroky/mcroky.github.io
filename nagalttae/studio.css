@@ -1,0 +1,176 @@
+#studio-footer {
+  color: #526158;
+}
+
+.nagal-studio-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  border-top: 1px solid #d8ded5;
+  padding: 12px 0 max(12px, env(safe-area-inset-bottom));
+  font: inherit;
+  font-size: 0.8rem;
+}
+
+.nagal-studio-brand {
+  font-weight: 650;
+  color: #3e5147;
+}
+
+.nagal-studio-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 6px;
+}
+
+.nagal-studio-links :is(a, button) {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  box-sizing: border-box;
+  background: transparent;
+  color: inherit;
+  border: 0;
+  border-radius: 5px;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nagal-studio-links :is(a, button):hover {
+  color: #19372d;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.nagal-studio-links a span {
+  font-size: 0.8em;
+}
+
+#studio-footer :is(a, button, input):focus-visible {
+  outline: 2px solid #18774f;
+  outline-offset: 2px;
+}
+
+.nagal-studio-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(390px, calc(100% - 32px));
+  max-height: calc(100% - 32px);
+  box-sizing: border-box;
+  padding: 22px;
+  overflow: auto;
+  border: 1px solid #bfc9bd;
+  border-radius: 16px;
+  box-shadow: 0 20px 65px #182e2433;
+  background: #f8f8f2;
+  color: #19372d;
+  font-family: inherit;
+  text-align: start;
+}
+
+.nagal-studio-dialog::backdrop {
+  background: rgb(18 32 27 / 48%);
+}
+
+.nagal-studio-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.nagal-studio-dialog h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.35;
+}
+
+.nagal-studio-close {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #19372d;
+  font: inherit;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.nagal-studio-dialog p {
+  margin: 12px 0;
+  line-height: 1.6;
+  font-size: 0.96rem;
+  overflow-wrap: anywhere;
+}
+
+.nagal-studio-dialog time {
+  color: #526158;
+  font-size: 0.875rem;
+}
+
+.nagal-studio-dialog .nagal-studio-version {
+  margin-bottom: 2px;
+  font-weight: 700;
+}
+
+.nagal-studio-choices {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.nagal-studio-choices :is(a, button) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #9cae9f;
+  border-radius: 8px;
+  background: #fff;
+  color: #19372d;
+  text-align: center;
+  text-decoration: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.nagal-studio-choices :is(a, button):hover {
+  background: #e9eee6;
+}
+
+.nagal-studio-number {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 14px;
+  padding: 8px 12px;
+  border: 1px solid #9cae9f;
+  border-radius: 6px;
+  color: #19372d;
+  background: #fff;
+  font: inherit;
+  user-select: all;
+}
+
+.nagal-studio-status:empty {
+  margin: 0;
+}
+
+@media (max-width: 620px) {
+  .nagal-studio-row { align-items: flex-start; flex-direction: column; }
+  .nagal-studio-brand { margin: 4px 0; }
+  .nagal-studio-links { margin-left: -6px; }
+}
