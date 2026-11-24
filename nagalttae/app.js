@@ -24,6 +24,7 @@
   let toastTimer;
   let minuteTimer;
   let calendarSaving = false;
+  let refreshPush;
 
   function localDay(offset, now = new Date()) {
     const day = new Date(now);
@@ -167,6 +168,7 @@
   function refresh() {
     const date = dateInput.valueAsDate;
     const plan = readPlan();
+    refreshPush?.();
     const rows = plan ? eventRows(plan) : [];
     const includeYear = date && date.getUTCFullYear() !== new Date().getFullYear();
     el('date-label').textContent = date ? formatDay(date, {year: includeYear ? 'numeric' : undefined, month: 'short', day: 'numeric', weekday: 'short'}) : copy.selectedDate;
@@ -511,6 +513,7 @@
   try { locale = localStorage.getItem(storageKey) || 'ko'; } catch { /* Use Korean when storage is unavailable. */ }
   setLocale(locale);
   mountInstall();
+  if (!android) refreshPush = window.NagalPush?.mount({ plan: readPlan, date: () => dateInput.value, language: () => locale });
   mountClockTransfer();
   window.NagalMobile?.mount({plan: readPlan, date: () => dateInput.value, dateLabel: appointmentDate,
     rows: eventRows, strings: () => copy, language: () => locale, notify});
