@@ -112,15 +112,14 @@
           <div class="section-head"><h2 id="timeline-title"><svg class="ic"><use href="#i-route"/></svg><span data-text="timeline">내 타임라인</span></h2><span class="total"><span data-text="total">총 소요</span> <strong id="total">–</strong></span></div>
           <ol class="stops" id="stops"></ol>
           <div class="clock-quick" id="clock-quick" hidden>
-            <button id="clock-quick-all" type="button" aria-controls="clock-dialog" aria-haspopup="dialog" hidden><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyAll">알람 한꺼번에 복사</span></button>
             <button id="clock-quick-ready" type="button" aria-controls="clock-dialog" aria-haspopup="dialog"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyReady">준비 시각 복사</span></button>
             <button id="clock-quick-leave" type="button" aria-controls="clock-dialog" aria-haspopup="dialog"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyLeave">출발 시각 복사</span></button>
           </div>
         </section>
         <div class="actions">
           <button id="alarms" type="button" aria-haspopup="dialog" hidden><svg class="ic"><use href="#i-clock"/></svg><span data-text="alarmAction">알람 설정</span></button>
+          <button id="calendar" type="button" aria-haspopup="dialog" aria-controls="calendar-dialog"><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg><span data-text="calendarRemindersAction">준비·출발 알림 담기</span></button>
           <button id="clock-transfer" type="button" aria-haspopup="dialog" hidden><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg><span data-text="clockAction">시계에 옮기기</span></button>
-          <button id="calendar" type="button" aria-haspopup="dialog"><svg class="ic"><use href="#i-calendar"/></svg><span data-text="calendarAction">캘린더에 담기</span></button>
           <button id="download" type="button"><svg class="ic"><use href="#i-download"/></svg><span data-text="saveTicket">티켓 이미지 저장</span></button>
           <button id="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span data-text="copy">일정 복사</span></button>
           <button id="share" type="button"><svg class="ic"><use href="#i-x"/></svg><span data-text="share">X에 공유</span></button>
@@ -133,7 +132,7 @@
   <dialog id="clock-dialog" aria-labelledby="clock-title">
     <div class="dialog-heading"><h2 id="clock-title" data-text="clockTitle">시계 앱에 알람 추가</h2><button class="icon-button" id="close-clock" type="button" aria-label="닫기"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button></div>
     <p id="clock-feedback" class="clock-help" role="status"></p>
-    <p class="clock-help" id="clock-instructions" data-text="clockInstructions"></p>
+    <p class="clock-help" data-text="clockInstructions"></p>
     <div class="clock-steps">
       <section class="clock-step" aria-labelledby="clock-ready-heading">
         <div class="clock-when">
@@ -154,14 +153,8 @@
         <label class="clock-done"><input id="clock-leave-done" type="checkbox" aria-labelledby="clock-leave-heading clock-leave-done-text"><span id="clock-leave-done-text" data-text="clockDone">기록 완료</span></label>
       </section>
     </div>
-    <button id="clock-all-copy" class="clock-copy" type="button" data-text="clockCopyAll" hidden>알람 한꺼번에 복사</button>
     <button id="open-clock-app" class="clock-copy" type="button" data-text="clockOpenAction" hidden>시계 앱 열기</button>
     <p class="clock-help clock-device-guide" id="clock-open-fallback" data-text="clockOpenUnsupported" hidden></p>
-    <div id="gemini-request-box" hidden>
-      <label class="clock-help" for="gemini-request" data-text="geminiRequestLabel">알람 요청 문장</label>
-      <textarea id="gemini-request" rows="4" readonly></textarea>
-    </div>
-    <a id="open-gemini-app" class="clock-copy" href="intent://gemini.google.com/app#Intent;scheme=https;package=com.google.android.apps.bard;S.browser_fallback_url=https%3A%2F%2Fgemini.google.com%2Fapp;end" referrerpolicy="no-referrer" data-text="geminiOpenAction" hidden>Gemini 열기</a>
     <p class="clock-help clock-device-guide" data-text="clockDateHint"></p>
   </dialog>
   <dialog id="install-dialog" aria-labelledby="install-title">

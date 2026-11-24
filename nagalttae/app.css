@@ -161,15 +161,12 @@ h2 { font-size: 20px; letter-spacing: -.055em; font-weight: 780; }
 .clock-when input { display: block; margin: 4px 0 0; width: 5ch; max-width: 100%; min-height: 36px; padding: 0; background: transparent; border: none; font: 650 29px/1.18 "Bahnschrift", system-ui, sans-serif; color: var(--green); }
 .clock-copy { min-height: 44px; max-width: 112px; border: 1px solid var(--line); border-radius: 8px; padding: 5px 9px; background: #f2f4e9; font-size: 12px; font-weight: 700; }
 .clock-copy:hover { background: #e4ecd7; }
-#clock-all-copy { width: 100%; max-width: none; margin-bottom: 8px; }
 .clock-done { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; min-height: 44px; font-size: 13px; cursor: pointer; }
 .clock-done input { width: 18px; height: 18px; margin: 0; accent-color: var(--green); }
 #clock-feedback:not(:empty) { margin-bottom: 10px; padding: 8px 10px; border-radius: 8px; background: #e4ecd7; color: #254f38; font-weight: 650; }
-#open-clock-app, #open-gemini-app { width: 100%; max-width: none; background: var(--green); border-color: var(--green); color: #fffef0; }
-#open-gemini-app { display: flex; align-items: center; justify-content: center; text-decoration: none; }
-#open-clock-app:hover, #open-gemini-app:hover { background: #173c2d; }
-.clock-device-guide + .clock-device-guide, #open-clock-app + .clock-device-guide, #open-gemini-app + .clock-device-guide { margin-top: 8px; }
-#gemini-request { display: block; width: 100%; min-height: 72px; margin: 4px 0 10px; padding: 8px; border: 1px solid var(--line); border-radius: 8px; resize: vertical; font: inherit; }
+#open-clock-app { width: 100%; max-width: none; background: var(--green); border-color: var(--green); color: #fffef0; }
+#open-clock-app:hover { background: #173c2d; }
+.clock-device-guide + .clock-device-guide, #open-clock-app + .clock-device-guide { margin-top: 8px; }
 .icon-button { display: grid; place-items: center; border: 0; border-radius: 8px; background: none; width: 44px; height: 44px; }
 #copy-text { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; resize: vertical; font-size: 15px; }
 #calendar-dialog .dialog-heading { margin-bottom: 0; }

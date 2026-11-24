@@ -13,7 +13,6 @@
   const dayButtons = [...document.querySelectorAll('[data-day]')];
   const actionButtons = [...document.querySelectorAll('.actions button:not(#alarms), #clock-quick button')];
   const android = window.NagalAndroid;
-  const geminiWeb = !android && /Android/i.test(navigator.userAgent);
   const storageKey = 'nagalttae.language';
   let locale = 'ko';
   let copy;
@@ -99,7 +98,6 @@
     document.querySelector('.wordmark').setAttribute('aria-label', copy.appName);
     document.querySelector('.days').setAttribute('aria-label', copy.date);
     for (const node of document.querySelectorAll('[data-text]')) node.textContent = copy[node.dataset.text];
-    if (geminiWeb) el('clock-instructions').textContent = copy.geminiInstructions;
     for (const {key} of segments) {
       for (const button of el(key).closest('.stepper').querySelectorAll('button')) {
         const direction = Number(button.dataset.step) > 0 ? copy.increment : copy.decrement;
@@ -287,9 +285,6 @@
     const feedback = el('clock-feedback');
     const apple = isAppleMobile();
     const openButton = el('open-clock-app');
-    const geminiLink = el('open-gemini-app');
-    const geminiRequestBox = el('gemini-request-box');
-    const geminiRequest = el('gemini-request');
     let displayedSchedule;
     let copyRequest = 0;
 
@@ -299,22 +294,6 @@
       } else if (apple) {
         // Availability of the Clock link depends on the iOS version and browser.
         location.href = 'clock-alarm://';
-      }
-    }
-
-    function copyGeminiWithTap() {
-      const focused = document.activeElement;
-      geminiRequestBox.hidden = false;
-      geminiRequest.focus({preventScroll: true});
-      geminiRequest.select();
-      try {
-        // Copy before the tap activation can expire during Android app handoff.
-        return document.execCommand('copy');
-      } catch {
-        return false;
-      } finally {
-        geminiRequestBox.hidden = true;
-        focused?.focus({preventScroll: true});
       }
     }
 
@@ -334,94 +313,50 @@
       displayedSchedule = schedule;
       copyRequest += 1;
       feedback.textContent = '';
-      geminiRequestBox.hidden = true;
-      geminiRequest.value = '';
       dialog.showModal();
       return true;
     }
 
-    function copyClockValue(field) {
-      const text = field.value;
+    function copyTime(kind) {
+      const field = el('clock-' + kind + '-time');
+      const time = field.value;
       const request = ++copyRequest;
-      const isCurrent = () => dialog.open && request === copyRequest;
-      if (geminiWeb) geminiRequestBox.hidden = true;
-      feedback.textContent = geminiWeb ? copy.geminiCopying : copy.clockOpenGuide.replace('{time}', text);
-      const copyCompleted = () => {
-        if (!isCurrent()) return;
-        if (geminiWeb) {
-          const canOpen = navigator.userActivation?.isActive !== false;
-          feedback.textContent = canOpen ? copy.geminiCopied : copy.geminiTapToOpen;
-          if (canOpen) geminiLink.click();
-        } else {
-          feedback.textContent = copy.clockTimeCopied.replace('{time}', text);
-        }
-      };
+      feedback.textContent = copy.clockOpenGuide.replace('{time}', time);
       const copyUnavailable = () => {
-        if (!isCurrent()) return;
-        if (geminiWeb) geminiRequestBox.hidden = false;
+        if (!dialog.open || request !== copyRequest) return;
         field.focus();
-        field.setSelectionRange(0, text.length);
-        feedback.textContent = geminiWeb ? copy.geminiManualCopy : copy.clockManualCopy;
+        field.setSelectionRange(0, time.length);
+        feedback.textContent = copy.clockManualCopy;
       };
       if (android) {
-        android.copyText(text);
-      } else if (geminiWeb && copyGeminiWithTap()) {
-        copyCompleted();
+        android.copyText(time);
       } else {
         try {
-          navigator.clipboard.writeText(text).then(copyCompleted, copyUnavailable);
+          navigator.clipboard.writeText(time).then(() => {
+            if (dialog.open && request === copyRequest) {
+              feedback.textContent = copy.clockTimeCopied.replace('{time}', time);
+            }
+          }, copyUnavailable);
         } catch {
           copyUnavailable();
         }
       }
-      if (!geminiWeb) openClock();
-    }
-
-    function formatGeminiAlarm(kind, template) {
-      const date = el('clock-' + kind + '-day').textContent;
-      const time = el('clock-' + kind + '-time').value;
-      const label = kind === 'ready' ? copy.alarmReady : copy.alarmLeave;
-      return template.replace('{date}', date).replace('{time}', time).replace('{label}', label);
-    }
-
-    function copyTime(kind) {
-      if (geminiWeb) {
-        geminiRequest.value = formatGeminiAlarm(kind, copy.geminiAlarmRequest);
-        copyClockValue(geminiRequest);
-      } else {
-        copyClockValue(el('clock-' + kind + '-time'));
-      }
-    }
-
-    function copyAllAlarms() {
-      const alarms = kinds.map(kind => '- ' + formatGeminiAlarm(kind, copy.geminiBatchItem));
-      geminiRequest.value = [copy.geminiBatchIntro, ...alarms].join('\n');
-      copyClockValue(geminiRequest);
+      // Launch while the browser is still processing the user's tap.
+      openClock();
     }
 
     button.hidden = false;
     el('clock-quick').hidden = false;
     openButton.hidden = !(android || apple);
     el('clock-open-fallback').hidden = openButton.hidden;
-    geminiLink.hidden = !geminiWeb;
     openButton.addEventListener('click', () => {
       if (!feedback.textContent) feedback.textContent = copy.clockOpenTried;
       openClock();
     });
     button.addEventListener('click', showSchedule);
-    if (geminiWeb) {
-      const quickCopy = el('clock-quick-all');
-      const dialogCopy = el('clock-all-copy');
-      quickCopy.hidden = false;
-      dialogCopy.hidden = false;
-      quickCopy.addEventListener('click', () => { if (showSchedule()) copyAllAlarms(); });
-      dialogCopy.addEventListener('click', copyAllAlarms);
-    }
     for (const kind of kinds) {
       el('clock-' + kind + '-copy').addEventListener('click', () => copyTime(kind));
-      const quickCopy = el('clock-quick-' + kind);
-      quickCopy.hidden = geminiWeb;
-      quickCopy.addEventListener('click', () => {
+      el('clock-quick-' + kind).addEventListener('click', () => {
         if (showSchedule()) copyTime(kind);
       });
     }
