@@ -112,6 +112,7 @@
           <div class="section-head"><h2 id="timeline-title"><svg class="ic"><use href="#i-route"/></svg><span data-text="timeline">내 타임라인</span></h2><span class="total"><span data-text="total">총 소요</span> <strong id="total">–</strong></span></div>
           <ol class="stops" id="stops"></ol>
           <div class="clock-quick" id="clock-quick" hidden>
+            <button id="clock-quick-all" type="button" aria-controls="clock-dialog" aria-haspopup="dialog" hidden><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyAll">알람 한꺼번에 복사</span></button>
             <button id="clock-quick-ready" type="button" aria-controls="clock-dialog" aria-haspopup="dialog"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyReady">준비 시각 복사</span></button>
             <button id="clock-quick-leave" type="button" aria-controls="clock-dialog" aria-haspopup="dialog"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyLeave">출발 시각 복사</span></button>
           </div>
@@ -153,11 +154,12 @@
         <label class="clock-done"><input id="clock-leave-done" type="checkbox" aria-labelledby="clock-leave-heading clock-leave-done-text"><span id="clock-leave-done-text" data-text="clockDone">기록 완료</span></label>
       </section>
     </div>
+    <button id="clock-all-copy" class="clock-copy" type="button" data-text="clockCopyAll" hidden>알람 한꺼번에 복사</button>
     <button id="open-clock-app" class="clock-copy" type="button" data-text="clockOpenAction" hidden>시계 앱 열기</button>
     <p class="clock-help clock-device-guide" id="clock-open-fallback" data-text="clockOpenUnsupported" hidden></p>
     <div id="gemini-request-box" hidden>
       <label class="clock-help" for="gemini-request" data-text="geminiRequestLabel">알람 요청 문장</label>
-      <textarea id="gemini-request" rows="2" readonly></textarea>
+      <textarea id="gemini-request" rows="4" readonly></textarea>
     </div>
     <a id="open-gemini-app" class="clock-copy" href="intent://gemini.google.com/app#Intent;scheme=https;package=com.google.android.apps.bard;S.browser_fallback_url=https%3A%2F%2Fgemini.google.com%2Fapp;end" referrerpolicy="no-referrer" data-text="geminiOpenAction" hidden>Gemini 열기</a>
     <p class="clock-help clock-device-guide" data-text="clockDateHint"></p>

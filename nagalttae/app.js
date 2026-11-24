@@ -340,19 +340,12 @@
       return true;
     }
 
-    function copyTime(kind) {
-      const field = el('clock-' + kind + '-time');
-      const time = field.value;
+    function copyClockValue(field) {
+      const text = field.value;
       const request = ++copyRequest;
       const isCurrent = () => dialog.open && request === copyRequest;
-      if (geminiWeb) {
-        const date = el('clock-' + kind + '-day').textContent;
-        const label = kind === 'ready' ? copy.alarmReady : copy.alarmLeave;
-        geminiRequest.value = copy.geminiAlarmRequest.replace('{date}', date).replace('{time}', time).replace('{label}', label);
-        geminiRequestBox.hidden = true;
-      }
-      const copyField = geminiWeb ? geminiRequest : field;
-      feedback.textContent = geminiWeb ? copy.geminiCopying : copy.clockOpenGuide.replace('{time}', time);
+      if (geminiWeb) geminiRequestBox.hidden = true;
+      feedback.textContent = geminiWeb ? copy.geminiCopying : copy.clockOpenGuide.replace('{time}', text);
       const copyCompleted = () => {
         if (!isCurrent()) return;
         if (geminiWeb) {
@@ -360,28 +353,50 @@
           feedback.textContent = canOpen ? copy.geminiCopied : copy.geminiTapToOpen;
           if (canOpen) geminiLink.click();
         } else {
-          feedback.textContent = copy.clockTimeCopied.replace('{time}', time);
+          feedback.textContent = copy.clockTimeCopied.replace('{time}', text);
         }
       };
       const copyUnavailable = () => {
         if (!isCurrent()) return;
         if (geminiWeb) geminiRequestBox.hidden = false;
-        copyField.focus();
-        copyField.setSelectionRange(0, copyField.value.length);
+        field.focus();
+        field.setSelectionRange(0, text.length);
         feedback.textContent = geminiWeb ? copy.geminiManualCopy : copy.clockManualCopy;
       };
       if (android) {
-        android.copyText(time);
+        android.copyText(text);
       } else if (geminiWeb && copyGeminiWithTap()) {
         copyCompleted();
       } else {
         try {
-          navigator.clipboard.writeText(copyField.value).then(copyCompleted, copyUnavailable);
+          navigator.clipboard.writeText(text).then(copyCompleted, copyUnavailable);
         } catch {
           copyUnavailable();
         }
       }
       if (!geminiWeb) openClock();
+    }
+
+    function formatGeminiAlarm(kind, template) {
+      const date = el('clock-' + kind + '-day').textContent;
+      const time = el('clock-' + kind + '-time').value;
+      const label = kind === 'ready' ? copy.alarmReady : copy.alarmLeave;
+      return template.replace('{date}', date).replace('{time}', time).replace('{label}', label);
+    }
+
+    function copyTime(kind) {
+      if (geminiWeb) {
+        geminiRequest.value = formatGeminiAlarm(kind, copy.geminiAlarmRequest);
+        copyClockValue(geminiRequest);
+      } else {
+        copyClockValue(el('clock-' + kind + '-time'));
+      }
+    }
+
+    function copyAllAlarms() {
+      const alarms = kinds.map(kind => '- ' + formatGeminiAlarm(kind, copy.geminiBatchItem));
+      geminiRequest.value = [copy.geminiBatchIntro, ...alarms].join('\n');
+      copyClockValue(geminiRequest);
     }
 
     button.hidden = false;
@@ -394,9 +409,19 @@
       openClock();
     });
     button.addEventListener('click', showSchedule);
+    if (geminiWeb) {
+      const quickCopy = el('clock-quick-all');
+      const dialogCopy = el('clock-all-copy');
+      quickCopy.hidden = false;
+      dialogCopy.hidden = false;
+      quickCopy.addEventListener('click', () => { if (showSchedule()) copyAllAlarms(); });
+      dialogCopy.addEventListener('click', copyAllAlarms);
+    }
     for (const kind of kinds) {
       el('clock-' + kind + '-copy').addEventListener('click', () => copyTime(kind));
-      el('clock-quick-' + kind).addEventListener('click', () => {
+      const quickCopy = el('clock-quick-' + kind);
+      quickCopy.hidden = geminiWeb;
+      quickCopy.addEventListener('click', () => {
         if (showSchedule()) copyTime(kind);
       });
     }
