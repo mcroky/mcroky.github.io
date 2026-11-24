@@ -302,6 +302,22 @@
       }
     }
 
+    function copyGeminiWithTap() {
+      const focused = document.activeElement;
+      geminiRequestBox.hidden = false;
+      geminiRequest.focus({preventScroll: true});
+      geminiRequest.select();
+      try {
+        // Copy before the tap activation can expire during Android app handoff.
+        return document.execCommand('copy');
+      } catch {
+        return false;
+      } finally {
+        geminiRequestBox.hidden = true;
+        focused?.focus({preventScroll: true});
+      }
+    }
+
     function showSchedule() {
       const plan = readPlan();
       if (!plan) return false;
@@ -337,6 +353,16 @@
       }
       const copyField = geminiWeb ? geminiRequest : field;
       feedback.textContent = geminiWeb ? copy.geminiCopying : copy.clockOpenGuide.replace('{time}', time);
+      const copyCompleted = () => {
+        if (!isCurrent()) return;
+        if (geminiWeb) {
+          const canOpen = navigator.userActivation?.isActive !== false;
+          feedback.textContent = canOpen ? copy.geminiCopied : copy.geminiTapToOpen;
+          if (canOpen) geminiLink.click();
+        } else {
+          feedback.textContent = copy.clockTimeCopied.replace('{time}', time);
+        }
+      };
       const copyUnavailable = () => {
         if (!isCurrent()) return;
         if (geminiWeb) geminiRequestBox.hidden = false;
@@ -346,17 +372,11 @@
       };
       if (android) {
         android.copyText(time);
+      } else if (geminiWeb && copyGeminiWithTap()) {
+        copyCompleted();
       } else {
         try {
-          navigator.clipboard.writeText(copyField.value).then(() => {
-            if (!isCurrent()) return;
-            if (geminiWeb) {
-              feedback.textContent = copy.geminiCopied;
-              geminiLink.click();
-            } else {
-              feedback.textContent = copy.clockTimeCopied.replace('{time}', time);
-            }
-          }, copyUnavailable);
+          navigator.clipboard.writeText(copyField.value).then(copyCompleted, copyUnavailable);
         } catch {
           copyUnavailable();
         }

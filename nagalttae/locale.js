@@ -110,6 +110,7 @@ globalThis.NagalCopy = {
     geminiAlarmRequest: "{date} {time}에 ‘{label}’ 알람을 한 번 울리게 설정해 줘.",
     geminiCopying: "알람 요청 문장을 복사하고 있어요.",
     geminiCopied: "알람 요청을 복사했어요. Gemini 모바일 앱에 붙여넣고 전송하세요.",
+    geminiTapToOpen: "알람 요청을 복사했어요. 아래 ‘Gemini 열기’를 누른 뒤 붙여넣고 전송하세요.",
     geminiManualCopy: "아래 문장을 직접 복사해 Gemini 모바일 앱에 붙여넣으세요.",
     geminiRequestLabel: "알람 요청 문장",
     geminiOpenAction: "Gemini 열기"
@@ -225,6 +226,7 @@ globalThis.NagalCopy = {
     geminiAlarmRequest: "Set a one-time alarm called ‘{label}’ for {date} at {time}.",
     geminiCopying: "Copying the alarm request.",
     geminiCopied: "Alarm request copied. Paste and send it in the Gemini mobile app.",
+    geminiTapToOpen: "Alarm request copied. Tap Open Gemini, then paste and send it.",
     geminiManualCopy: "Copy the request below and paste it into the Gemini mobile app.",
     geminiRequestLabel: "Alarm request",
     geminiOpenAction: "Open Gemini"
@@ -340,6 +342,7 @@ globalThis.NagalCopy = {
     geminiAlarmRequest: "{date}の{time}に「{label}」というアラームを1回だけ設定して。",
     geminiCopying: "アラームの依頼文をコピーしています。",
     geminiCopied: "依頼文をコピーしました。Gemini モバイルアプリに貼り付けて送信してください。",
+    geminiTapToOpen: "依頼文をコピーしました。下の「Gemini を開く」を押して貼り付け、送信してください。",
     geminiManualCopy: "下の依頼文を手動でコピーして、Gemini モバイルアプリに貼り付けてください。",
     geminiRequestLabel: "アラームの依頼文",
     geminiOpenAction: "Gemini を開く"
@@ -455,6 +458,7 @@ globalThis.NagalCopy = {
     geminiAlarmRequest: "请在{date} {time}设置一个名为“{label}”的单次闹钟。",
     geminiCopying: "正在复制闹钟指令。",
     geminiCopied: "已复制闹钟指令。请在 Gemini 手机应用中粘贴并发送。",
+    geminiTapToOpen: "已复制闹钟指令。请点按下方的“打开 Gemini”，然后粘贴并发送。",
     geminiManualCopy: "请手动复制下方指令，再粘贴到 Gemini 手机应用。",
     geminiRequestLabel: "闹钟指令",
     geminiOpenAction: "打开 Gemini"
