@@ -11,7 +11,8 @@
   const dateInput = el('date');
   const form = el('settings-form');
   const dayButtons = [...document.querySelectorAll('[data-day]')];
-  const actionButtons = [...document.querySelectorAll('.actions button')];
+  const actionButtons = [...document.querySelectorAll('.actions button:not(#alarms)')];
+  const android = window.NagalAndroid;
   const storageKey = 'nagalttae.language';
   let locale = 'ko';
   let copy;
@@ -90,6 +91,7 @@
     el('language').setAttribute('aria-label', copy.lang);
     el('close-copy').setAttribute('aria-label', copy.close);
     el('close-calendar').setAttribute('aria-label', copy.close);
+    el('close-install').setAttribute('aria-label', copy.close);
     el('event-name').placeholder = copy.appointment;
     dateInput.setAttribute('aria-label', copy.selectedDate);
     document.querySelector('.wordmark').setAttribute('aria-label', copy.appName);
@@ -216,11 +218,69 @@
     toastTimer = setTimeout(() => { el('toast').textContent = ''; }, 3200);
   }
 
+  function mountInstall() {
+    if (android || !window.isSecureContext || location.protocol === 'file:' || !('serviceWorker' in navigator)) return;
+    const button = el('install-app');
+    const dialog = el('install-dialog');
+    const standalone = matchMedia('(display-mode: standalone)');
+    const appleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    let installPrompt;
+    let installed = false;
+    const updateButton = () => {
+      button.hidden = installed || standalone.matches || navigator.standalone === true;
+    };
+    const openGuide = fromPrompt => {
+      el('install-offer').hidden = !fromPrompt;
+      el('install-apple').hidden = !appleMobile;
+      el('install-browser').hidden = appleMobile;
+      if (!dialog.open) dialog.showModal();
+    };
+    window.addEventListener('beforeinstallprompt', event => {
+      event.preventDefault();
+      installPrompt = event;
+    });
+    window.addEventListener('appinstalled', () => {
+      installed = true;
+      installPrompt = undefined;
+      if (dialog.open) dialog.close();
+      updateButton();
+    });
+    standalone.addEventListener('change', updateButton);
+    el('close-install').addEventListener('click', () => dialog.close());
+    button.addEventListener('click', async () => {
+      const prompt = installPrompt;
+      if (!prompt) {
+        openGuide(false);
+        return;
+      }
+      installPrompt = undefined;
+      button.disabled = true;
+      try {
+        const choice = await prompt.prompt();
+        if (choice?.outcome === 'accepted') {
+          installed = true;
+          updateButton();
+        }
+      } catch {
+        openGuide(true);
+      } finally {
+        button.disabled = false;
+      }
+    });
+    updateButton();
+    navigator.serviceWorker.register('./sw.js').catch(error => console.warn('Offline mode unavailable:', error));
+  }
+
   el('copy').addEventListener('click', async () => {
     const plan = readPlan();
     if (!plan) return;
     const text = planText(plan);
     try {
+      if (android) {
+        android.copyText(text);
+        return;
+      }
       await navigator.clipboard.writeText(text);
       notify(copy.copied);
     } catch {
@@ -259,6 +319,11 @@
         : crypto.getRandomValues(new Uint8Array(16));
       options.uid = Array.from(idBytes, byte => byte.toString(16).padStart(2, '0')).join('') + '@nagalttae.mcroky.github.io';
       const calendar = NagalCalendar.build(options);
+      if (android) {
+        el('calendar-dialog').close();
+        android.exportFile('calendar', calendar);
+        return;
+      }
       const file = URL.createObjectURL(new Blob([calendar], {type: 'text/calendar;charset=utf-8'}));
       const link = document.createElement('a');
       link.href = file;
@@ -284,6 +349,11 @@
     if (!plan) return;
     const url = new URL('https://x.com/intent/tweet');
     url.searchParams.set('text', planText(plan));
+    if (android) {
+      url.searchParams.set('url', 'https://mcroky.github.io/nagalttae/');
+      android.openExternal(url.href);
+      return;
+    }
     if (location.protocol === 'https:' && !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname)) {
       url.searchParams.set('url', location.origin + location.pathname);
     }
@@ -294,8 +364,9 @@
     if (!plan) return;
     try {
       await NagalTicket.download({copy, locale, plan, dateLabel: appointmentDate(),
-        filename: 'nagalttae-' + dateInput.value + '.png', rows: eventRows(plan)});
-      notify(copy.saved);
+        filename: 'nagalttae-' + dateInput.value + '.png', rows: eventRows(plan),
+        exportPng: android && (base64 => android.exportFile('ticket', base64))});
+      if (!android) notify(copy.saved);
     } catch {
       notify(copy.imageError);
     }
@@ -330,5 +401,8 @@
   }
   try { locale = localStorage.getItem(storageKey) || 'ko'; } catch { /* Use Korean when storage is unavailable. */ }
   setLocale(locale);
+  mountInstall();
+  window.NagalMobile?.mount({plan: readPlan, date: () => dateInput.value, dateLabel: appointmentDate,
+    rows: eventRows, strings: () => copy, language: () => locale, notify});
   scheduleClockUpdate();
 })();

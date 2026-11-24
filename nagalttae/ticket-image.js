@@ -144,6 +144,10 @@
 
   async function download(options) {
     const canvas = drawTicket(options);
+    if (options.exportPng) {
+      options.exportPng(canvas.toDataURL('image/png').split(',')[1]);
+      return;
+    }
     const anchor = document.createElement("a");
     anchor.download = options.filename;
     let objectUrl;

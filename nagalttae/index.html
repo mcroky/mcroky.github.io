@@ -16,6 +16,8 @@
   <meta name="twitter:title" content="나갈때 · 언제 나가야 할까?">
   <meta name="twitter:description" content="준비 시간과 이동 시간을 입력하고 출발 티켓을 받아보세요.">
   <meta name="twitter:image" content="https://mcroky.github.io/nagalttae/preview.jpg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="app.css">
   <link rel="stylesheet" href="studio.css">
@@ -25,6 +27,7 @@
   <script defer src="locale.js"></script>
   <script defer src="studio.js"></script>
   <script defer src="ticket-image.js"></script>
+  <script defer src="android-ui.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
@@ -60,6 +63,7 @@
       <div class="intro-content">
         <h1 data-text="heading">언제 나가야 할까?</h1>
         <p class="intro-text" data-text="intro">약속 시간에 맞춰 준비할 때와 나갈 때를 확인하세요.</p>
+        <button id="install-app" type="button" aria-haspopup="dialog" hidden><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg><span data-text="installApp">앱 설치</span></button>
       </div>
       <div class="still-life" aria-hidden="true"><img src="morning.webp" alt="" fetchpriority="high"></div>
     </section>
@@ -106,6 +110,7 @@
           <ol class="stops" id="stops"></ol>
         </section>
         <div class="actions">
+          <button id="alarms" type="button" aria-haspopup="dialog" hidden><svg class="ic"><use href="#i-clock"/></svg><span data-text="alarmAction">알람 설정</span></button>
           <button id="calendar" type="button" aria-haspopup="dialog"><svg class="ic"><use href="#i-calendar"/></svg><span data-text="calendarAction">캘린더에 담기</span></button>
           <button id="download" type="button"><svg class="ic"><use href="#i-download"/></svg><span data-text="saveTicket">티켓 이미지 저장</span></button>
           <button id="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span data-text="copy">일정 복사</span></button>
@@ -116,6 +121,38 @@
   </main>
   <footer id="studio-footer"></footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog id="install-dialog" aria-labelledby="install-title">
+    <div class="dialog-heading"><h2 id="install-title" data-text="installHeading">홈 화면에 나갈때 추가</h2><button class="icon-button" id="close-install" type="button" aria-label="닫기"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+    <p id="install-offer" data-text="installOffer" hidden></p>
+    <ol id="install-apple" hidden>
+      <li data-text="installAppleShare"></li>
+      <li data-text="installAppleAdd"></li>
+      <li data-text="installAppleConfirm"></li>
+    </ol>
+    <ol id="install-browser" hidden>
+      <li data-text="installBrowserMenu"></li>
+      <li data-text="installBrowserAdd"></li>
+    </ol>
+  </dialog>
+  <dialog id="alarm-dialog" aria-labelledby="alarm-title">
+    <form id="alarm-form">
+      <div class="dialog-heading"><h2 id="alarm-title" data-text="alarmHeading">준비·출발 알람</h2><button class="icon-button" id="close-alarm" type="button" aria-label="닫기"><svg class="ic"><use href="#i-close"/></svg></button></div>
+      <p id="alarm-date"></p>
+      <div class="alarm-choices">
+        <label><input id="alarm-ready" type="checkbox"><span data-text="alarmReady">준비 시작</span><time id="alarm-ready-time"></time></label>
+        <label><input id="alarm-leave" type="checkbox"><span data-text="alarmLeave">출발</span><time id="alarm-leave-time"></time></label>
+      </div>
+      <p id="alarm-feedback" role="status"></p>
+      <button id="alarm-permission" type="button" data-text="alarmPermissionHelp" hidden>기기 설정 열기</button>
+      <button id="alarm-save" type="submit" data-text="alarmSave" disabled>선택한 알람 예약</button>
+      <section class="active-alarms" aria-labelledby="active-title">
+        <h3 id="active-title" data-text="alarmStatus">예약된 알람</h3>
+        <ul id="active-alarms"></ul>
+        <p id="alarm-empty" data-text="alarmNoActive">예약된 알람이 없어요.</p>
+        <button id="alarm-cancel" type="button" data-text="alarmCancel" hidden>예약된 알람 취소</button>
+      </section>
+    </form>
+  </dialog>
   <dialog id="calendar-dialog" aria-labelledby="calendar-title">
     <form id="calendar-form">
       <div class="dialog-heading"><h2 id="calendar-title" data-text="calendarAction">캘린더에 담기</h2><button class="icon-button" id="close-calendar" type="button" aria-label="닫기"><svg class="ic"><use href="#i-close"/></svg></button></div>
