@@ -102,10 +102,9 @@ globalThis.NagalCopy = {
     clockCopyTime: "시각 복사",
     clockCopyReady: "준비 시각 복사",
     clockCopyLeave: "출발 시각 복사",
-    clockOpenAction: "시계 앱 열기",
+    clockOpenAction: "시계 앱 열기 (베타)",
     clockOpenGuide: "시계 앱에서 알람을 추가하고 {time}에 맞추세요.",
     clockOpenUnsupported: "시계가 열리지 않으면 휴대폰에서 시계 앱의 ‘알람’ 탭을 여세요.",
-    clockAndroidConnect: "안드로이드에서 시계를 바로 열려면 나갈때 1.3.1 연결 앱이 필요해요.",
     clockOpenTried: "시계 앱 열기를 요청했어요."
   },
   en: {
@@ -211,10 +210,9 @@ globalThis.NagalCopy = {
     clockCopyTime: "Copy time",
     clockCopyReady: "Copy prep time",
     clockCopyLeave: "Copy departure time",
-    clockOpenAction: "Open Clock",
+    clockOpenAction: "Open Clock (beta)",
     clockOpenGuide: "Add an alarm in Clock and set it for {time}.",
     clockOpenUnsupported: "If Clock doesn’t open, open the Clock app on your phone and tap Alarms.",
-    clockAndroidConnect: "Opening Clock directly on Android requires the Nagalttae 1.3.1 companion app.",
     clockOpenTried: "Sent a request to open Clock."
   },
   ja: {
@@ -320,10 +318,9 @@ globalThis.NagalCopy = {
     clockCopyTime: "時刻をコピー",
     clockCopyReady: "支度開始時刻をコピー",
     clockCopyLeave: "出発時刻をコピー",
-    clockOpenAction: "時計アプリを開く",
+    clockOpenAction: "時計アプリを開く（ベータ）",
     clockOpenGuide: "時計アプリでアラームを追加し、{time}に設定してください。",
     clockOpenUnsupported: "時計アプリが開かない場合は、スマートフォンで時計アプリの「アラーム」を開いてください。",
-    clockAndroidConnect: "Androidで時計を直接開くには、Nagalttae 1.3.1の連携アプリが必要です。",
     clockOpenTried: "時計アプリを開くようリクエストしました。"
   },
   zh: {
@@ -429,10 +426,9 @@ globalThis.NagalCopy = {
     clockCopyTime: "复制时间",
     clockCopyReady: "复制准备时间",
     clockCopyLeave: "复制出门时间",
-    clockOpenAction: "打开时钟",
+    clockOpenAction: "打开时钟（测试版）",
     clockOpenGuide: "请在时钟应用中添加闹钟，并设为 {time}。",
     clockOpenUnsupported: "如果时钟没有打开，请在手机上打开时钟应用，进入“闹钟”页。",
-    clockAndroidConnect: "在安卓设备上直接打开时钟需要安装 Nagalttae 1.3.1 配套应用。",
     clockOpenTried: "已请求打开时钟应用。"
   }
 };

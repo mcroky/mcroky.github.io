@@ -284,7 +284,6 @@
     const button = el('clock-transfer');
     const feedback = el('clock-feedback');
     const apple = isAppleMobile();
-    const androidWeb = !android && /Android/.test(navigator.userAgent) && /^https?:$/.test(location.protocol);
     const openButton = el('open-clock-app');
     let displayedSchedule;
     let copyRequest = 0;
@@ -295,11 +294,6 @@
       } else if (apple) {
         // Availability of the Clock link depends on the iOS version and browser.
         location.href = 'clock-alarm://';
-      } else if (androidWeb) {
-        const fallback = new URL(location.href);
-        fallback.hash = 'clock-dialog';
-        location.href = 'intent://clock/open#Intent;scheme=nagalttae;package=com.rokystudio.nagalttae.preview;' +
-          'S.browser_fallback_url=' + encodeURIComponent(fallback.href) + ';end';
       }
     }
 
@@ -353,9 +347,8 @@
 
     button.hidden = false;
     el('clock-quick').hidden = false;
-    openButton.hidden = !(android || apple || androidWeb);
+    openButton.hidden = !(android || apple);
     el('clock-open-fallback').hidden = openButton.hidden;
-    el('clock-android-connect').hidden = !androidWeb;
     openButton.addEventListener('click', () => {
       if (!feedback.textContent) feedback.textContent = copy.clockOpenTried;
       openClock();
@@ -368,16 +361,6 @@
       });
     }
     el('close-clock').addEventListener('click', () => dialog.close());
-
-    function restoreClockFallback() {
-      if (location.hash !== '#clock-dialog') return;
-      history.replaceState(history.state, '', location.pathname + location.search);
-      if (!dialog.open && NagalDraft.load()) showSchedule();
-    }
-    if (androidWeb) {
-      window.addEventListener('hashchange', restoreClockFallback);
-      restoreClockFallback();
-    }
   }
 
   el('copy').addEventListener('click', async () => {
