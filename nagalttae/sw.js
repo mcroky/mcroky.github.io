@@ -1,19 +1,19 @@
 'use strict';
 
 // Refresh the release key and integrity table together when publishing the shell.
-const release = '1.4.9-f8a25bd0090e70fb07d0';
+const release = '1.4.10-d892330584f845df85ac';
 const integrity = {
-  'index.html': 'sha256-48vdO+m8JaUghtO/ZNlBuU48sjPTsrzKAw1M/jIK/OI= sha256-HxoS9xQN3Tk+032UstBCwks6sUqB/AIXdhYZC77olHE=',
-  'app.css': 'sha256-MtWGXwyD8onEKsyTBe1mRWHVSiJW9U7fwvwawwxEe9A= sha256-QqSFcUFiKx5xbCEhoxnoGd/2tSREmx0i6ObUiEQT/0g=',
+  'index.html': 'sha256-D1HsTU/ioLSMqUKOvs8BYtd43AVQRnd3C5dA7WQwHbg= sha256-kTX6bqQ/4mKzu9rJIL2kNYpOrPZsj0CfvavmX/JyRA8=',
+  'app.css': 'sha256-nEwl5kU4az4YEVHN/ZgXLGr1YMnJN3hYWpM5fa/PuMk= sha256-o/I2ES4gsFMFZwLOP/Fry+rLX95rmHsmCo5hrqx8iag=',
   'studio.css': 'sha256-HnrBTsqr4PFz8UC2eRdNVUGVKHqWrui6bkYCUfwPiAw= sha256-oEwz56SiGgy82iE/GQn5+P/iGQRyLsbqP7AMWZaKueM=',
   'planner.js': 'sha256-EGPZadTtp0CWz/MDkWVdZtLx3sW5M/N0ZLOYkYOic+k= sha256-Ol3M2ylwgGau7CBWbYMvjF9IQaXMZ8Isw1q1EVjAV2A=',
   'session-plan.js': 'sha256-CSzAjNxzz6Aa5d+pnkoTv1gQ6fIlkpT4iz/9XnZlbrA= sha256-biIHVpnKd1VhhNHCRD5yxUogJm3yGvLMhbgpsXxME28=',
   'calendar.js': 'sha256-/BDTcmEPzbxusr01YjPnsuXjhhzAU819F4pQqWd6dcw= sha256-G1Y7VZnAfWUCRUT3I6Rc1PHWKTxQFXqbIHDIovjuBWQ=',
-  'locale.js': 'sha256-+aS1yeJaSBOSwFGNY52sLpTb3ki4011mDADQYPSBzj0= sha256-efR8U6Fx1cFZUtxj/eKQG2Vq145+B5MiE7PsOL38AVU=',
-  'studio.js': 'sha256-NGUJQHkSPSwTXzKoAgDcd38rrv/3r3nPjV/P6EAtYmw= sha256-hhemidd2544rwBzUc2xRu9zUD6qR57079fxnxfMk9Ow=',
+  'locale.js': 'sha256-2kxYE+XLXrrDXw6wwDsr9OIS+p1WslCeqQHoH3INVEU= sha256-SE8UHSr3I/dPGImvNr9y9hAel1l6iTLwQJPnrx8wboQ=',
+  'studio.js': 'sha256-1OYzYa//WBfW6ssWtthrSpMeuoiZ4uLIMPgJ+y+1ZHU= sha256-JNhgYKtVtAZk1pfs0eji6zFX84OFF9Ruv7JOsZA22pM=',
   'ticket-image.js': 'sha256-AQEBfUUFDxPS6uFumo0wSUraTq/MTg4tplStID2bdhI= sha256-CZxo+Z10pBza0m7L/5GZmHitGSu/7QzjM74hcON8uB4=',
   'android-ui.js': 'sha256-YmKIXtwdq/RPFv7cC3+JjvOeB0zjsdrMZjDJd/nsxaQ= sha256-djaulnBQGBVhbRA00bVHPBJ39OUam1+AaqjKpxNm5xc=',
-  'app.js': 'sha256-7qI+HaZydyXo0HG9ufn5fk0pf9UI53Jaqq5Eb42wh0E= sha256-koh6OrRC69UqidmWRfvoQtw0UAAyfIkNea3As1t56+M=',
+  'app.js': 'sha256-PP0ltbUy2Vwqz6motwcURMz+uAjfxNWjcJ0QBhd44gA= sha256-jo44bqxZJ9Ekm6LBGHas8f2upTSUoQ9mVW1TxfC6mkg=',
   'icon.svg': 'sha256-/k7BE8OXeXKDtJrWQkmsriwD8ltdH4NPAppriIxU9yM= sha256-3cq8vvg4OzZB+PCctkZAKyA2nmCqqRarEh2NIG/O9c8=',
   'morning.webp': 'sha256-DbCuu0GEGWdIj6hxYfEkSxSOh4APYPQ44LLGmClOIaA=',
   'manifest.webmanifest': 'sha256-74FM068Knjz3Pjt5YVDuD+WBUJMu/SD02tCCVnltVJQ= sha256-tkvYfr0+2AZrWhc+UozWaXZyCyxMw7/GJvM4JkQWYto=',

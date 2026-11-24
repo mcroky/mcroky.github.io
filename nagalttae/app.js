@@ -12,12 +12,18 @@
   const form = el('settings-form');
   const dayButtons = [...document.querySelectorAll('[data-day]')];
   const actionButtons = [...document.querySelectorAll('.actions button:not(#alarms), #clock-quick button')];
+  const calendarDownload = el('calendar-download');
+  const calendarOptions = el('calendar');
+  const calendarSubmit = el('save-calendar');
+  const calendarDialog = el('calendar-dialog');
+  const calendarButtons = [calendarDownload, calendarOptions];
   const android = window.NagalAndroid;
   const storageKey = 'nagalttae.language';
   let locale = 'ko';
   let copy;
   let toastTimer;
   let minuteTimer;
+  let calendarSaving = false;
 
   function localDay(offset, now = new Date()) {
     const day = new Date(now);
@@ -178,7 +184,7 @@
       buttons[0].disabled = input.valueAsNumber === 0;
       buttons[1].disabled = input.valueAsNumber === 240;
     }
-    for (const button of actionButtons) button.disabled = !plan;
+    for (const button of actionButtons) button.disabled = !plan || (calendarSaving && calendarButtons.includes(button));
     el('depart-time').value = plan ? rows[1].time : '--:--';
     for (const [index, id] of ['mobile-ready', 'mobile-leave'].entries()) {
       const row = rows[index];
@@ -382,27 +388,17 @@
     }
   });
   el('close-copy').addEventListener('click', () => el('copy-dialog').close());
-  el('calendar').addEventListener('click', () => {
+  async function saveCalendar(fromDialog) {
     const plan = readPlan();
-    if (!plan) return;
-    el('calendar-date').textContent = appointmentDate() + ' · ' + el('target').value;
-    const alarmRows = eventRows(plan).slice(0, 2);
-    el('alarm-times').textContent = alarmRows.map(row => [row.label, row.offset, row.time].filter(Boolean).join(' ')).join('  /  ');
-    el('alarm-times').hidden = !el('event-alarms').checked;
-    el('calendar-dialog').showModal();
-  });
-  el('close-calendar').addEventListener('click', () => el('calendar-dialog').close());
-  el('event-alarms').addEventListener('change', event => { el('alarm-times').hidden = !event.target.checked; });
-  el('calendar-form').addEventListener('submit', async event => {
-    event.preventDefault();
-    const plan = readPlan();
-    if (!plan || el('save-calendar').disabled) return;
+    if (!plan || calendarSaving) return;
     const date = dateInput.value;
     const target = el('target').value;
-    const title = el('event-name').value.trim() || copy.appointment;
+    const title = (fromDialog ? el('event-name').value.trim() : '') || copy.appointment;
     const options = {date, target, plan, title, description: planText(plan), stamp: new Date(),
-      reminders: el('event-alarms').checked, readyLabel: copy.ready, leaveLabel: copy.leave};
-    el('save-calendar').disabled = true;
+      reminders: !fromDialog || el('event-alarms').checked, readyLabel: copy.ready, leaveLabel: copy.leave};
+    calendarSaving = true;
+    for (const button of calendarButtons) button.disabled = true;
+    calendarSubmit.disabled = true;
     try {
       // Re-exporting the same named appointment keeps its event identity on HTTPS and file URLs.
       const idBytes = crypto.subtle
@@ -411,7 +407,7 @@
       options.uid = Array.from(idBytes, byte => byte.toString(16).padStart(2, '0')).join('') + '@nagalttae.mcroky.github.io';
       const calendar = NagalCalendar.build(options);
       if (android) {
-        el('calendar-dialog').close();
+        calendarDialog.close();
         android.exportFile('calendar', calendar);
         return;
       }
@@ -426,15 +422,37 @@
         link.remove();
         setTimeout(() => URL.revokeObjectURL(file), 60000);
       }
-      el('calendar-dialog').close();
+      if (fromDialog) calendarDialog.close();
       notify(copy.calendarSaved);
     } catch {
-      el('calendar-feedback').textContent = copy.calendarError;
+      if (fromDialog && calendarDialog.open) el('calendar-feedback').textContent = copy.calendarError;
+      else notify(copy.calendarError);
     } finally {
-      el('save-calendar').disabled = false;
+      calendarSaving = false;
+      const hasPlan = Boolean(readPlan());
+      for (const button of calendarButtons) button.disabled = !hasPlan;
+      calendarSubmit.disabled = false;
     }
+  }
+
+  calendarDownload.hidden = Boolean(android);
+  calendarDownload.addEventListener('click', () => saveCalendar(false));
+  calendarOptions.addEventListener('click', () => {
+    const plan = readPlan();
+    if (!plan || calendarSaving) return;
+    el('calendar-date').textContent = appointmentDate() + ' · ' + el('target').value;
+    const alarmRows = eventRows(plan).slice(0, 2);
+    el('alarm-times').textContent = alarmRows.map(row => [row.label, row.offset, row.time].filter(Boolean).join(' ')).join('  /  ');
+    el('alarm-times').hidden = !el('event-alarms').checked;
+    calendarDialog.showModal();
   });
-  el('calendar-dialog').addEventListener('close', () => { el('calendar-feedback').textContent = ''; });
+  el('close-calendar').addEventListener('click', () => calendarDialog.close());
+  el('event-alarms').addEventListener('change', event => { el('alarm-times').hidden = !event.target.checked; });
+  el('calendar-form').addEventListener('submit', event => {
+    event.preventDefault();
+    saveCalendar(true);
+  });
+  calendarDialog.addEventListener('close', () => { el('calendar-feedback').textContent = ''; });
   el('share').addEventListener('click', () => {
     const plan = readPlan();
     if (!plan) return;

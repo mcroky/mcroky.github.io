@@ -138,11 +138,10 @@ h2 { font-size: 20px; letter-spacing: -.055em; font-weight: 780; }
 .actions button .ic { width: 16px; height: 16px; }
 .actions #download { background: #e4ecd7; color: #254f38; border-color: #cedabe; }
 .actions #download:hover:enabled { background: #d9e5c6; }
-.actions #calendar, .actions #alarms, #save-calendar, #alarm-save { background: var(--green); border-color: var(--green); color: #fffef0; }
+.actions #calendar-download, .actions #alarms, #save-calendar, #alarm-save { background: var(--green); border-color: var(--green); color: #fffef0; }
 .actions #clock-transfer { background: #e4ecd7; color: #254f38; border-color: #cedabe; }
 .actions #clock-transfer:hover:enabled { background: #d9e5c6; }
-.actions #calendar:hover:enabled, #save-calendar:hover:enabled { background: #173c2d; }
-[data-channel=android] .actions #calendar { background: #fffefa; border-color: var(--line); color: var(--ink); }
+.actions #calendar-download:hover:enabled, #save-calendar:hover:enabled { background: #173c2d; }
 #studio-footer { margin-top: 42px; }
 .toast:not(:empty) { position: fixed; z-index: 5; bottom: max(22px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 28px); background: #1d3c2e; color: #fff; border-radius: 10px; padding: 12px 20px; font-size: 14px; box-shadow: 0 4px 16px #152c2026; }
 :is(#copy-dialog, #calendar-dialog, #alarm-dialog, #install-dialog, #clock-dialog) { border: 1px solid var(--line); border-radius: 15px; padding: 22px; width: min(440px, calc(100% - 32px)); max-height: calc(100dvh - 32px); background: var(--paper); color: var(--ink); }
