@@ -111,6 +111,7 @@
         </section>
         <div class="actions">
           <button id="alarms" type="button" aria-haspopup="dialog" hidden><svg class="ic"><use href="#i-clock"/></svg><span data-text="alarmAction">알람 설정</span></button>
+          <button id="clock-transfer" type="button" aria-haspopup="dialog" hidden><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg><span data-text="clockAction">시계에 옮기기</span></button>
           <button id="calendar" type="button" aria-haspopup="dialog"><svg class="ic"><use href="#i-calendar"/></svg><span data-text="calendarAction">캘린더에 담기</span></button>
           <button id="download" type="button"><svg class="ic"><use href="#i-download"/></svg><span data-text="saveTicket">티켓 이미지 저장</span></button>
           <button id="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span data-text="copy">일정 복사</span></button>
@@ -121,6 +122,32 @@
   </main>
   <footer id="studio-footer"></footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog id="clock-dialog" aria-labelledby="clock-title">
+    <div class="dialog-heading"><h2 id="clock-title" data-text="clockTitle">시계 앱에 알람 추가</h2><button class="icon-button" id="close-clock" type="button" aria-label="닫기"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+    <p class="clock-help" data-text="clockInstructions"></p>
+    <div class="clock-steps">
+      <section class="clock-step" aria-labelledby="clock-ready-heading">
+        <div class="clock-when">
+          <h3 id="clock-ready-heading" data-text="ready">준비 시작</h3>
+          <p id="clock-ready-day"></p>
+          <input id="clock-ready-time" type="text" aria-labelledby="clock-ready-heading clock-ready-day" readonly>
+        </div>
+        <button class="clock-copy" id="clock-ready-copy" type="button" aria-labelledby="clock-ready-heading clock-ready-copy-text"><span id="clock-ready-copy-text" data-text="clockCopyTime">시각 복사</span></button>
+        <label class="clock-done"><input id="clock-ready-done" type="checkbox" aria-labelledby="clock-ready-heading clock-ready-done-text"><span id="clock-ready-done-text" data-text="clockDone">기록 완료</span></label>
+      </section>
+      <section class="clock-step" aria-labelledby="clock-leave-heading">
+        <div class="clock-when">
+          <h3 id="clock-leave-heading" data-text="leave">출발 시각</h3>
+          <p id="clock-leave-day"></p>
+          <input id="clock-leave-time" type="text" aria-labelledby="clock-leave-heading clock-leave-day" readonly>
+        </div>
+        <button class="clock-copy" id="clock-leave-copy" type="button" aria-labelledby="clock-leave-heading clock-leave-copy-text"><span id="clock-leave-copy-text" data-text="clockCopyTime">시각 복사</span></button>
+        <label class="clock-done"><input id="clock-leave-done" type="checkbox" aria-labelledby="clock-leave-heading clock-leave-done-text"><span id="clock-leave-done-text" data-text="clockDone">기록 완료</span></label>
+      </section>
+    </div>
+    <p id="clock-feedback" class="clock-help" role="status"></p>
+    <p class="clock-help" data-text="clockDateHint"></p>
+  </dialog>
   <dialog id="install-dialog" aria-labelledby="install-title">
     <div class="dialog-heading"><h2 id="install-title" data-text="installHeading">홈 화면에 나갈때 추가</h2><button class="icon-button" id="close-install" type="button" aria-label="닫기"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button></div>
     <p id="install-offer" data-text="installOffer" hidden></p>

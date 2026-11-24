@@ -91,7 +91,15 @@ globalThis.NagalCopy = {
     installAppleConfirm: "‘웹 앱으로 열기’ 옵션이 보이면 켜고 ‘추가’를 누르세요.",
     installBrowserMenu: "브라우저 메뉴를 여세요.",
     installBrowserAdd: "‘앱 설치’ 또는 ‘홈 화면에 추가’를 선택하세요.",
-    installOffer: "설치 창을 닫았거나 창이 열리지 않으면 아래 방법을 시도해 보세요."
+    installOffer: "설치 창을 닫았거나 창이 열리지 않으면 아래 방법을 시도해 보세요.",
+    clockAction: "시계에 옮기기",
+    clockTitle: "시계 앱에 알람 추가",
+    clockInstructions: "휴대폰 시계 앱의 알람 탭을 열고, 아래 시각을 하나씩 입력한 뒤 돌아와 체크하세요.",
+    clockDone: "기록 완료",
+    clockTimeCopied: "시각을 복사했어요.",
+    clockManualCopy: "시각을 길게 눌러 복사하거나 시계 앱에 직접 입력하세요.",
+    clockDateHint: "시계 알람의 날짜를 확인하세요. 며칠 뒤 약속은 ‘캘린더에 담기’로 추가할 수 있어요.",
+    clockCopyTime: "시각 복사"
   },
   en: {
     appName: "Nagalttae",
@@ -185,7 +193,15 @@ globalThis.NagalCopy = {
     installAppleConfirm: "If you see “Open as Web App”, turn it on, then tap “Add”.",
     installBrowserMenu: "Open your browser’s menu.",
     installBrowserAdd: "Choose “Install app” or “Add to Home screen”.",
-    installOffer: "If you dismissed the install prompt or it didn’t appear, try the steps below."
+    installOffer: "If you dismissed the install prompt or it didn’t appear, try the steps below.",
+    clockAction: "Set in Clock",
+    clockTitle: "Add alarms in Clock",
+    clockInstructions: "Open the Alarms tab in your phone’s Clock app. Enter each time below, then return here to check it off.",
+    clockDone: "Entered",
+    clockTimeCopied: "Time copied.",
+    clockManualCopy: "Press and hold the time to copy it, or enter it in Clock yourself.",
+    clockDateHint: "Check the date of each alarm in Clock. For an appointment a few days away, you can use “Add to calendar”.",
+    clockCopyTime: "Copy time"
   },
   ja: {
     appName: "Nagalttae",
@@ -279,7 +295,15 @@ globalThis.NagalCopy = {
     installAppleConfirm: "Webアプリとして開く設定が表示されたらオンにして、「追加」をタップします。",
     installBrowserMenu: "ブラウザのメニューを開きます。",
     installBrowserAdd: "「アプリをインストール」または「ホーム画面に追加」を選びます。",
-    installOffer: "インストール画面を閉じた場合や表示されない場合は、以下の手順をお試しください。"
+    installOffer: "インストール画面を閉じた場合や表示されない場合は、以下の手順をお試しください。",
+    clockAction: "時計に転記",
+    clockTitle: "時計アプリにアラームを追加",
+    clockInstructions: "スマートフォンの時計アプリで「アラーム」を開きます。下の時刻を1つずつ入力し、ここに戻ってチェックしてください。",
+    clockDone: "入力済み",
+    clockTimeCopied: "時刻をコピーしました。",
+    clockManualCopy: "時刻を長押ししてコピーするか、時計アプリに直接入力してください。",
+    clockDateHint: "時計アプリでアラームの日付を確認してください。数日先の予定には「カレンダーに追加」も使えます。",
+    clockCopyTime: "時刻をコピー"
   },
   zh: {
     appName: "Nagalttae",
@@ -373,6 +397,14 @@ globalThis.NagalCopy = {
     installAppleConfirm: "如果看到以网页 App 打开的选项，请将其开启，然后轻点“添加”。",
     installBrowserMenu: "打开浏览器菜单。",
     installBrowserAdd: "选择“安装应用”或“添加到主屏幕”。",
-    installOffer: "如果你已关闭安装提示，或没有看到提示，请尝试以下步骤。"
+    installOffer: "如果你已关闭安装提示，或没有看到提示，请尝试以下步骤。",
+    clockAction: "在时钟中设置",
+    clockTitle: "在时钟应用中添加闹钟",
+    clockInstructions: "打开手机时钟应用的“闹钟”页，逐个输入下列时间，再回到这里勾选已录入的时间。",
+    clockDone: "已录入",
+    clockTimeCopied: "时间已复制。",
+    clockManualCopy: "长按时间即可复制，也可以在时钟应用中直接输入。",
+    clockDateHint: "请检查时钟应用中的闹钟日期。如果约定在几天之后，也可以选择“添加到日历”。",
+    clockCopyTime: "复制时间"
   }
 };

@@ -92,6 +92,7 @@
     el('close-copy').setAttribute('aria-label', copy.close);
     el('close-calendar').setAttribute('aria-label', copy.close);
     el('close-install').setAttribute('aria-label', copy.close);
+    el('close-clock').setAttribute('aria-label', copy.close);
     el('event-name').placeholder = copy.appointment;
     dateInput.setAttribute('aria-label', copy.selectedDate);
     document.querySelector('.wordmark').setAttribute('aria-label', copy.appName);
@@ -272,6 +273,51 @@
     navigator.serviceWorker.register('./sw.js').catch(error => console.warn('Offline mode unavailable:', error));
   }
 
+  function mountClockTransfer() {
+    if (android) return;
+    const kinds = ['ready', 'leave'];
+    const dialog = el('clock-dialog');
+    const button = el('clock-transfer');
+    const feedback = el('clock-feedback');
+    let displayedSchedule;
+
+    button.hidden = false;
+    button.addEventListener('click', () => {
+      const plan = readPlan();
+      if (!plan) return;
+      const schedule = [dateInput.value, plan.ready, plan.leave].join('|');
+      for (const kind of kinds) {
+        const {time, dayOffset} = NagalPlanner.clockParts(plan[kind]);
+        const day = dateInput.valueAsDate;
+        day.setUTCDate(day.getUTCDate() + dayOffset);
+        el('clock-' + kind + '-day').textContent = formatDay(day,
+          {year: 'numeric', month: 'short', day: 'numeric', weekday: 'short'});
+        el('clock-' + kind + '-time').value = time;
+        if (displayedSchedule !== schedule) el('clock-' + kind + '-done').checked = false;
+      }
+      displayedSchedule = schedule;
+      feedback.textContent = '';
+      dialog.showModal();
+    });
+    for (const kind of kinds) {
+      const field = el('clock-' + kind + '-time');
+      el('clock-' + kind + '-copy').addEventListener('click', async () => {
+        const time = field.value;
+        const schedule = displayedSchedule;
+        try {
+          await navigator.clipboard.writeText(time);
+          if (dialog.open && displayedSchedule === schedule) feedback.textContent = copy.clockTimeCopied;
+        } catch {
+          if (!dialog.open || displayedSchedule !== schedule) return;
+          field.focus();
+          field.setSelectionRange(0, time.length);
+          feedback.textContent = copy.clockManualCopy;
+        }
+      });
+    }
+    el('close-clock').addEventListener('click', () => dialog.close());
+  }
+
   el('copy').addEventListener('click', async () => {
     const plan = readPlan();
     if (!plan) return;
@@ -402,6 +448,7 @@
   try { locale = localStorage.getItem(storageKey) || 'ko'; } catch { /* Use Korean when storage is unavailable. */ }
   setLocale(locale);
   mountInstall();
+  mountClockTransfer();
   window.NagalMobile?.mount({plan: readPlan, date: () => dateInput.value, dateLabel: appointmentDate,
     rows: eventRows, strings: () => copy, language: () => locale, notify});
   scheduleClockUpdate();

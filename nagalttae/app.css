@@ -133,17 +133,31 @@ h2 { font-size: 20px; letter-spacing: -.055em; font-weight: 780; }
 .actions #download { background: #e4ecd7; color: #254f38; border-color: #cedabe; }
 .actions #download:hover:enabled { background: #d9e5c6; }
 .actions #calendar, .actions #alarms, #save-calendar, #alarm-save { background: var(--green); border-color: var(--green); color: #fffef0; }
+.actions #clock-transfer { background: #e4ecd7; color: #254f38; border-color: #cedabe; }
+.actions #clock-transfer:hover:enabled { background: #d9e5c6; }
 .actions #calendar:hover:enabled, #save-calendar:hover:enabled { background: #173c2d; }
 [data-channel=android] .actions #calendar { background: #fffefa; border-color: var(--line); color: var(--ink); }
 #studio-footer { margin-top: 42px; }
 .toast:not(:empty) { position: fixed; z-index: 5; bottom: max(22px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 28px); background: #1d3c2e; color: #fff; border-radius: 10px; padding: 12px 20px; font-size: 14px; box-shadow: 0 4px 16px #152c2026; }
-:is(#copy-dialog, #calendar-dialog, #alarm-dialog, #install-dialog) { border: 1px solid var(--line); border-radius: 15px; padding: 22px; width: min(440px, calc(100% - 32px)); max-height: calc(100dvh - 32px); background: var(--paper); color: var(--ink); }
-:is(#copy-dialog, #calendar-dialog, #alarm-dialog, #install-dialog)::backdrop { background: #10291f70; }
+:is(#copy-dialog, #calendar-dialog, #alarm-dialog, #install-dialog, #clock-dialog) { border: 1px solid var(--line); border-radius: 15px; padding: 22px; width: min(440px, calc(100% - 32px)); max-height: calc(100dvh - 32px); background: var(--paper); color: var(--ink); }
+:is(#copy-dialog, #calendar-dialog, #alarm-dialog, #install-dialog, #clock-dialog)::backdrop { background: #10291f70; }
 .dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
 .dialog-heading h2 { font-size: 17px; }
 #install-dialog ol { margin: 0; padding-inline-start: 21px; font-size: 15px; line-height: 1.6; }
 #install-dialog li + li { margin-top: 7px; }
 #install-offer { margin: 0 0 10px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.clock-help { color: var(--muted); font-size: 13px; line-height: 1.55; }
+.clock-steps { display: grid; gap: 8px; margin: 14px 0; }
+.clock-step { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; align-items: center; background: #fffefa; border: 1px solid var(--line); border-radius: 11px; padding: 10px 12px 2px; }
+.clock-step:has(.clock-done input:checked) { border-color: #9eb39d; background: #eef2e8; }
+.clock-when h3 { margin: 0 0 3px; font-size: 14px; }
+.clock-when p { font-size: 12px; color: var(--muted); }
+.clock-when input { display: block; margin: 4px 0 0; width: 5ch; max-width: 100%; min-height: 36px; padding: 0; background: transparent; border: none; font: 650 29px/1.18 "Bahnschrift", system-ui, sans-serif; color: var(--green); }
+.clock-copy { min-height: 44px; max-width: 112px; border: 1px solid var(--line); border-radius: 8px; padding: 5px 9px; background: #f2f4e9; font-size: 12px; font-weight: 700; }
+.clock-copy:hover { background: #e4ecd7; }
+.clock-done { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; min-height: 44px; font-size: 13px; cursor: pointer; }
+.clock-done input { width: 18px; height: 18px; margin: 0; accent-color: var(--green); }
+#clock-feedback:not(:empty) { margin-bottom: 9px; color: var(--green); font-weight: 650; }
 .icon-button { display: grid; place-items: center; border: 0; border-radius: 8px; background: none; width: 44px; height: 44px; }
 #copy-text { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; resize: vertical; font-size: 15px; }
 #calendar-dialog .dialog-heading { margin-bottom: 0; }
