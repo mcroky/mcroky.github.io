@@ -69,7 +69,7 @@
 
   function mount({ plan, date, language }) {
     const configured = document.querySelector('meta[name="nagal-push-api"]').content;
-    const api = configured || (location.hostname === '127.0.0.1' ? 'http://127.0.0.1:8791' : '');
+    const api = location.hostname === '127.0.0.1' ? 'http://127.0.0.1:8791' : configured;
     if (!api || !window.isSecureContext || location.protocol === 'file:') return;
     const el = id => document.getElementById(id);
     const save = el('push-save'), cancel = el('push-cancel');

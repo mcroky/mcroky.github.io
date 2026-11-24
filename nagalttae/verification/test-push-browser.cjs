@@ -6,7 +6,9 @@ const { readFile } = require('node:fs/promises');
 const path = require('node:path');
 const { chromium } = require(process.env.NAGAL_PLAYWRIGHT || 'playwright');
 const app = path.resolve(__dirname, '..');
-const origin = 'http://127.0.0.1:8792', api = 'http://127.0.0.1:8791';
+const live = process.argv.includes('--public');
+const origin = live ? 'https://mcroky.github.io' : 'http://127.0.0.1:8792';
+const api = live ? 'https://nagalttae-push.cokyroky.workers.dev' : 'http://127.0.0.1:8791';
 const pageUrl = origin + '/nagalttae/';
 const mime = { js: 'text/javascript', css: 'text/css', html: 'text/html', png: 'image/png',
   webmanifest: 'application/manifest+json', svg: 'image/svg+xml', webp: 'image/webp' };
@@ -20,13 +22,13 @@ const server = createServer(async (req, res) => {
 });
 
 (async () => {
-  await new Promise(resolve => server.listen(8792, '127.0.0.1', resolve));
+  if (!live) await new Promise(resolve => server.listen(8792, '127.0.0.1', resolve));
   const real = process.argv.includes('--real');
-  const browser = await chromium.launch({ channel: 'chrome', headless: true,
+  const context = await chromium.launchPersistentContext('', { channel: 'chrome', headless: true,
+    permissions: ['notifications'], viewport: { width: 390, height: 800 }, timezoneId: 'Asia/Seoul',
+    userAgent: 'Mozilla/5.0 (Linux; Android 16) AppleWebKit/537.36 Chrome/157.0.0.0 Mobile Safari/537.36',
     ignoreDefaultArgs: real ? ['--disable-background-networking'] : [] });
   try {
-    const context = await browser.newContext({ permissions: ['notifications'], viewport: { width: 390, height: 800 },
-      timezoneId: 'Asia/Seoul', userAgent: 'Mozilla/5.0 (Linux; Android 16) AppleWebKit/537.36 Chrome/157.0.0.0 Mobile Safari/537.36' });
     if (real) await context.addInitScript(() => {
       const subscribe = PushManager.prototype.subscribe;
       PushManager.prototype.subscribe = async function(options) {
@@ -44,6 +46,10 @@ const server = createServer(async (req, res) => {
     }
     const page = await context.newPage();
     await page.goto(pageUrl);
+    if (live) {
+      assert.equal(await page.locator('meta[name="nagal-push-api"]').getAttribute('content'), api);
+      assert.equal(await page.locator('#app-version').innerText(), 'v1.5.0');
+    }
     await page.evaluate(() => navigator.serviceWorker.ready.then(() => true));
     await page.locator('[data-day="1"]').click();
     await page.locator('#push-save').click();
@@ -90,5 +96,8 @@ const server = createServer(async (req, res) => {
     }, pageUrl, { timeout: real ? 35000 : 7000 });
     console.log('PASS Galaxy-sized Chrome: reserve, edit, restore, cancel and two notifications after closing app.',
       real ? 'Real push provider.' : 'Simulated subscription and browser push transport.');
-  } finally { await browser.close(); await new Promise(resolve => server.close(resolve)); }
+  } finally {
+    await context.close();
+    if (!live) await new Promise(resolve => server.close(resolve));
+  }
 })().catch(error => { console.error(error); process.exitCode = 1; });

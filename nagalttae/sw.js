@@ -1,9 +1,9 @@
 'use strict';
 
 // Refresh the release key and integrity table together when publishing the shell.
-const release = '1.5.0-87c1e7ba2aa70e032800';
+const release = '1.5.0-2fc6831e559f45ee990a';
 const integrity = {
-  'index.html': 'sha256-M3S/t4HvJNJG7FL0JInzcAHVnstzKXXM3PSD5X69qRQ= sha256-lEytiPfdQvfC3VnJcrqD1UKWXXFqEbyW0it371D9YGw=',
+  'index.html': 'sha256-Dz1LR7sSb8tlwJQxudo05TVkM7SLSNd80fy9KqvXwZY= sha256-XszXo3nfFtIQx7PW8ppONc1qiIChfBZRM/lEzwJ4/bY=',
   'app.css': 'sha256-7xZeIov3Luguxl8I/i6G2jL8zfrFnCO1wETDTow6dy0= sha256-uqyZ7CY89LT9rdSFm+5vZmy4xhxkUsjQ+AK/OqF90zg=',
   'studio.css': 'sha256-HnrBTsqr4PFz8UC2eRdNVUGVKHqWrui6bkYCUfwPiAw= sha256-oEwz56SiGgy82iE/GQn5+P/iGQRyLsbqP7AMWZaKueM=',
   'planner.js': 'sha256-EGPZadTtp0CWz/MDkWVdZtLx3sW5M/N0ZLOYkYOic+k= sha256-Ol3M2ylwgGau7CBWbYMvjF9IQaXMZ8Isw1q1EVjAV2A=',
@@ -13,7 +13,7 @@ const integrity = {
   'studio.js': 'sha256-QwDUUquA+g8XQ8BuhlFcWY46tzdIAY9CoWA7FL9kRXg= sha256-wNMC8IdhZ6GCrg4H0pW7Tc4Ip6wtj+CMF9dqR084s6Q=',
   'ticket-image.js': 'sha256-AQEBfUUFDxPS6uFumo0wSUraTq/MTg4tplStID2bdhI= sha256-CZxo+Z10pBza0m7L/5GZmHitGSu/7QzjM74hcON8uB4=',
   'android-ui.js': 'sha256-YmKIXtwdq/RPFv7cC3+JjvOeB0zjsdrMZjDJd/nsxaQ= sha256-djaulnBQGBVhbRA00bVHPBJ39OUam1+AaqjKpxNm5xc=',
-  'push.js': 'sha256-PgeR0nkyDuVXk+FUiyp+iNSvKSK9Wlj5Rl9HM6SqYb0= sha256-nVuaaGktcuP5Wckh8+pISoa3m2DzHGiJIcTdV1cwWGk=',
+  'push.js': 'sha256-6Y3kiSj9emJa8Ev1lNwWIkZppERWVjiK6HBUgjimC0g= sha256-X+h2C4oaV1JGUIL6icksqB6aUCKIWX3nSaa9kSYB8ac=',
   'app.js': 'sha256-Aiyj3Sv4gRagurcrxrS3xso1Kdv/mPZ5ZZBMxN0amqw= sha256-RWA2E7eVfiRXk6o+NI0xdQQoB+UEKSZ1dRyCX6LEyeo=',
   'icon.svg': 'sha256-/k7BE8OXeXKDtJrWQkmsriwD8ltdH4NPAppriIxU9yM= sha256-3cq8vvg4OzZB+PCctkZAKyA2nmCqqRarEh2NIG/O9c8=',
   'morning.webp': 'sha256-DbCuu0GEGWdIj6hxYfEkSxSOh4APYPQ44LLGmClOIaA=',
