@@ -129,7 +129,7 @@
   <dialog id="clock-dialog" aria-labelledby="clock-title">
     <div class="dialog-heading"><h2 id="clock-title" data-text="clockTitle">시계 앱에 알람 추가</h2><button class="icon-button" id="close-clock" type="button" aria-label="닫기"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button></div>
     <p id="clock-feedback" class="clock-help" role="status"></p>
-    <p class="clock-help" data-text="clockInstructions"></p>
+    <p class="clock-help" id="clock-instructions" data-text="clockInstructions"></p>
     <div class="clock-steps">
       <section class="clock-step" aria-labelledby="clock-ready-heading">
         <div class="clock-when">
@@ -152,6 +152,11 @@
     </div>
     <button id="open-clock-app" class="clock-copy" type="button" data-text="clockOpenAction" hidden>시계 앱 열기</button>
     <p class="clock-help clock-device-guide" id="clock-open-fallback" data-text="clockOpenUnsupported" hidden></p>
+    <div id="gemini-request-box" hidden>
+      <label class="clock-help" for="gemini-request" data-text="geminiRequestLabel">알람 요청 문장</label>
+      <textarea id="gemini-request" rows="2" readonly></textarea>
+    </div>
+    <a id="open-gemini-app" class="clock-copy" href="https://gemini.google.com/app" referrerpolicy="no-referrer" data-text="geminiOpenAction" hidden>Gemini 열기</a>
     <p class="clock-help clock-device-guide" data-text="clockDateHint"></p>
   </dialog>
   <dialog id="install-dialog" aria-labelledby="install-title">

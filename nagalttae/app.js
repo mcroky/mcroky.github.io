@@ -13,6 +13,7 @@
   const dayButtons = [...document.querySelectorAll('[data-day]')];
   const actionButtons = [...document.querySelectorAll('.actions button:not(#alarms), #clock-quick button')];
   const android = window.NagalAndroid;
+  const geminiWeb = !android && /Android/i.test(navigator.userAgent);
   const storageKey = 'nagalttae.language';
   let locale = 'ko';
   let copy;
@@ -98,6 +99,7 @@
     document.querySelector('.wordmark').setAttribute('aria-label', copy.appName);
     document.querySelector('.days').setAttribute('aria-label', copy.date);
     for (const node of document.querySelectorAll('[data-text]')) node.textContent = copy[node.dataset.text];
+    if (geminiWeb) el('clock-instructions').textContent = copy.geminiInstructions;
     for (const {key} of segments) {
       for (const button of el(key).closest('.stepper').querySelectorAll('button')) {
         const direction = Number(button.dataset.step) > 0 ? copy.increment : copy.decrement;
@@ -285,6 +287,9 @@
     const feedback = el('clock-feedback');
     const apple = isAppleMobile();
     const openButton = el('open-clock-app');
+    const geminiLink = el('open-gemini-app');
+    const geminiRequestBox = el('gemini-request-box');
+    const geminiRequest = el('gemini-request');
     let displayedSchedule;
     let copyRequest = 0;
 
@@ -313,6 +318,8 @@
       displayedSchedule = schedule;
       copyRequest += 1;
       feedback.textContent = '';
+      geminiRequestBox.hidden = true;
+      geminiRequest.value = '';
       dialog.showModal();
       return true;
     }
@@ -321,19 +328,32 @@
       const field = el('clock-' + kind + '-time');
       const time = field.value;
       const request = ++copyRequest;
-      feedback.textContent = copy.clockOpenGuide.replace('{time}', time);
+      const isCurrent = () => dialog.open && request === copyRequest;
+      if (geminiWeb) {
+        const date = el('clock-' + kind + '-day').textContent;
+        const label = kind === 'ready' ? copy.alarmReady : copy.alarmLeave;
+        geminiRequest.value = copy.geminiAlarmRequest.replace('{date}', date).replace('{time}', time).replace('{label}', label);
+        geminiRequestBox.hidden = true;
+      }
+      const copyField = geminiWeb ? geminiRequest : field;
+      feedback.textContent = geminiWeb ? copy.geminiCopying : copy.clockOpenGuide.replace('{time}', time);
       const copyUnavailable = () => {
-        if (!dialog.open || request !== copyRequest) return;
-        field.focus();
-        field.setSelectionRange(0, time.length);
-        feedback.textContent = copy.clockManualCopy;
+        if (!isCurrent()) return;
+        if (geminiWeb) geminiRequestBox.hidden = false;
+        copyField.focus();
+        copyField.setSelectionRange(0, copyField.value.length);
+        feedback.textContent = geminiWeb ? copy.geminiManualCopy : copy.clockManualCopy;
       };
       if (android) {
         android.copyText(time);
       } else {
         try {
-          navigator.clipboard.writeText(time).then(() => {
-            if (dialog.open && request === copyRequest) {
+          navigator.clipboard.writeText(copyField.value).then(() => {
+            if (!isCurrent()) return;
+            if (geminiWeb) {
+              feedback.textContent = copy.geminiCopied;
+              geminiLink.click();
+            } else {
               feedback.textContent = copy.clockTimeCopied.replace('{time}', time);
             }
           }, copyUnavailable);
@@ -341,14 +361,14 @@
           copyUnavailable();
         }
       }
-      // Launch while the browser is still processing the user's tap.
-      openClock();
+      if (!geminiWeb) openClock();
     }
 
     button.hidden = false;
     el('clock-quick').hidden = false;
     openButton.hidden = !(android || apple);
     el('clock-open-fallback').hidden = openButton.hidden;
+    geminiLink.hidden = !geminiWeb;
     openButton.addEventListener('click', () => {
       if (!feedback.textContent) feedback.textContent = copy.clockOpenTried;
       openClock();

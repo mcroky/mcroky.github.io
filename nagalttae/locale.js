@@ -105,7 +105,14 @@ globalThis.NagalCopy = {
     clockOpenAction: "시계 앱 열기 (베타)",
     clockOpenGuide: "시계 앱에서 알람을 추가하고 {time}에 맞추세요.",
     clockOpenUnsupported: "시계가 열리지 않으면 휴대폰에서 시계 앱의 ‘알람’ 탭을 여세요.",
-    clockOpenTried: "시계 앱 열기를 요청했어요."
+    clockOpenTried: "시계 앱 열기를 요청했어요.",
+    geminiInstructions: "‘시각 복사’를 누르면 알람 요청 문장을 복사하고 Gemini를 열어요. 브라우저에서 열리면 휴대폰의 Gemini 앱을 직접 여세요.",
+    geminiAlarmRequest: "{date} {time}에 ‘{label}’ 알람을 한 번 울리게 설정해 줘.",
+    geminiCopying: "알람 요청 문장을 복사하고 있어요.",
+    geminiCopied: "알람 요청을 복사했어요. Gemini 모바일 앱에 붙여넣고 전송하세요.",
+    geminiManualCopy: "아래 문장을 직접 복사해 Gemini 모바일 앱에 붙여넣으세요.",
+    geminiRequestLabel: "알람 요청 문장",
+    geminiOpenAction: "Gemini 열기"
   },
   en: {
     appName: "Nagalttae",
@@ -213,7 +220,14 @@ globalThis.NagalCopy = {
     clockOpenAction: "Open Clock (beta)",
     clockOpenGuide: "Add an alarm in Clock and set it for {time}.",
     clockOpenUnsupported: "If Clock doesn’t open, open the Clock app on your phone and tap Alarms.",
-    clockOpenTried: "Sent a request to open Clock."
+    clockOpenTried: "Sent a request to open Clock.",
+    geminiInstructions: "Tap Copy time to copy an alarm request and open Gemini. If it opens in a browser, open the Gemini app on your phone.",
+    geminiAlarmRequest: "Set a one-time alarm called ‘{label}’ for {date} at {time}.",
+    geminiCopying: "Copying the alarm request.",
+    geminiCopied: "Alarm request copied. Paste and send it in the Gemini mobile app.",
+    geminiManualCopy: "Copy the request below and paste it into the Gemini mobile app.",
+    geminiRequestLabel: "Alarm request",
+    geminiOpenAction: "Open Gemini"
   },
   ja: {
     appName: "Nagalttae",
@@ -321,7 +335,14 @@ globalThis.NagalCopy = {
     clockOpenAction: "時計アプリを開く（ベータ）",
     clockOpenGuide: "時計アプリでアラームを追加し、{time}に設定してください。",
     clockOpenUnsupported: "時計アプリが開かない場合は、スマートフォンで時計アプリの「アラーム」を開いてください。",
-    clockOpenTried: "時計アプリを開くようリクエストしました。"
+    clockOpenTried: "時計アプリを開くようリクエストしました。",
+    geminiInstructions: "「時刻をコピー」を押すと、アラームの依頼文をコピーして Gemini を開きます。ブラウザで開いた場合は、スマートフォンの Gemini アプリを開いてください。",
+    geminiAlarmRequest: "{date}の{time}に「{label}」というアラームを1回だけ設定して。",
+    geminiCopying: "アラームの依頼文をコピーしています。",
+    geminiCopied: "依頼文をコピーしました。Gemini モバイルアプリに貼り付けて送信してください。",
+    geminiManualCopy: "下の依頼文を手動でコピーして、Gemini モバイルアプリに貼り付けてください。",
+    geminiRequestLabel: "アラームの依頼文",
+    geminiOpenAction: "Gemini を開く"
   },
   zh: {
     appName: "Nagalttae",
@@ -429,6 +450,13 @@ globalThis.NagalCopy = {
     clockOpenAction: "打开时钟（测试版）",
     clockOpenGuide: "请在时钟应用中添加闹钟，并设为 {time}。",
     clockOpenUnsupported: "如果时钟没有打开，请在手机上打开时钟应用，进入“闹钟”页。",
-    clockOpenTried: "已请求打开时钟应用。"
+    clockOpenTried: "已请求打开时钟应用。",
+    geminiInstructions: "点按“复制时间”即可复制闹钟指令并打开 Gemini。如果链接在浏览器中打开，请手动打开手机的 Gemini 应用。",
+    geminiAlarmRequest: "请在{date} {time}设置一个名为“{label}”的单次闹钟。",
+    geminiCopying: "正在复制闹钟指令。",
+    geminiCopied: "已复制闹钟指令。请在 Gemini 手机应用中粘贴并发送。",
+    geminiManualCopy: "请手动复制下方指令，再粘贴到 Gemini 手机应用。",
+    geminiRequestLabel: "闹钟指令",
+    geminiOpenAction: "打开 Gemini"
   }
 };
