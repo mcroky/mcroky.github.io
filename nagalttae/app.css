@@ -26,7 +26,9 @@ button, a, input, select { touch-action: manipulation; }
 .nav { min-height: 68px; display: flex; justify-content: space-between; align-items: center; gap: 14px; }
 .wordmark, .studio-home { display: inline-flex; align-items: center; color: inherit; text-decoration: none; min-height: 44px; }
 .wordmark { gap: 10px; font-size: 24px; letter-spacing: -.09em; }
+.wordmark-text { display: flex; align-items: baseline; gap: 8px; }
 .wordmark b { font-weight: 850; }
+.app-version { color: var(--muted); font-size: 12px; font-weight: 650; letter-spacing: normal; white-space: nowrap; }
 .nav-end { display: flex; align-items: center; gap: 24px; }
 .studio-home { gap: 4px; color: var(--muted); font-size: 13px; font-weight: 600; }
 .studio-home .ic { width: 14px; height: 14px; }
@@ -208,6 +210,8 @@ h2 { font-size: 20px; letter-spacing: -.055em; font-weight: 780; }
   .nav { min-height: 58px; }
   .wordmark { font-size: 21px; gap: 7px; }
   .wordmark img { width: 29px; height: 29px; }
+  .wordmark-text { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .app-version { line-height: 1.1; }
   .nav-end { gap: 11px; }
   .studio-home { font-size: 11px; }
   .intro { min-height: 117px; margin: 12px 0; }
