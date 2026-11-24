@@ -108,6 +108,10 @@
         <section class="timeline panel" aria-labelledby="timeline-title">
           <div class="section-head"><h2 id="timeline-title"><svg class="ic"><use href="#i-route"/></svg><span data-text="timeline">내 타임라인</span></h2><span class="total"><span data-text="total">총 소요</span> <strong id="total">–</strong></span></div>
           <ol class="stops" id="stops"></ol>
+          <div class="clock-quick" id="clock-quick" hidden>
+            <button id="clock-quick-ready" type="button" aria-controls="clock-dialog" aria-haspopup="dialog"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyReady">준비 시각 복사</span></button>
+            <button id="clock-quick-leave" type="button" aria-controls="clock-dialog" aria-haspopup="dialog"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyLeave">출발 시각 복사</span></button>
+          </div>
         </section>
         <div class="actions">
           <button id="alarms" type="button" aria-haspopup="dialog" hidden><svg class="ic"><use href="#i-clock"/></svg><span data-text="alarmAction">알람 설정</span></button>
@@ -124,6 +128,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <dialog id="clock-dialog" aria-labelledby="clock-title">
     <div class="dialog-heading"><h2 id="clock-title" data-text="clockTitle">시계 앱에 알람 추가</h2><button class="icon-button" id="close-clock" type="button" aria-label="닫기"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+    <p id="clock-feedback" class="clock-help" role="status"></p>
     <p class="clock-help" data-text="clockInstructions"></p>
     <div class="clock-steps">
       <section class="clock-step" aria-labelledby="clock-ready-heading">
@@ -145,7 +150,6 @@
         <label class="clock-done"><input id="clock-leave-done" type="checkbox" aria-labelledby="clock-leave-heading clock-leave-done-text"><span id="clock-leave-done-text" data-text="clockDone">기록 완료</span></label>
       </section>
     </div>
-    <p id="clock-feedback" class="clock-help" role="status"></p>
     <p class="clock-help" data-text="clockDateHint"></p>
   </dialog>
   <dialog id="install-dialog" aria-labelledby="install-title">

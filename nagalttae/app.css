@@ -127,6 +127,10 @@ h2 { font-size: 20px; letter-spacing: -.055em; font-weight: 780; }
 .stop-time { margin-top: 4px; font: 600 22px/1.2 "Bahnschrift", "Arial", sans-serif; letter-spacing: -.035em; }
 .stops li:nth-child(2) .stop-time { color: var(--orange); }
 .stop-offset { margin-top: 2px; font-size: 10px; color: var(--muted); }
+.clock-quick { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.clock-quick button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 44px; padding: 6px 10px; border: 1px solid #cedabe; border-radius: 8px; background: #eef2e8; color: #254f38; font-size: 12px; font-weight: 750; }
+.clock-quick button:hover:enabled { background: #e4ecd7; }
+.clock-quick .ic { width: 15px; height: 15px; }
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .actions button { min-height: 45px; border: 1px solid var(--line); background: #fffefa; border-radius: 10px; padding: 10px 15px; display: inline-flex; gap: 7px; align-items: center; justify-content: center; font-size: 13px; font-weight: 650; }
 .actions button .ic { width: 16px; height: 16px; }
@@ -157,7 +161,7 @@ h2 { font-size: 20px; letter-spacing: -.055em; font-weight: 780; }
 .clock-copy:hover { background: #e4ecd7; }
 .clock-done { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; min-height: 44px; font-size: 13px; cursor: pointer; }
 .clock-done input { width: 18px; height: 18px; margin: 0; accent-color: var(--green); }
-#clock-feedback:not(:empty) { margin-bottom: 9px; color: var(--green); font-weight: 650; }
+#clock-feedback:not(:empty) { margin-bottom: 10px; padding: 8px 10px; border-radius: 8px; background: #e4ecd7; color: #254f38; font-weight: 650; }
 .icon-button { display: grid; place-items: center; border: 0; border-radius: 8px; background: none; width: 44px; height: 44px; }
 #copy-text { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; resize: vertical; font-size: 15px; }
 #calendar-dialog .dialog-heading { margin-bottom: 0; }

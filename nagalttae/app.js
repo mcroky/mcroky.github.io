@@ -11,7 +11,7 @@
   const dateInput = el('date');
   const form = el('settings-form');
   const dayButtons = [...document.querySelectorAll('[data-day]')];
-  const actionButtons = [...document.querySelectorAll('.actions button:not(#alarms)')];
+  const actionButtons = [...document.querySelectorAll('.actions button:not(#alarms), #clock-quick button')];
   const android = window.NagalAndroid;
   const storageKey = 'nagalttae.language';
   let locale = 'ko';
@@ -280,11 +280,11 @@
     const button = el('clock-transfer');
     const feedback = el('clock-feedback');
     let displayedSchedule;
+    let copyRequest = 0;
 
-    button.hidden = false;
-    button.addEventListener('click', () => {
+    function showSchedule() {
       const plan = readPlan();
-      if (!plan) return;
+      if (!plan) return false;
       const schedule = [dateInput.value, plan.ready, plan.leave].join('|');
       for (const kind of kinds) {
         const {time, dayOffset} = NagalPlanner.clockParts(plan[kind]);
@@ -296,23 +296,36 @@
         if (displayedSchedule !== schedule) el('clock-' + kind + '-done').checked = false;
       }
       displayedSchedule = schedule;
+      copyRequest += 1;
       feedback.textContent = '';
       dialog.showModal();
-    });
-    for (const kind of kinds) {
+      return true;
+    }
+
+    async function copyTime(kind) {
       const field = el('clock-' + kind + '-time');
-      el('clock-' + kind + '-copy').addEventListener('click', async () => {
-        const time = field.value;
-        const schedule = displayedSchedule;
-        try {
-          await navigator.clipboard.writeText(time);
-          if (dialog.open && displayedSchedule === schedule) feedback.textContent = copy.clockTimeCopied;
-        } catch {
-          if (!dialog.open || displayedSchedule !== schedule) return;
-          field.focus();
-          field.setSelectionRange(0, time.length);
-          feedback.textContent = copy.clockManualCopy;
+      const time = field.value;
+      const request = ++copyRequest;
+      try {
+        await navigator.clipboard.writeText(time);
+        if (dialog.open && request === copyRequest) {
+          feedback.textContent = copy.clockTimeCopied.replace('{time}', time);
         }
+      } catch {
+        if (!dialog.open || request !== copyRequest) return;
+        field.focus();
+        field.setSelectionRange(0, time.length);
+        feedback.textContent = copy.clockManualCopy;
+      }
+    }
+
+    button.hidden = false;
+    el('clock-quick').hidden = false;
+    button.addEventListener('click', showSchedule);
+    for (const kind of kinds) {
+      el('clock-' + kind + '-copy').addEventListener('click', () => copyTime(kind));
+      el('clock-quick-' + kind).addEventListener('click', () => {
+        if (showSchedule()) copyTime(kind);
       });
     }
     el('close-clock').addEventListener('click', () => dialog.close());

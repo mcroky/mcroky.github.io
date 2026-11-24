@@ -6,7 +6,7 @@
     ko: {
       nav: 'Roky Studio 안내', updates: '업데이트', feedback: '의견 보내기', books: '전자책',
       support: '후원하기', close: '닫기', newTab: '새 탭에서 열기',
-      version: '웹 버전 1.4.1', change: '준비·출발 시각을 각각 복사해 휴대폰 시계 앱에 알람을 직접 추가하고, 입력한 시각에 완료 표시를 할 수 있어요.',
+      version: '웹 버전 1.4.2', change: '타임라인에서 준비 시작이나 출발 시각을 바로 복사할 수 있어요. 복사한 시각에 맞춰 휴대폰 시계 앱에 알람을 추가하세요.',
       choice: '더 좋은 앱을 위한 후원', about: '나갈때는 무료입니다. 원하시면 다음 업데이트를 후원할 수 있어요.',
       coffee: 'Buy Me a Coffee로 후원', bank: '카카오뱅크 계좌번호 복사', number: '카카오뱅크 계좌번호',
       copied: '계좌번호를 복사했습니다.', manual: '계좌번호를 직접 선택해 복사해 주세요.'
@@ -14,7 +14,7 @@
     en: {
       nav: 'Roky Studio links', updates: 'Updates', feedback: 'Feedback', books: 'E-books',
       support: 'Support the app', close: 'Close', newTab: 'opens in a new tab',
-      version: 'Web version 1.4.1', change: 'Copy your prep and departure times, enter each alarm in your phone’s Clock app, then check off the times you’ve entered.',
+      version: 'Web version 1.4.2', change: 'Copy your prep or departure time directly from the timeline, then set an alarm for that time in your phone’s Clock app.',
       choice: 'Support development', about: 'Nagalttae is free. You can help fund future updates if you like.',
       coffee: 'Support via Buy Me a Coffee', bank: 'Copy KakaoBank account number', number: 'KakaoBank account number',
       copied: 'Account number copied.', manual: 'Select the account number and copy it manually.'
@@ -22,7 +22,7 @@
     ja: {
       nav: 'Roky Studioのリンク', updates: '更新履歴', feedback: 'ご意見', books: '電子書籍',
       support: '開発を応援', close: '閉じる', newTab: '新しいタブで開く',
-      version: 'Web版 1.4.1', change: '支度と出発の時刻をそれぞれコピーできます。スマートフォンの時計アプリにアラームを手入力したら、入力済みの時刻にチェックを付けられます。',
+      version: 'Web版 1.4.2', change: 'タイムラインから支度の開始時刻や出発時刻を直接コピーできます。スマートフォンの時計アプリで、その時刻にアラームを設定してください。',
       choice: '開発を応援する', about: 'このアプリは無料です。ご希望の方は今後の開発を応援していただけます。',
       coffee: 'Buy Me a Coffeeで応援', bank: 'カカオバンクの口座番号をコピー', number: 'カカオバンクの口座番号',
       copied: '口座番号をコピーしました。', manual: '口座番号を選択して手動でコピーしてください。'
@@ -30,7 +30,7 @@
     zh: {
       nav: 'Roky Studio 链接', updates: '更新记录', feedback: '意见反馈', books: '电子书',
       support: '支持开发', close: '关闭', newTab: '在新标签页中打开',
-      version: '网页版 1.4.1', change: '你可以分别复制准备和出门时间，在手机的时钟应用中手动添加闹钟，再勾选已录入的时间。',
+      version: '网页版 1.4.2', change: '现在可以直接从时间表复制开始准备或出门的时间，再到手机的时钟应用中按这个时间设置闹钟。',
       choice: '支持应用开发', about: '本应用免费使用。如果愿意，你可以支持后续开发。',
       coffee: '通过 Buy Me a Coffee 支持', bank: '复制 KakaoBank 账号', number: 'KakaoBank 账号',
       copied: '账号已复制。', manual: '请选中账号并手动复制。'
