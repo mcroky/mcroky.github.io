@@ -1,10 +1,10 @@
 'use strict';
 
 // Refresh the release key and integrity table together when publishing the shell.
-const release = '1.4.7-759458e24fa14670c17c';
+const release = '1.4.7-271d2d89d3bd69da57af';
 const integrity = {
   'index.html': 'sha256-dM77YS5yqHenXpw/D/1zYoo1uF5y/m74oD4V1LYw3+E= sha256-nu4B3ScPa5XVx3gSQVsffib+Ht4w2HD+UEl09qdHNvA=',
-  'app.css': 'sha256-lMDQ0WwSQBlM/hIpxUm9nBotnyIUAFumpVs2yYG/0kk= sha256-tPH+zSFC+0LIzVWOmw9sqtW7eoCRANqeYmaHJ8Bq/mY=',
+  'app.css': 'sha256-dQKmEFZm+YPk9bAovxRSF+2DrLRp0Hqtarj+URdUrWg= sha256-kuW0Tq1QTWRskeXQNdz61zTjvUFLqiCspb6dpRFy90w=',
   'studio.css': 'sha256-HnrBTsqr4PFz8UC2eRdNVUGVKHqWrui6bkYCUfwPiAw= sha256-oEwz56SiGgy82iE/GQn5+P/iGQRyLsbqP7AMWZaKueM=',
   'planner.js': 'sha256-EGPZadTtp0CWz/MDkWVdZtLx3sW5M/N0ZLOYkYOic+k= sha256-Ol3M2ylwgGau7CBWbYMvjF9IQaXMZ8Isw1q1EVjAV2A=',
   'session-plan.js': 'sha256-CSzAjNxzz6Aa5d+pnkoTv1gQ6fIlkpT4iz/9XnZlbrA= sha256-biIHVpnKd1VhhNHCRD5yxUogJm3yGvLMhbgpsXxME28=',
