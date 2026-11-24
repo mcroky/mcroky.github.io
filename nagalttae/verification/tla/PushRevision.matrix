@@ -1,0 +1,6 @@
+spec PushRevision.tla
+check INVARIANTS RevisionGuards NoNullReplayAfterClose ExactRetryUnchanged AckAfterCommit ExclusiveOperations TombstoneLifetime
+reach OldNullBlocked | three revisions
+reach AckedPartialRetry | three revisions
+reach ClosedStatePurged | three revisions
+run three revisions | Limit=3

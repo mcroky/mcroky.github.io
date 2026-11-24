@@ -1,0 +1,34 @@
+mutation dispatch an already expired alarm
+detects ExpiryGate
+-     /\ LET network == now < At(k)+Grace
++     /\ LET network == now <= At(k)+Grace
+
+mutation skip the deadline recheck after awaiting VAPID keys
+detects ExpiryGate
+-     /\ LET network == now < At(k)+Grace
++     /\ LET network == TRUE
+
+mutation permit a retry exactly at the expiry deadline
+detects RetryOnlyBeforeDeadline
+-     /\ LET retry == result = "temp" /\ now+1 < At(item)+Grace
++     /\ LET retry == result = "temp" /\ now+1 <= At(item)+Grace
+
+mutation retry a permanent request error
+detects RetryOnlyBeforeDeadline
+-     /\ LET retry == result = "temp" /\ now+1 < At(item)+Grace
++     /\ LET retry == result \in {"temp","permanent"} /\ now+1 < At(item)+Grace
+
+mutation discard the later departure reminder when consuming the ready reminder
+detects PreserveOtherReminder
+-                    ELSE [q EXCEPT ![item] = IF retry THEN now+1 ELSE 0]
++                    ELSE [None EXCEPT ![item] = IF retry THEN now+1 ELSE 0]
+
+mutation retain the other pending reminder for an invalidated subscription
+detects GoneClosesDevice
+-            next == IF result = "gone" THEN None
++            next == IF result = "gone" THEN [q EXCEPT ![item] = 0]
+
+mutation add an acknowledged delivery to the future queue
+detects NoRequeueAfterCommit
+-                    ELSE [q EXCEPT ![item] = IF retry THEN now+1 ELSE 0]
++                    ELSE [q EXCEPT ![item] = IF retry \/ result = "ok" THEN now+1 ELSE 0]

@@ -28,6 +28,8 @@
   <script defer src="studio.js"></script>
   <script defer src="ticket-image.js"></script>
   <script defer src="android-ui.js"></script>
+  <meta name="nagal-push-api" content="">
+  <script defer src="push.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
@@ -114,6 +116,14 @@
           <div class="clock-quick" id="clock-quick" hidden>
             <button id="clock-quick-ready" type="button" aria-controls="clock-dialog" aria-haspopup="dialog"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyReady">준비 시각 복사</span></button>
             <button id="clock-quick-leave" type="button" aria-controls="clock-dialog" aria-haspopup="dialog"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyLeave">출발 시각 복사</span></button>
+          </div>
+        </section>
+        <section class="push-panel panel" id="push-panel" aria-labelledby="push-title" hidden>
+          <h2 id="push-title"></h2>
+          <p id="push-status" role="status" aria-live="polite"></p>
+          <div class="push-controls">
+            <button id="push-save" type="button"></button>
+            <button id="push-cancel" type="button" hidden></button>
           </div>
         </section>
         <div class="actions">

@@ -1,0 +1,10 @@
+spec PushDelivery.tla
+check INVARIANTS ExpiryGate RetryOnlyBeforeDeadline PreserveOtherReminder GoneClosesDevice NoRequeueAfterCommit
+reach DuplicateAfterCrash | timing
+reach ReadyRetryKeepsLeave | timing
+reach ExactRetryCutoff | timing
+reach ExpiredSkip | timing
+reach ExpiredDuringKeyLookup | timing
+reach Coalesced | timing
+reach PastReadySkipped | timing
+run timing boundaries |

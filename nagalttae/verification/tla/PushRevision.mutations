@@ -1,0 +1,31 @@
+mutation ignore a closed revision and replay a cancelled creation with expected null
+detects NoNullReplayAfterClose
+-            knownRevision == db.rev
++            knownRevision == IF db.shape = 0 THEN 0 ELSE db.rev
+
+mutation permit a stale writer to replace or cancel a newer active plan
+detects RevisionGuards
+-            status == IF ~valid THEN 422 ELSE IF same THEN 200 ELSE IF expected # knownRevision THEN 409 ELSE 200
++            status == IF ~valid THEN 422 ELSE 200
+
+mutation recreate the same schedule and its consumed ready event on retry
+detects ExactRetryUnchanged
+-            replace == status = 200 /\ ~same /\ (s # 0 \/ db.shape # 0)
++            replace == status = 200 /\ (s # 0 \/ db.shape # 0)
+
+mutation acknowledge a changed plan before storing it
+detects AckAfterCommit
+-     /\ pc = "committed" /\ pc' = "idle"
++     /\ pc \in {"update","committed"} /\ pc' = "idle"
+
+mutation admit updates while the alarm handler owns the device
+detects ExclusiveOperations
+- Begin(s,expected) ==
+-     /\ pc = "idle"
++ Begin(s,expected) ==
++     /\ pc \in {"idle","alarm"}
+
+mutation expire closed state immediately and reopen the null revision
+detects TombstoneLifetime
+- Closed(nonce) == [shape |-> 0, rev |-> nonce, done |-> FALSE, oldShape |-> db.shape, closedAt |-> now, until |-> now+Horizon]
++ Closed(nonce) == [shape |-> 0, rev |-> nonce, done |-> FALSE, oldShape |-> db.shape, closedAt |-> now, until |-> now]

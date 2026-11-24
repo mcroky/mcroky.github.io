@@ -1,0 +1,21 @@
+{
+  "name": "nagalttae-push",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  "vars": { "APP_ORIGIN": "https://mcroky.github.io" },
+  "durable_objects": {
+    "bindings": [
+      { "name": "DEVICES", "class_name": "ReminderDevice" },
+      { "name": "SIGNER", "class_name": "PushIdentity" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["ReminderDevice", "PushIdentity"] }
+  ],
+  "ratelimits": [
+    { "name": "WRITES", "namespace_id": "41029", "simple": { "limit": 60, "period": 60 } }
+  ],
+  "observability": { "enabled": false }
+}
