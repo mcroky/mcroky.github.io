@@ -150,7 +150,10 @@
         <label class="clock-done"><input id="clock-leave-done" type="checkbox" aria-labelledby="clock-leave-heading clock-leave-done-text"><span id="clock-leave-done-text" data-text="clockDone">기록 완료</span></label>
       </section>
     </div>
-    <p class="clock-help" data-text="clockDateHint"></p>
+    <button id="open-clock-app" class="clock-copy" type="button" data-text="clockOpenAction" hidden>시계 앱 열기</button>
+    <p class="clock-help clock-device-guide" id="clock-open-fallback" data-text="clockOpenUnsupported" hidden></p>
+    <p class="clock-help clock-device-guide" id="clock-android-connect" data-text="clockAndroidConnect" hidden></p>
+    <p class="clock-help clock-device-guide" data-text="clockDateHint"></p>
   </dialog>
   <dialog id="install-dialog" aria-labelledby="install-title">
     <div class="dialog-heading"><h2 id="install-title" data-text="installHeading">홈 화면에 나갈때 추가</h2><button class="icon-button" id="close-install" type="button" aria-label="닫기"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button></div>

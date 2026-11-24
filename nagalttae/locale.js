@@ -96,12 +96,17 @@ globalThis.NagalCopy = {
     clockTitle: "시계 앱에 알람 추가",
     clockInstructions: "휴대폰 시계 앱의 알람 탭을 열고, 아래 시각을 하나씩 입력한 뒤 돌아와 체크하세요.",
     clockDone: "기록 완료",
-    clockTimeCopied: "{time}을 복사했어요. 시계 앱에 붙여넣거나 알람을 이 시각에 맞추세요.",
+    clockTimeCopied: "{time}을 복사했어요. 시계 앱에서 알람을 추가해 이 시각으로 맞추세요.",
     clockManualCopy: "선택한 시각을 직접 복사하거나 시계 앱에 입력하세요.",
     clockDateHint: "시계 알람의 날짜를 확인하세요. 며칠 뒤 약속은 ‘캘린더에 담기’로 추가할 수 있어요.",
     clockCopyTime: "시각 복사",
     clockCopyReady: "준비 시각 복사",
-    clockCopyLeave: "출발 시각 복사"
+    clockCopyLeave: "출발 시각 복사",
+    clockOpenAction: "시계 앱 열기",
+    clockOpenGuide: "시계 앱에서 알람을 추가하고 {time}에 맞추세요.",
+    clockOpenUnsupported: "시계가 열리지 않으면 휴대폰에서 시계 앱의 ‘알람’ 탭을 여세요.",
+    clockAndroidConnect: "안드로이드에서 시계를 바로 열려면 나갈때 1.3.1 연결 앱이 필요해요.",
+    clockOpenTried: "시계 앱 열기를 요청했어요."
   },
   en: {
     appName: "Nagalttae",
@@ -200,12 +205,17 @@ globalThis.NagalCopy = {
     clockTitle: "Add alarms in Clock",
     clockInstructions: "Open the Alarms tab in your phone’s Clock app. Enter each time below, then return here to check it off.",
     clockDone: "Entered",
-    clockTimeCopied: "Copied {time}. Paste it into Clock or set an alarm for that time.",
+    clockTimeCopied: "Copied {time}. Add an alarm in Clock and set it to that time.",
     clockManualCopy: "Copy the selected time manually or enter it in Clock.",
     clockDateHint: "Check the date of each alarm in Clock. For an appointment a few days away, you can use “Add to calendar”.",
     clockCopyTime: "Copy time",
     clockCopyReady: "Copy prep time",
-    clockCopyLeave: "Copy departure time"
+    clockCopyLeave: "Copy departure time",
+    clockOpenAction: "Open Clock",
+    clockOpenGuide: "Add an alarm in Clock and set it for {time}.",
+    clockOpenUnsupported: "If Clock doesn’t open, open the Clock app on your phone and tap Alarms.",
+    clockAndroidConnect: "Opening Clock directly on Android requires the Nagalttae 1.3.1 companion app.",
+    clockOpenTried: "Sent a request to open Clock."
   },
   ja: {
     appName: "Nagalttae",
@@ -304,12 +314,17 @@ globalThis.NagalCopy = {
     clockTitle: "時計アプリにアラームを追加",
     clockInstructions: "スマートフォンの時計アプリで「アラーム」を開きます。下の時刻を1つずつ入力し、ここに戻ってチェックしてください。",
     clockDone: "入力済み",
-    clockTimeCopied: "{time}をコピーしました。時計アプリに貼り付けるか、その時刻にアラームを設定してください。",
+    clockTimeCopied: "{time}をコピーしました。時計アプリでアラームを追加し、この時刻に設定してください。",
     clockManualCopy: "選んだ時刻を手動でコピーするか、時計アプリに直接入力してください。",
     clockDateHint: "時計アプリでアラームの日付を確認してください。数日先の予定には「カレンダーに追加」も使えます。",
     clockCopyTime: "時刻をコピー",
     clockCopyReady: "支度開始時刻をコピー",
-    clockCopyLeave: "出発時刻をコピー"
+    clockCopyLeave: "出発時刻をコピー",
+    clockOpenAction: "時計アプリを開く",
+    clockOpenGuide: "時計アプリでアラームを追加し、{time}に設定してください。",
+    clockOpenUnsupported: "時計アプリが開かない場合は、スマートフォンで時計アプリの「アラーム」を開いてください。",
+    clockAndroidConnect: "Androidで時計を直接開くには、Nagalttae 1.3.1の連携アプリが必要です。",
+    clockOpenTried: "時計アプリを開くようリクエストしました。"
   },
   zh: {
     appName: "Nagalttae",
@@ -408,11 +423,16 @@ globalThis.NagalCopy = {
     clockTitle: "在时钟应用中添加闹钟",
     clockInstructions: "打开手机时钟应用的“闹钟”页，逐个输入下列时间，再回到这里勾选已录入的时间。",
     clockDone: "已录入",
-    clockTimeCopied: "已复制 {time}。请在时钟应用中粘贴，或将闹钟设为这个时间。",
+    clockTimeCopied: "已复制 {time}。请在时钟应用中添加闹钟，并设为这个时间。",
     clockManualCopy: "请手动复制选中的时间，或在时钟应用中直接输入。",
     clockDateHint: "请检查时钟应用中的闹钟日期。如果约定在几天之后，也可以选择“添加到日历”。",
     clockCopyTime: "复制时间",
     clockCopyReady: "复制准备时间",
-    clockCopyLeave: "复制出门时间"
+    clockCopyLeave: "复制出门时间",
+    clockOpenAction: "打开时钟",
+    clockOpenGuide: "请在时钟应用中添加闹钟，并设为 {time}。",
+    clockOpenUnsupported: "如果时钟没有打开，请在手机上打开时钟应用，进入“闹钟”页。",
+    clockAndroidConnect: "在安卓设备上直接打开时钟需要安装 Nagalttae 1.3.1 配套应用。",
+    clockOpenTried: "已请求打开时钟应用。"
   }
 };

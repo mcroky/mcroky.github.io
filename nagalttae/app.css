@@ -162,6 +162,9 @@ h2 { font-size: 20px; letter-spacing: -.055em; font-weight: 780; }
 .clock-done { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; min-height: 44px; font-size: 13px; cursor: pointer; }
 .clock-done input { width: 18px; height: 18px; margin: 0; accent-color: var(--green); }
 #clock-feedback:not(:empty) { margin-bottom: 10px; padding: 8px 10px; border-radius: 8px; background: #e4ecd7; color: #254f38; font-weight: 650; }
+#open-clock-app { width: 100%; max-width: none; background: var(--green); border-color: var(--green); color: #fffef0; }
+#open-clock-app:hover { background: #173c2d; }
+.clock-device-guide + .clock-device-guide, #open-clock-app + .clock-device-guide { margin-top: 8px; }
 .icon-button { display: grid; place-items: center; border: 0; border-radius: 8px; background: none; width: 44px; height: 44px; }
 #copy-text { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; resize: vertical; font-size: 15px; }
 #calendar-dialog .dialog-heading { margin-bottom: 0; }
