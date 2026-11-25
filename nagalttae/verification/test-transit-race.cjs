@@ -53,7 +53,7 @@ async function snapshot(page) {
       };
       window.fetch = function (url, options) {
         const pathname = new URL(url, location.href).pathname;
-        if (pathname.endsWith('/anseong-stops.json')) {
+        if (pathname.endsWith('/stops/37.json')) {
           return new Promise((resolve, reject) => {
             window.releaseCatalog = () => realFetch(url, options).then(resolve, reject);
           });
@@ -75,17 +75,21 @@ async function snapshot(page) {
     });
     await page.goto(origin + '/index.html');
     const click = id => page.locator('#bus-' + id).click();
-    const search = q => page.locator('#bus-query').fill(q);
+    async function search(q) {
+      if (!(await page.locator('#bus-query').isVisible())) await page.locator('#bus-manual summary').click();
+      await page.locator('#bus-query').fill(q);
+    }
     const stops = page.locator('#bus-stops button');
     const waitRequests = n => page.waitForFunction(count => window.arrivalRequests.length === count, n);
     const finish = (index, ok, label, wrongStation, trips) => settle(page, 'releaseArrival', { index, ok, label, wrongStation, trips });
     const gps = (index, ok) => settle(page, 'releaseLocation', { index, ok });
     const containsRide = label => page.waitForFunction(s => document.querySelector('#bus-ride').textContent.includes(s), label);
 
-    await click('locate');
+    assert.equal(await page.evaluate(() => window.geoCount()), 1, 'mount requests GPS without a click');
+    assert.ok(await page.locator('#bus-locate').isHidden());
     await gps(0, true);
     await page.waitForFunction(() => typeof window.releaseCatalog === 'function');
-    await search('신창리');
+    await search('안성시 신창리');
     await page.evaluate(() => window.releaseCatalog());
     await page.waitForFunction(() => document.querySelectorAll('#bus-stops button').length >= 2);
     assert.ok((await snapshot(page)).hidden, 'old nearest-stop result cannot auto-select after manual search');
@@ -112,7 +116,7 @@ async function snapshot(page) {
     assert.deepEqual(await snapshot(page), refreshed, 'same-stop stale error cannot replace a newer arrival');
 
     await click('reload');
-    await search('신창리 ');
+    await search('안성시 신창리 ');
     await stopA.waitFor();
     const cleared = await snapshot(page);
     assert.ok(cleared.hidden);
@@ -122,7 +126,7 @@ async function snapshot(page) {
     for (const ok of [true, false]) {
       const count = await page.evaluate(() => window.geoCount());
       await click('locate');
-      await search('신창리');
+      await search('안성시 신창리');
       await stopA.click();
       const before = await snapshot(page);
       await gps(count, ok);
@@ -161,6 +165,15 @@ async function snapshot(page) {
     await stopB.click();
     await finish(firstTripRequest + 7, true, '', '', ['B1', 'B2']);
     assert.match(await selectedTrip(), /B1/, 'an explicit stop selection starts a new trip choice');
+    await click('reload');
+    const outstanding = await page.evaluate(() => window.arrivalRequests.length);
+    await search('SEB107900045');
+    await stops.first().click();
+    assert.match(await page.locator('#bus-official').getAttribute('href'), /map\.kakao\.com/);
+    assert.ok(await page.locator('#bus-reload').isHidden());
+    await finish(outstanding - 1, true, 'OLD-ANSEONG');
+    assert.ok((await snapshot(page)).tripHidden, 'map-only stop ignores an older arrival');
+    await waitRequests(outstanding);
     console.log('PASS Chrome ' + browser.version() + ': stale location/list/arrival callbacks, foreign-station rejection, overlapping refreshes, missing/returning trip, retry and fresh stop choice');
   } finally {
     await browser.close();

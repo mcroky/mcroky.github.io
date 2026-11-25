@@ -11,10 +11,10 @@ const origin = live ? 'https://mcroky.github.io' : 'http://127.0.0.1:8792';
 const api = live ? 'https://nagalttae-push.cokyroky.workers.dev' : 'http://127.0.0.1:8791';
 const pageUrl = origin + '/nagalttae/';
 const mime = { js: 'text/javascript', css: 'text/css', html: 'text/html', png: 'image/png',
-  webmanifest: 'application/manifest+json', svg: 'image/svg+xml', webp: 'image/webp' };
+  webmanifest: 'application/manifest+json', json: 'application/json', svg: 'image/svg+xml', webp: 'image/webp' };
 const server = createServer(async (req, res) => {
   if (req.url === '/') { res.writeHead(200, { 'Content-Type': 'text/html' }).end('<title>Test observer</title>'); return; }
-  const match = /^\/nagalttae\/((?:icons\/)?[a-z0-9.-]*)$/.exec(req.url);
+  const match = /^\/nagalttae\/((?:(?:icons|stops)\/)?[a-z0-9.-]*)$/.exec(req.url);
   if (!match) return res.writeHead(404).end();
   const name = match[1] || 'index.html';
   try { res.writeHead(200, { 'Content-Type': mime[name.split('.').pop()] || 'text/plain' }).end(await readFile(path.join(app, name))); }
@@ -48,7 +48,7 @@ const server = createServer(async (req, res) => {
     await page.goto(pageUrl);
     if (live) {
       assert.equal(await page.locator('meta[name="nagal-push-api"]').getAttribute('content'), api);
-      assert.equal(await page.locator('#app-version').innerText(), 'v1.6.0');
+      assert.equal(await page.locator('#app-version').innerText(), 'v1.6.1');
     }
     await page.evaluate(() => navigator.serviceWorker.ready.then(() => true));
     await page.locator('[data-day="1"]').click();

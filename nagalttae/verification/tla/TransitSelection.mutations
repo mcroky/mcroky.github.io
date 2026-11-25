@@ -48,3 +48,18 @@ mutation render a successful payload reporting the wrong station ID
 detects SameStationBody
 -            acceptBody == bodyStop = r[4]
 +            acceptBody == TRUE
+
+mutation 50fb4b8 wait for a button click instead of starting geolocation on mount
+detects AutoStart
+-         /\ board = Empty /\ pending = {BootGPS} /\ results = FALSE /\ hit = "mount"
++         /\ board = Empty /\ pending = {} /\ results = FALSE /\ hit = "mount"
+
+mutation send an arrivals request even for a locally displayed map stop
+detects MapOnly
+- Arrival(t,g,s) == IF Remote(s) THEN {<<t,g,"arrival",s>>} ELSE {}
++ Arrival(t,g,s) == {<<t,g,"arrival",s>>}
+
+mutation show the previous arrival when selecting a map-only stop
+detects MapOnly
+-     /\ selected' = s /\ board' = Empty
++     /\ selected' = s /\ board' = IF Remote(s) THEN Empty ELSE board

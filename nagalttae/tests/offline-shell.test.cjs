@@ -7,7 +7,8 @@ const vm = require('node:vm');
 
 const root = path.join(__dirname, '..');
 const scope = 'https://studio.example/nagalttae/';
-const paths = ['index.html', 'app.css', 'studio.css', 'planner.js', 'session-plan.js', 'calendar.js','transit.js','anseong-stops.json',
+const paths = ['index.html', 'app.css', 'studio.css', 'planner.js', 'session-plan.js', 'calendar.js', 'transit.js',
+  ...[33, 34, 35, 36, 37, 38].map(band => 'stops/' + band + '.json'),
   'locale.js', 'studio.js', 'ticket-image.js', 'android-ui.js', 'push.js', 'app.js', 'icon.svg', 'morning.webp',
   'manifest.webmanifest', 'icons/app-192.png', 'icons/app-512.png', 'icons/app-maskable.png',
   'icons/apple-touch-icon.png'];

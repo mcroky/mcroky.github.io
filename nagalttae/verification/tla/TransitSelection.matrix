@@ -1,5 +1,9 @@
 spec TransitSelection.tla
-check INVARIANTS LatestLocation LatestCatalog LatestBoard SameStationBody EmptySearch
+check INVARIANTS LatestLocation LatestCatalog LatestBoard SameStationBody EmptySearch AutoStart MapOnly
+reach AutoFoundRemote | three
+reach AutoFoundMap | three
+reach AutoDenied | three
+reach OldArrivalAfterMap | three
 reach GeoAfterSearch | three
 reach GeoErrorAfterSearch | three
 reach GeoAfterSelection | three
