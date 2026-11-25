@@ -1,0 +1,9 @@
+spec PushAudit.tla
+check INVARIANTS UpdateSuccessAfterSave UpdateAssociation DeliveryAssociation DeliveryClassification DeliveryRecordedBeforeSave
+reach Replaced | two generations
+reach CanceledSecond | two generations
+reach UpdateWriteFailed | two generations
+reach DeliveryWriteFailed | two generations
+reach Expired | two generations
+reach Retry | two generations
+run two generations | Limit=2

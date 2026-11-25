@@ -5,6 +5,10 @@ import { afterAttempt, change, grace, horizon, snapshot, validSubscription } fro
 
 function identity(env) { return env.SIGNER.getByName('nagalttae-web-push-v1'); }
 
+function logReminder(record) {
+  try { console.log(record); } catch { /* Logging cannot interrupt a reservation or delivery. */ }
+}
+
 export class PushIdentity extends DurableObject {
   async keys() {
     return this.ctx.blockConcurrencyWhile(async () => {
@@ -41,11 +45,26 @@ export class ReminderDevice extends DurableObject {
       let revision = current?.revision ?? (await this.ctx.storage.get('closed'))?.revision ?? null;
       const next = crypto.randomUUID();
       const result = change(current, action, input, Date.now(), next, revision);
-      if (result.plan !== current) {
+      const changed = result.plan !== current;
+      if (changed) {
         await this.save(result.plan, next);
         revision = next;
       }
-      return { status: result.status, plan: snapshot(result.plan), revision };
+      const plan = snapshot(result.plan);
+      if (action === 'schedule') {
+        const accepted = result.status === 200;
+        logReminder({ event: 'reminder_schedule', httpStatus: result.status,
+          outcome: !accepted ? 'rejected' : changed ? 'saved' : 'unchanged',
+          reservationId: accepted ? plan.revision : null,
+          ...(accepted && { readyAt: plan.ready, leaveAt: plan.leave, pending: plan.events.map(event => event.kind) }),
+          ...(accepted && changed && current && { previousReservationId: current.revision }) });
+      } else if (action === 'cancel') {
+        logReminder({ event: 'reminder_cancel', httpStatus: result.status,
+          outcome: result.status !== 200 ? 'rejected' : current ? 'canceled' : 'no_active_plan',
+          reservationId: current?.revision ?? null,
+          ...(current && { readyAt: current.ready, leaveAt: current.leave }) });
+      }
+      return { status: result.status, plan, revision };
     });
   }
 
@@ -61,27 +80,33 @@ export class ReminderDevice extends DurableObject {
       while (plan && plan.events[0].next <= Date.now()) {
         const event = plan.events[0];
         let status = 204;
+        let providerStatus = null;
+        let outcome = 'expired';
         if (Date.now() < event.at + grace) {
           try {
             const vapid = await identity(this.env).keys();
-            if (Date.now() >= event.at + grace) {
-              plan = afterAttempt(plan, event, 204, Date.now());
-              await this.save(plan, crypto.randomUUID());
-              continue;
+            // The reminder can expire while the signing key is being loaded.
+            if (Date.now() < event.at + grace) {
+              const payload = JSON.stringify({ at: event.at, kind: event.kind, locale: plan.locale });
+              const { headers, body } = generateRequestDetails(plan.subscription, payload, {
+                vapidDetails: { subject: 'https://mcroky.github.io/nagalttae/', ...vapid },
+                TTL: Math.max(1, Math.ceil((event.at + grace - Date.now()) / 1000)),
+                urgency: 'high', topic: 'nagal-' + event.kind + '-' + event.at
+              });
+              const reply = await fetch(plan.subscription.endpoint, {
+                method: 'POST', headers, body, redirect: 'manual', signal: AbortSignal.timeout(5000)
+              });
+              status = providerStatus = reply.status;
+              outcome = reply.ok ? 'provider_accepted' : 'provider_rejected';
             }
-            const payload = JSON.stringify({ at: event.at, kind: event.kind, locale: plan.locale });
-            const { headers, body } = generateRequestDetails(plan.subscription, payload, {
-              vapidDetails: { subject: 'https://mcroky.github.io/nagalttae/', ...vapid },
-              TTL: Math.max(1, Math.ceil((event.at + grace - Date.now()) / 1000)),
-              urgency: 'high', topic: 'nagal-' + event.kind + '-' + event.at
-            });
-            const reply = await fetch(plan.subscription.endpoint, {
-              method: 'POST', headers, body, redirect: 'manual', signal: AbortSignal.timeout(5000)
-            });
-            status = reply.status;
-          } catch { status = 503; }
+          } catch { status = 503; outcome = 'send_error'; }
         }
-        plan = afterAttempt(plan, event, status, Date.now());
+        const remaining = afterAttempt(plan, event, status, Date.now());
+        // Record the provider result even if committing the next queue state fails.
+        logReminder({ event: 'reminder_delivery', reservationId: plan.revision,
+          reminder: event.kind, scheduledAt: event.at, outcome, providerStatus,
+          retryPlanned: remaining?.events.some(item => item.kind === event.kind) ?? false });
+        plan = remaining;
         await this.save(plan, crypto.randomUUID());
       }
       if (plan) await this.ctx.storage.setAlarm(plan.events[0].next);
@@ -120,17 +145,30 @@ export default {
       return reply({ publicKey });
     }
     if (!['/status', '/schedule', '/cancel'].includes(route) || request.method !== 'POST') return reply({}, 404);
-    if (!request.headers.get('Content-Type')?.startsWith('application/json')) return reply({}, 415);
-    const limited = await env.WRITES.limit({ key: request.headers.get('CF-Connecting-IP') || 'local' });
-    if (!limited.success) return reply({}, 429);
-    const input = await readInput(request);
-    if (!validSubscription(input?.subscription)) return reply({}, 400);
-    const { endpoint, keys: { auth, p256dh } } = input.subscription;
-    input.subscription = { endpoint, keys: { auth, p256dh } };
-    // Subscription possession authorizes the device. No raw capability appears in a route or log.
-    const capability = await crypto.subtle.digest('SHA-256', new TextEncoder().encode([endpoint, auth, p256dh].join('\n')));
-    const device = env.DEVICES.getByName(Array.from(new Uint8Array(capability), n => n.toString(16).padStart(2, '0')).join(''));
-    const result = await device.update(route.slice(1), input);
-    return reply({ plan: result.plan, revision: result.revision }, result.status);
+    const action = route.slice(1);
+    function logUnresolved(httpStatus, outcome) {
+      if (action !== 'status') logReminder({ event: 'reminder_' + action, httpStatus, outcome, reservationId: null });
+    }
+    function reject(httpStatus) {
+      logUnresolved(httpStatus, 'rejected');
+      return reply({}, httpStatus);
+    }
+    try {
+      if (!request.headers.get('Content-Type')?.startsWith('application/json')) return reject(415);
+      const limited = await env.WRITES.limit({ key: request.headers.get('CF-Connecting-IP') || 'local' });
+      if (!limited.success) return reject(429);
+      const input = await readInput(request);
+      if (!validSubscription(input?.subscription)) return reject(400);
+      const { endpoint, keys: { auth, p256dh } } = input.subscription;
+      input.subscription = { endpoint, keys: { auth, p256dh } };
+      // Subscription possession authorizes the device. No raw capability appears in a route or log.
+      const capability = await crypto.subtle.digest('SHA-256', new TextEncoder().encode([endpoint, auth, p256dh].join('\n')));
+      const device = env.DEVICES.getByName(Array.from(new Uint8Array(capability), n => n.toString(16).padStart(2, '0')).join(''));
+      const result = await device.update(action, input);
+      return reply({ plan: result.plan, revision: result.revision }, result.status);
+    } catch (error) {
+      logUnresolved(500, 'server_error');
+      throw error;
+    }
   }
 };

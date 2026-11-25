@@ -6,8 +6,8 @@ flags == <<badRev,badReplay,badSame,badAck,badLock,badPurge,hit>>
 vars == <<now,issued,db,pc,proposed,flags>>
 
 \* Source read at schedule.js blob f0b8606665ad6dec03f32b7dc6ee8bb3bae7a9c7
-\* lines 25-44 and worker.js blob 622ae1fa4f673dc6c73bcd54e44a9e1b19f2fdc1
-\* lines 21-60. One Durable Object per subscription capability, one stored plan.
+\* lines 25-44 and worker.js blob f1600f847444d351071a09443d18c637dc1e1201
+\* lines 26-70. One Durable Object per subscription capability, one stored plan.
 \* schedule.js change; worker.js ReminderDevice.update/save/alarm. Shape=0 means cancel.
 \* Positive shapes are distinct normalized (ready,leave,locale) identities whose
 \* leave times are the shape numbers. Only future values within Horizon are admitted.

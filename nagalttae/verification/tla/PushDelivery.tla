@@ -5,8 +5,8 @@ checks == <<badExpire,badRetry,badOther,badGone>>
 vars == <<now,pair,q,pc,item,result,applied,risk,hit,checks>>
 
 \* Source read at schedule.js blob f0b8606665ad6dec03f32b7dc6ee8bb3bae7a9c7
-\* lines 25-52 and worker.js blob 622ae1fa4f673dc6c73bcd54e44a9e1b19f2fdc1
-\* lines 51-86, ReminderDevice.alarm/save. Selecting the event and obtaining
+\* lines 25-53 and worker.js blob f1600f847444d351071a09443d18c637dc1e1201
+\* lines 26-41 and 72-116, ReminderDevice.alarm/save. Selecting the event and obtaining
 \* VAPID keys precede the second clock check before building the push.
 \* One active outing, after successful creation, until retirement. now=1 at scheduling.
 \* Zero means absent. Model minutes are discrete representative slots: retry=1,

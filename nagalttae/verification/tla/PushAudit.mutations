@@ -1,0 +1,34 @@
+mutation log a successful schedule or cancellation before committing storage
+detects UpdateSuccessAfterSave
+-    /\ phase = "updateResolved"
++    /\ phase \in {"update", "updateResolved"}
+
+mutation associate cancellation with the post-update state
+detects UpdateAssociation
+-    /\ LET subject == IF request.action = "cancel" THEN request.before
++    /\ LET subject == IF request.action = "cancel" THEN request.after
+
+mutation omit the old ID on schedule replacement
+detects UpdateAssociation
+-           prior == IF request.outcome = "replaced" THEN request.before.id ELSE 0
++           prior == 0
+
+mutation associate a delivered event with the new queue after it has been closed
+detects DeliveryAssociation
+-                  !.reservationId = request.before.id, !.kind = request.kind,
++                  !.reservationId = request.after.id, !.kind = request.kind,
+
+mutation omit the retry flag when planning a retry
+detects DeliveryAssociation
+-                  !.retry = request.kind \in request.after.pending]
++                  !.retry = FALSE]
+
+mutation record an expired alarm as a provider success
+detects DeliveryClassification
+-    /\ audit' = [NoAudit EXCEPT !.action = "delivery", !.outcome = request.outcome,
++    /\ audit' = [NoAudit EXCEPT !.action = "delivery", !.outcome = IF request.outcome = "expired" THEN "provider_accepted" ELSE request.outcome,
+
+mutation commit the delivered event before recording its provider result
+detects DeliveryRecordedBeforeSave
+-    /\ phase = "deliveryLogged"
++    /\ phase \in {"deliveryResult", "deliveryLogged"}
