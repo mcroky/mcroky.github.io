@@ -1,0 +1,12 @@
+spec PushAppleAuthorization.tla
+check INVARIANTS TypeOK ExclusiveSigner PersistentIdentity DurableAcrossRestart MinimumRefreshGap RefreshDecisions ReturnedAfterCommit HeaderLifetime UsesSharedHeader
+check PROPERTIES RequestFinishes
+reach BothRefreshWait | cold
+reach SameHeader | cold
+reach FreshBeforeBoundary | warm
+reach RefreshAtBoundary | warm
+reach WarmRefreshCompetition | warm
+reach ReuseAcrossRestart | cold
+reach FailedWhileCold | cold
+run cold two devices | Clients={1,2} EndHour=3 Warm=FALSE
+run warm two devices | Clients={1,2} EndHour=3 Warm=TRUE

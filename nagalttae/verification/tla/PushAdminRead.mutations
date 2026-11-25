@@ -1,0 +1,79 @@
+mutation finish a backend failure without producing a response
+detects TypeOK
+only one configured
+-                     ![r].response = requests[r].result]
++                     ![r].response = IF requests[r].result = "failed" THEN "none" ELSE requests[r].result]
+
+mutation issue a cookie on an unrecognized POST code
+detects CookieRequiresMatchingPost
+only one configured
+-    /\ LET approvedCode == Configured /\ requests[r].credential = "match"
++    /\ LET approvedCode == Configured /\ requests[r].credential \in {"match", "other"}
+
+mutation issue a cookie when the configured digest is missing
+detects CookieRequiresMatchingPost
+only blank digest
+-    /\ LET approvedCode == Configured /\ requests[r].credential = "match"
++    /\ LET approvedCode == requests[r].credential = "match"
+
+mutation issue a cookie from a form that failed the request transport checks
+detects CookieRequiresMatchingPost
+only one configured
+-                         ![r].response = CASE ~requests[r].validInput -> "blocked"
++                         ![r].response = CASE FALSE -> "blocked"
+
+mutation use the POST code path to initiate a private query
+detects QueryRequiresRootGet
+only one configured
+-                        [] route = "postRoot" -> "codeCheck"
++                        [] route = "postRoot" -> "cookieCheck"
+
+mutation let a non-root request query the audit backend
+detects QueryRequiresRootGet
+only one configured
+-                        [] OTHER -> "done",
++                        [] route = "wrongPath" -> "cookieCheck"
++                        [] OTHER -> "done",
+
+mutation trust a query or header claim instead of the verified cookie
+detects QueryRequiresMatchingCookie
+only one configured
+-    /\ LET approvedCookie == Configured /\ requests[r].credential = "match"
++    /\ LET approvedCookie == Configured /\ (requests[r].credential = "match" \/ requests[r].claim)
+
+mutation start the private query when the cookie verifier errors
+detects QueryRequiresMatchingCookie
+only one configured
+-    /\ LET approvedCookie == Configured /\ requests[r].credential = "match"
++    /\ LET approvedCookie == Configured /\ requests[r].credential \in {"match", "error"}
+
+mutation permit a cookie although the configured digest is missing
+detects QueryRequiresMatchingCookie
+only blank digest
+-    /\ LET approvedCookie == Configured /\ requests[r].credential = "match"
++    /\ LET approvedCookie == requests[r].credential = "match"
+
+mutation reuse a previous request's valid-cookie decision for another request
+detects QueryRequiresMatchingCookie
+only two concurrent
+-    /\ LET approvedCookie == Configured /\ requests[r].credential = "match"
++    /\ LET approvedCookie == Configured /\ (requests[r].credential = "match" \/
++                   (\E peer \in RequestIds \ {r} : requests[peer].phase \in {"approved", "query"}))
+
+mutation send invalid dates or pages to the audit object
+detects QueryRequiresValidInput
+only one configured
+-    /\ LET mayQuery == requests[r].validInput
++    /\ LET mayQuery == TRUE
+
+mutation use another request's ready rows when the current backend query fails
+detects RowsStayWithRequest
+only two concurrent
+-     /\ requests' = [requests EXCEPT ![r].result = result,
+-          ![r].origin = IF result = "rows" THEN r ELSE 0,
+-          ![r].phase = "render"]
++     /\ LET donors == {peer \in RequestIds \ {r} : requests[peer].result = "rows"}
++            borrowed == IF result = "failed" /\ donors # {} THEN (CHOOSE peer \in donors : TRUE) ELSE 0
++        IN requests' = [requests EXCEPT ![r].result = IF borrowed # 0 THEN "rows" ELSE result,
++             ![r].origin = IF borrowed # 0 THEN borrowed ELSE IF result = "rows" THEN r ELSE 0,
++             ![r].phase = "render"]

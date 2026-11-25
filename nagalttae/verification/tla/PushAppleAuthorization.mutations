@@ -1,0 +1,60 @@
+mutation introduce a token phase outside the agreed protocol
+detects TypeOK
+only cold
+- pc' = [pc EXCEPT ![w] = "queued"]
++ pc' = [pc EXCEPT ![w] = "queue_typo"]
+
+mutation remove signer serialization for competing token refreshes
+detects ExclusiveSigner
+only cold
+- pc[w] = "queued" /\ lock = 0
++ pc[w] = "queued"
+
+mutation create new VAPID keys instead of retrieving the stable stored keys
+detects PersistentIdentity
+only warm
+- IF keys = 0 THEN latestKey + 1 ELSE keys
++ latestKey + 1
+
+mutation lose the last cached header on a signer restart
+detects DurableAcrossRestart
+only warm
+- /\ UNCHANGED <<now, durable, lock, caller>>
++ /\ cache' = None
++ /\ UNCHANGED <<now, keys, latestKey, lastPersisted, published, gapOK, lock, caller>>
+
+mutation replace a valid header at the first hour
+detects MinimumRefreshGap
+only warm
+- IF CanReuse(cache, now)
++ IF cache.id # 0 /\ cache.refreshAt > now + 1
+
+mutation reuse the last header on or after the refresh boundary
+detects RefreshDecisions
+only warm
+- IF CanReuse(cache, now)
++ IF cache.id # 0 /\ cache.refreshAt >= now
+
+mutation return a minted header before its storage write
+detects ReturnedAfterCommit
+only cold
+- lock = w /\ pc[w] = "committed"
++ lock = w /\ pc[w] \in {"staged", "committed"}
+
+mutation increase the generated token lifetime past Apple's limit
+detects HeaderLifetime
+only cold
+- FreshHeader(generation, keyId, time) == Token(generation, keyId, time)
++ FreshHeader(generation, keyId, time) == [Token(generation, keyId, time) EXCEPT !.expires = time + 25]
+
+mutation overwrite the shared Authorization header with a new per-device token at send
+detects UsesSharedHeader
+only cold
+- [sent EXCEPT ![w] = returned[w]]
++ [sent EXCEPT ![w] = FreshHeader(returned[w].id + 1, obtainedKey[w], now)]
+
+mutation fail to release the signer when returning to a caller
+detects RequestFinishes
+only cold
+- /\ lock' = 0 /\ pc' = [pc EXCEPT ![w] = "send"]
++ /\ UNCHANGED lock /\ pc' = [pc EXCEPT ![w] = "send"]

@@ -3,22 +3,30 @@ import { busResponse } from './anseong.js';
 import { railArrivalsResponse } from './rail-arrivals.js';
 import { seoulResponse } from './seoul.js';
 import { tagoResponse } from './tago.js';
-import { generateVAPIDKeys, generateRequestDetails } from 'web-push';
+import { generateVAPIDKeys, generateRequestDetails, getVapidHeaders } from 'web-push';
 import { afterAttempt, change, grace, horizon, snapshot, validSubscription } from './schedule.js';
 
 function identity(env) { return env.SIGNER.getByName('nagalttae-web-push-v1'); }
 
-function logReminder(record) {
+const applePushOrigin = 'https://web.push.apple.com';
+const vapidSubject = 'https://mcroky.github.io/nagalttae/';
+const hour = 60 * 60;
+
+function logReminder(record, env, ctx) {
   try { console.log(record); } catch { /* Logging cannot interrupt a reservation or delivery. */ }
+  try {
+    const archive = env.SIGNER.getByName('nagalttae-reminder-audit-v1');
+    ctx.waitUntil(archive.appendReminder(Date.now(), record).catch(() => console.warn('reminder_archive_write_failed')));
+  } catch { console.warn('reminder_archive_write_failed'); }
 }
 
 const applePushReasons = new Set([
   'BadTtl', 'BadUrgency', 'BadWebPushRequest', 'BadWebPushTopic', 'VapidPkHashMismatch',
-  'IdleTimeout', 'BadAuthorizationHeader', 'BadJwtToken', 'BadVapidPublicKey', 'BadPath',
+  'IdleTimeout', 'BadAuthorizationHeader', 'BadJwtToken', 'BadVapidPublicKey', 'BadPath', 'BadDeviceToken',
   'MethodNotAllowed', 'PayloadTooLarge', 'TooManyRequests', 'InternalServerError', 'ServiceUnavailable', 'Shutdown'
 ]);
 
-async function logAppleRejection(response, reminder) {
+async function logAppleRejection(response, reminder, env, ctx) {
   let reason = null;
   let reasonStatus = 'missing_or_invalid';
   try {
@@ -34,10 +42,29 @@ async function logAppleRejection(response, reminder) {
   } catch {
     reasonStatus = 'unreadable';
   }
-  logReminder({ event: 'reminder_apple_rejection', ...reminder, reason, reasonStatus });
+  logReminder({ event: 'reminder_apple_rejection', ...reminder, reason, reasonStatus }, env, ctx);
 }
 
 export class PushIdentity extends DurableObject {
+  reminderTable() {
+    const sql = this.ctx.storage.sql;
+    sql.exec('CREATE TABLE IF NOT EXISTS reminders (id INTEGER PRIMARY KEY, at INTEGER NOT NULL, record TEXT NOT NULL)');
+    return sql;
+  }
+
+  async appendReminder(at, record) {
+    const sql = this.reminderTable();
+    this.ctx.storage.transactionSync(() => {
+      sql.exec('INSERT INTO reminders(at,record) VALUES (?,?)', at, JSON.stringify(record));
+      sql.exec('DELETE FROM reminders WHERE id <= last_insert_rowid() - 10000');
+    });
+  }
+
+  async reminderPage(from, offset) {
+    return this.reminderTable().exec('SELECT at,record FROM reminders WHERE at >= ? AND at < ? ORDER BY at DESC,id DESC LIMIT 101 OFFSET ?',
+      from, from + 86400_000, offset).toArray().map(({ at, record }) => ({ timestamp: at, source: JSON.parse(record) }));
+  }
+
   async keys() {
     return this.ctx.blockConcurrencyWhile(async () => {
       let keys = await this.ctx.storage.get('keys');
@@ -46,6 +73,21 @@ export class PushIdentity extends DurableObject {
         await this.ctx.storage.put('keys', keys);
       }
       return keys;
+    });
+  }
+
+  async appleAuthorization() {
+    const keys = await this.keys();
+    return this.ctx.blockConcurrencyWhile(async () => {
+      const cached = await this.ctx.storage.get('appleAuthorization');
+      const now = Math.floor(Date.now() / 1000);
+      // Reuse one Apple token across devices and Worker restarts. Apple asks for at least one hour between refreshes.
+      if (cached?.refreshAt > now) return cached.header;
+      const { Authorization: header } = getVapidHeaders(
+        applePushOrigin, vapidSubject, keys.publicKey, keys.privateKey, 'aes128gcm', now + 12 * hour
+      );
+      await this.ctx.storage.put('appleAuthorization', { header, refreshAt: now + 2 * hour });
+      return header;
     });
   }
 }
@@ -85,12 +127,12 @@ export class ReminderDevice extends DurableObject {
           outcome: !accepted ? 'rejected' : changed ? 'saved' : 'unchanged',
           reservationId: accepted ? plan.revision : null,
           ...(accepted && { readyAt: plan.ready, leaveAt: plan.leave, pending: plan.events.map(event => event.kind) }),
-          ...(accepted && changed && current && { previousReservationId: current.revision }) });
+          ...(accepted && changed && current && { previousReservationId: current.revision }) }, this.env, this.ctx);
       } else if (action === 'cancel') {
         logReminder({ event: 'reminder_cancel', httpStatus: result.status,
           outcome: result.status !== 200 ? 'rejected' : current ? 'canceled' : 'no_active_plan',
           reservationId: current?.revision ?? null,
-          ...(current && { readyAt: current.ready, leaveAt: current.leave }) });
+          ...(current && { readyAt: current.ready, leaveAt: current.leave }) }, this.env, this.ctx);
       }
       return { status: result.status, plan, revision };
     });
@@ -113,21 +155,25 @@ export class ReminderDevice extends DurableObject {
         let appleRejection = null;
         if (Date.now() < event.at + grace) {
           try {
-            const vapid = await identity(this.env).keys();
+            const apple = new URL(plan.subscription.endpoint).origin === applePushOrigin;
+            const signer = identity(this.env);
+            const appleAuthorization = apple ? await signer.appleAuthorization() : null;
+            const vapid = apple ? null : { subject: vapidSubject, ...await signer.keys() };
             // The reminder can expire while the signing key is being loaded.
             if (Date.now() < event.at + grace) {
               const payload = JSON.stringify({ at: event.at, kind: event.kind, locale: plan.locale });
               const { headers, body } = generateRequestDetails(plan.subscription, payload, {
-                vapidDetails: { subject: 'https://mcroky.github.io/nagalttae/', ...vapid },
+                vapidDetails: vapid,
                 TTL: Math.max(1, Math.ceil((event.at + grace - Date.now()) / 1000)),
                 urgency: 'high', topic: 'nagal-' + event.kind + '-' + event.at
               });
+              if (apple) headers.Authorization = appleAuthorization;
               const reply = await fetch(plan.subscription.endpoint, {
                 method: 'POST', headers, body, redirect: 'manual', signal: AbortSignal.timeout(5000)
               });
               status = providerStatus = reply.status;
               outcome = reply.ok ? 'provider_accepted' : 'provider_rejected';
-              if (!reply.ok && new URL(plan.subscription.endpoint).hostname === 'web.push.apple.com') {
+              if (!reply.ok && apple) {
                 appleRejection = reply;
               }
             }
@@ -137,8 +183,8 @@ export class ReminderDevice extends DurableObject {
         // Record the provider result even if committing the next queue state fails.
         const reminder = { reservationId: plan.revision, reminder: event.kind, scheduledAt: event.at };
         logReminder({ event: 'reminder_delivery', ...reminder, outcome, providerStatus,
-          retryPlanned: remaining?.events.some(item => item.kind === event.kind) ?? false });
-        if (appleRejection) this.ctx.waitUntil(logAppleRejection(appleRejection, { ...reminder, providerStatus }));
+          retryPlanned: remaining?.events.some(item => item.kind === event.kind) ?? false }, this.env, this.ctx);
+        if (appleRejection) this.ctx.waitUntil(logAppleRejection(appleRejection, { ...reminder, providerStatus }, this.env, this.ctx));
         plan = remaining;
         await this.save(plan, crypto.randomUUID());
       }
@@ -163,7 +209,7 @@ async function readInput(request) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const origin = request.headers.get('Origin');
     const headers = { 'Cache-Control': 'no-store', 'Vary': 'Origin' };
     const reply = (data, status = 200) => Response.json(data, { status, headers });
@@ -186,7 +232,7 @@ export default {
     if (!['/status', '/schedule', '/cancel'].includes(route) || request.method !== 'POST') return reply({}, 404);
     const action = route.slice(1);
     function logUnresolved(httpStatus, outcome) {
-      if (action !== 'status') logReminder({ event: 'reminder_' + action, httpStatus, outcome, reservationId: null });
+      if (action !== 'status') logReminder({ event: 'reminder_' + action, httpStatus, outcome, reservationId: null }, env, ctx);
     }
     function reject(httpStatus) {
       logUnresolved(httpStatus, 'rejected');

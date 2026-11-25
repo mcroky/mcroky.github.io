@@ -24,6 +24,8 @@ TLC 1.7.4에서 예약 모델은 4,473개 상태와 도달 검사 3개, 발송 �
 
 ## 중복이 생길 수 있는 경우
 
+관리자 기록에는 `PushAdminRead`가 최대 두 요청의 코드 확인과 쿠키 발급, 읽기 권한을 검사한다. `PushArchive`는 보관 한도와 날짜 경계, 같은 시각의 기록 정렬, 쓰기 실패와 발송의 독립성을 검사한다. `PushAppleAuthorization`은 두 기기가 동시에 Apple에 보낼 때의 인증 토큰 재사용과 서명 객체 재시작, 갱신 시점을 검사한다. `node --test push-server/admin/viewer.test.mjs`와 `node push-server/test-audit.mjs`에서 전용 코드, 실제 서명과 기록 보관소를 검증한다.
+
 푸시 서비스가 패킷을 받은 직후, 서버가 이벤트 삭제를 커밋하기 전에 중단되면 복구한 큐에 이벤트가 남는다. TLC는 같은 준비 또는 출발 푸시를 다시 보내는 경로에 도달했다. 응답 타임아웃 뒤에도 상대 서비스가 첫 요청을 수락했을 수 있다. 정상 발송 후 큐 저장을 마친 이벤트는 다시 예약하지 않는다. OS 표시 시각과 알림 수신은 푸시 제공자 및 기기 상태에 따른다.
 
 모델은 구독 하나, 서로 다른 버전 최대 3개, 단조 증가하는 시각, 원자적인 저장 트랜잭션, 객체 단위의 이벤트 직렬화를 가정한다. 발송 모델에서 재시도 간격을 1칸, 유예 기간을 3칸으로 줄여 경계 순서를 검사했다. 실제 서비스 시간 단위는 위 JavaScript 검사에 적용했다. [Cloudflare 이벤트 직렬화](https://developers.cloudflare.com/durable-objects/api/state/) · [Cloudflare 알람 재시도](https://developers.cloudflare.com/durable-objects/api/alarms/)

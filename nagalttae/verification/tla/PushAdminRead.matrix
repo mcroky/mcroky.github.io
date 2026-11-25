@@ -1,0 +1,21 @@
+spec PushAdminRead.tla
+check INVARIANTS TypeOK CookieRequiresMatchingPost QueryRequiresRootGet QueryRequiresMatchingCookie QueryRequiresValidInput RowsStayWithRequest
+reach OwnerRendered | one configured
+reach EmptyQuery | one configured
+reach FailedQuery | one configured
+reach CodeAccepted | one configured
+reach WrongCodeDenied | one configured
+reach FailedCodeCheckDenied | one configured
+reach FailedCookieCheckDenied | one configured
+reach BadFormBlocked | one configured
+reach MissingCookieShowsForm | one configured
+reach ClaimWithoutCookieShowsForm | one configured
+reach BadInputBlocked | one configured
+reach WrongPathBlocked | one configured
+reach WrongMethodBlocked | one configured
+reach MissingDigestBlocksCode | blank digest
+reach MissingDigestBlocksCookie | blank digest
+reach OverlappingRequests | two concurrent
+run one configured server | Count=1 Configured=TRUE
+run blank digest config | Count=1 Configured=FALSE
+run two concurrent requests | Count=2 Configured=TRUE

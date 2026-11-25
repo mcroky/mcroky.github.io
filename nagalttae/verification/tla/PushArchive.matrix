@@ -1,0 +1,12 @@
+spec PushArchive.tla
+check INVARIANTS CommittedTail HalfOpenDay StableNewestOrder PageAndLookahead
+check PROPERTIES OnlyDeliveryCompletes
+reach Trimmed | cap-1
+reach CompletedWithPending | cap-1
+reach FailedButCompleted | cap-1
+reach EqualTimestamp | cap-3
+reach DayBoundary | cap-3
+reach ExtraRow | cap-3
+reach SecondPage | cap-3
+run cap-1 | Cap=1 PageSize=1 Count=2
+run cap-3 | Cap=3 PageSize=2 Count=5

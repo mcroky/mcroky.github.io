@@ -1,0 +1,44 @@
+mutation keep one excess archive row
+detects CommittedTail
+-          /\ rows' = SelectSeq(Append(rows, row), LAMBDA entry: entry.id > row.id - Cap)
++          /\ rows' = SelectSeq(Append(rows, row), LAMBDA entry: entry.id >= row.id - Cap)
+
+mutation retain a failed transaction's inserted row
+detects CommittedTail
+-    /\ UNCHANGED <<delivery, storage>>
++    /\ rows' = Append(rows, NewRow(item)) /\ UNCHANGED <<delivery, committed>>
+
+mutation an archive failure advances the delivery instead of isolating the error
+detects OnlyDeliveryCompletes
+-    /\ UNCHANGED <<delivery, storage>>
++    /\ completed' = started /\ UNCHANGED <<started, storage>>
+
+mutation wait for the archive before completing delivery
+detects reach:CompletedWithPending
+-    /\ completed < started
++    /\ completed < started /\ pending = {}
+
+mutation include the first record from the next day
+detects HalfOpenDay
+- DayRows == SelectSeq(rows, LAMBDA row: row.at >= DayStart /\ row.at < DayEnd)
++ DayRows == SelectSeq(rows, LAMBDA row: row.at >= DayStart /\ row.at <= DayEnd)
+
+mutation exclude the first record at the selected day's midnight
+detects HalfOpenDay
+- DayRows == SelectSeq(rows, LAMBDA row: row.at >= DayStart /\ row.at < DayEnd)
++ DayRows == SelectSeq(rows, LAMBDA row: row.at > DayStart /\ row.at < DayEnd)
+
+mutation reverse insertion order for equal timestamps
+detects StableNewestOrder
+- NewestFirst(a, b) == a.at > b.at \/ (a.at = b.at /\ a.id > b.id)
++ NewestFirst(a, b) == a.at > b.at \/ (a.at = b.at /\ a.id < b.id)
+
+mutation drop the extra row that indicates the next page
+detects PageAndLookahead
+- Query(offset) == SubSeq(Ordered, offset + 1, Min(Len(Ordered), offset + PageSize + 1))
++ Query(offset) == SubSeq(Ordered, offset + 1, Min(Len(Ordered), offset + PageSize))
+
+mutation start the second page one record too early
+detects PageAndLookahead
+- Query(offset) == SubSeq(Ordered, offset + 1, Min(Len(Ordered), offset + PageSize + 1))
++ Query(offset) == SubSeq(Ordered, IF offset = 0 THEN 1 ELSE offset, Min(Len(Ordered), offset + PageSize + 1))

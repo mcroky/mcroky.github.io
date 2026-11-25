@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { createECDH, randomBytes } from 'node:crypto';
+import { createECDH, createPublicKey, randomBytes, verify } from 'node:crypto';
 import { mkdtemp, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
@@ -33,6 +33,7 @@ const statuses = [201, 201, 503, 410];
 const reasonGate = Promise.withResolvers();
 const unexpectedReason = 'opaque-reason-never-in-logs';
 let delayedAppleRequests = 0;
+const appleRequests = [];
 const testClients = new Map();
 const origin = config.vars.APP_ORIGIN;
 const mf = new Miniflare({ ...convertV4MiniflareOptions({
@@ -46,6 +47,10 @@ const mf = new Miniflare({ ...convertV4MiniflareOptions({
   outboundService: async request => {
     const url = new URL(request.url);
     if (url.hostname === 'web.push.apple.com') {
+      appleRequests.push(request.headers.get('Authorization'));
+      assert.equal(request.headers.get('Content-Encoding'), 'aes128gcm');
+      assert.equal(request.headers.get('Urgency'), 'high');
+      assert.ok(Number(request.headers.get('TTL')) > 0);
       if (url.pathname === '/wp/audit-delayed') {
         if (++delayedAppleRequests === 2) return new Response(null, { status: 201 });
         const encoder = new TextEncoder();
@@ -61,10 +66,12 @@ const mf = new Miniflare({ ...convertV4MiniflareOptions({
         return new Response(body, { status: 400 });
       }
       if (url.pathname === '/wp/audit-unknown') return Response.json({ reason: unexpectedReason }, { status: 400 });
+      if (url.pathname === '/wp/audit-invalid-device') return Response.json({ reason: 'BadDeviceToken' }, { status: 400 });
       assert.equal(url.pathname, '/wp/audit-missing');
       return new Response(null, { status: 400 });
     }
     assert.equal(request.url, subscription.endpoint);
+    assert.match(request.headers.get('Authorization'), /^vapid t=[\w.-]+, k=[\w-]+$/);
     return new Response(null, { status: statuses.shift() });
   }
 }), handleStructuredLogs: ({ message }) => records.push(message) });
@@ -137,27 +144,48 @@ try {
     assert.ok(records.every(record => !record.includes(secret)), 'A subscription credential appeared in a log');
   }
 
-  const appleSubscriptions = ['delayed', 'unknown', 'missing'].map(kind => ({ ...subscription,
+  const appleSubscriptions = ['delayed', 'unknown', 'missing', 'invalid-device'].map(kind => ({ ...subscription,
     endpoint: 'https://web.push.apple.com/wp/audit-' + kind }));
   const appleReady = Date.now() + 1_600;
   const appleDeparture = appleReady + 900;
-  const [delayed, unknown, missing] = await Promise.all(appleSubscriptions.map((target, index) =>
+  const [delayed, unknown, missing, invalidDevice] = await Promise.all(appleSubscriptions.map((target, index) =>
     call('schedule', { subscription: target, ready: appleReady, leave: index === 0 ? appleDeparture : appleReady,
       locale: 'ko', expected: null })));
   await Promise.all(appleSubscriptions.map(target => waitForClosure(target)));
   assert.equal(delayedAppleRequests, 2, 'The later Apple alert ran while the earlier rejection body was paused');
+  assert.equal(appleRequests.length, 5);
+  assert.equal(new Set(appleRequests).size, 1, 'All Apple recipients received the same reusable VAPID header');
+  const [, jwt, encodedKey] = /^vapid t=([\w.-]+), k=([\w-]+)$/.exec(appleRequests[0]);
+  const keyResponse = await mf.dispatchFetch('https://service.test/key', { headers: { Origin: origin } });
+  assert.equal((await keyResponse.json()).publicKey, encodedKey);
+  const [header, payload, signature] = jwt.split('.');
+  const claims = JSON.parse(Buffer.from(payload, 'base64url'));
+  assert.equal(claims.aud, 'https://web.push.apple.com');
+  assert.equal(claims.sub, 'https://mcroky.github.io/nagalttae/');
+  assert.ok(Math.abs(claims.exp - appleReady / 1000 - 12 * 3600) < 5);
+  const point = Buffer.from(encodedKey, 'base64url');
+  const key = createPublicKey({ format: 'jwk', key: { kty: 'EC', crv: 'P-256',
+    x: point.subarray(1, 33).toString('base64url'), y: point.subarray(33).toString('base64url') } });
+  assert.ok(verify('sha256', Buffer.from(header + '.' + payload), { key, dsaEncoding: 'ieee-p1363' },
+    Buffer.from(signature, 'base64url')));
   const replacement = await call('schedule', { subscription: appleSubscriptions[0], ready: Date.now() + 60_000,
     leave: Date.now() + 120_000, locale: 'ko', expected: (await call('status', { subscription: appleSubscriptions[0] })).revision });
   reasonGate.resolve();
   const appleReason = (reservationId, reminder, reason, reasonStatus) => ({ event: 'reminder_apple_rejection',
     reservationId, reminder, scheduledAt: appleReady, providerStatus: 400, reason, reasonStatus });
   const appleLogs = () => records.filter(text => text.includes('reminder_apple_rejection')).map(flatten).sort();
-  for (let i = 0; appleLogs().length < 3 && i < 25; i++) await sleep(100);
+  for (let i = 0; appleLogs().length < 4 && i < 25; i++) await sleep(100);
   assert.deepEqual(appleLogs(), [appleReason(delayed.revision, 'ready', 'BadWebPushRequest', 'recorded'),
     appleReason(unknown.revision, 'both', null, 'unrecognized'),
-    appleReason(missing.revision, 'both', null, 'missing_or_invalid')].map(format).sort());
+    appleReason(missing.revision, 'both', null, 'missing_or_invalid'),
+    appleReason(invalidDevice.revision, 'both', 'BadDeviceToken', 'recorded')].map(format).sort());
   assert.ok(records.map(flatten).includes(format(delivery(delayed.revision, 'leave', appleDeparture, 'provider_accepted', 201))));
   assert.equal((await call('status', { subscription: appleSubscriptions[0] })).revision, replacement.revision);
   assert.ok(records.every(record => !record.includes(unexpectedReason)), 'An unexpected provider field appeared in a log');
-  console.log('PASS workerd: ordinary push audit and Apple rejection reasons, including delayed, missing and unexpected responses.');
+  assert.ok(records.every(record => !record.includes(jwt)), 'The reusable authorization token appeared in a log');
+  const archive = (await mf.getDurableObjectNamespace('SIGNER')).getByName('nagalttae-reminder-audit-v1');
+  const archived = await archive.reminderPage(ready - 3600_000, 0);
+  assert.ok(archived.some(entry => entry.source.reservationId === delayed.revision && entry.source.reason === 'BadWebPushRequest'));
+  assert.ok(archived.some(entry => entry.source.reservationId === canceled.revision || entry.source.outcome === 'canceled'));
+  console.log('PASS workerd: signed Apple authorization reused across recipients, ordinary push and rejection audits.');
 } finally { reasonGate.resolve(); await mf.dispose(); }

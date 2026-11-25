@@ -24,6 +24,10 @@ Cloudflare Worker가 브라우저 구독별로 준비·출발 알림 한 일정�
 
 ## 운영에서 알림 확인
 
+[관리자 알림 기록](https://nagalttae-reminder-admin.cokyroky.workers.dev/)에서 전용 코드를 입력하고 한국 시간 기준 날짜를 선택한다. 별도의 로그 보관을 시작한 시점부터 최근 10,000개 이벤트를 보관한다. 보관소 쓰기는 비동기로 처리하며 실패는 Worker 로그의 `reminder_archive_write_failed`에 남는다. 관리자 Worker에는 전용 코드의 SHA-256 해시를 `ADMIN_CODE_SHA256`로 설정한다. 유효한 코드로 발급한 보안 쿠키는 8시간 동안 사용할 수 있고 코드 교체 시 기존 쿠키도 무효가 된다.
+
+Apple로 보낼 때 모든 기기가 같은 서명 객체에서 인증 헤더를 가져온다. 토큰 유효 기간은 12시간이고 발송 시 2시간 이상 지난 토큰을 갱신한다. 푸시 본문은 매번 각 구독의 키로 암호화한다.
+
 Cloudflare에서 `nagalttae-push`의 **Observability**를 열고 `event`로 검색한다. 로그의 자체 시각은 요청·발송 처리 시각이다. `readyAt`, `leaveAt`, `scheduledAt`은 알림 예정 시각을 Unix 밀리초로 담는다. 예약마다 발급한 `reservationId`로 다음 로그를 연결할 수 있다.
 
 | `event` | 기록하는 정보 |
