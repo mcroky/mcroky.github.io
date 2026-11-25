@@ -136,6 +136,16 @@ h2 { font-size: 20px; letter-spacing: -.055em; font-weight: 780; }
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .push-panel { padding: 18px 20px; }
 .push-panel h2 { margin: 0; font-size: 17px; }
+.timetable-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
+.timetable-fields > label { min-width: 0; }
+.timetable-field-wide { grid-column: 1 / -1; }
+.timetable-modes { display: flex; gap: 6px; margin-top: 10px; }
+.timetable-modes button, #timetable-live-refresh { min-height: 44px; padding: 7px 11px; border: 1px solid var(--line); background: #fffefa; color: var(--ink); border-radius: 9px; }
+.timetable-modes button[aria-pressed="true"] { background: #edf3e6; border-color: var(--green); color: var(--green); }
+#timetable-live-refresh { margin-top: 8px; }
+#timetable-nearby, #timetable-refresh { grid-column: 1 / -1; justify-self: start; border: 1px solid var(--line); border-radius: 9px; background: #fffefa; color: var(--green); min-height: 44px; padding: 8px 13px; margin-top: 8px; font-weight: 650; }
+#timetable-panel .timetable-source { font-size: 12px; color: var(--muted); margin-bottom: 0; }
+#timetable-source { color: var(--green); }
 .install-invite { margin: 12px 0; padding: 12px 14px; border-radius: 10px; background: #edf3e6; }
 .install-invite button, #bus-panel button { min-height: 44px; padding: 8px 13px; border-radius: 9px; border: 1px solid var(--line); background: #fffefa; color: var(--ink); font-weight: 650; }
 .install-invite button { display: inline-flex; align-items: center; gap: 7px; background: var(--green); border-color: var(--green); color: white; }
@@ -149,6 +159,9 @@ h2 { font-size: 20px; letter-spacing: -.055em; font-weight: 780; }
 #bus-stops button[aria-pressed="true"] { border-color: var(--green); background: #edf3e6; }
 #bus-board { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
 #bus-board h3 { margin: 0; font-size: 15px; }
+.transit-arrivals { list-style: none; padding: 0; margin: 8px 0; }
+.transit-arrivals li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.transit-arrivals strong { color: var(--green); white-space: nowrap; }
 #bus-official { display: inline-block; padding: 10px 4px; color: var(--green); font-size: 13px; }
 .push-panel p { margin: 7px 0 12px; line-height: 1.5; font-size: 14px; white-space: pre-line; }
 .push-controls { display: flex; flex-wrap: wrap; gap: 8px; }

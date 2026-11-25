@@ -31,6 +31,8 @@
   <meta name="nagal-push-api" content="https://nagalttae-push.cokyroky.workers.dev">
   <script defer src="push.js"></script>
   <script defer src="transit.js"></script>
+  <script defer src="timetable-data.js"></script>
+  <script defer src="timetable.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
@@ -134,28 +136,6 @@
             <button id="push-cancel" type="button" hidden></button>
           </div>
         </section>
-        <section id="bus-panel" class="push-panel panel" aria-labelledby="bus-heading">
-          <h2 id="bus-heading" data-text="busHeading">내 주변 정류장</h2>
-          <p id="bus-status" role="status" aria-live="polite"></p>
-          <button id="bus-locate" type="button" data-text="busLocate" hidden>현재 위치로 다시 찾기</button>
-          <div id="bus-stops"></div>
-          <div id="bus-board" hidden>
-            <h3 id="bus-station-name"></h3>
-            <p id="bus-arrivals" role="status" aria-live="polite"></p>
-            <div id="bus-trip" hidden>
-              <label class="bus-search"><span data-text="busRide">탈 버스</span><select id="bus-ride"></select></label>
-              <label class="bus-search"><span data-text="busWalk">정류장까지 걸리는 시간(분)</span><input id="bus-walk" type="number" min="0" max="180" step="1" inputmode="numeric"></label>
-              <p id="bus-leave"></p>
-              <button type="button" id="bus-reserve" data-text="busReserve">이 버스에 맞춰 알림 예약</button>
-            </div>
-            <button id="bus-reload" type="button" data-text="busReload">도착 정보 새로고침</button>
-            <a id="bus-official" href="https://m.gbis.go.kr/search" target="_blank" rel="noopener noreferrer" data-text="busOfficial">경기버스정보에서 보기</a>
-          </div>
-          <details id="bus-manual">
-            <summary data-text="busManual">다른 정류장 검색</summary>
-            <label class="bus-search"><span data-text="busSearch">정류장 이름 또는 번호</span><input id="bus-query" type="search" inputmode="search" autocomplete="off" maxlength="60"></label>
-          </details>
-        </section>
         <div class="actions">
           <button id="alarms" type="button" aria-haspopup="dialog" hidden><svg class="ic"><use href="#i-clock"/></svg><span data-text="alarmAction">알람 설정</span></button>
           <button id="calendar-download" type="button" hidden><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg><span data-text="calendarDownloadAction">준비·출발 알림 파일 받기</span></button>
@@ -165,6 +145,48 @@
           <button id="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span data-text="copy">일정 복사</span></button>
           <button id="share" type="button"><svg class="ic"><use href="#i-x"/></svg><span data-text="share">X에 공유</span></button>
         </div>
+        <section id="bus-panel" class="push-panel panel" aria-labelledby="bus-heading">
+          <h2 id="bus-heading" data-text="busHeading">내 주변 정류장</h2>
+          <p id="bus-status" role="status" aria-live="polite"></p>
+          <button id="bus-locate" type="button" data-text="busLocate" hidden>현재 위치로 다시 찾기</button>
+          <div id="bus-board" hidden>
+            <h3 id="bus-station-name"></h3>
+            <p id="bus-arrivals" role="status" aria-live="polite"></p>
+            <ul id="bus-next" class="transit-arrivals" hidden></ul>
+            <button id="bus-reload" type="button" data-text="busReload">도착 정보 새로고침</button>
+            <a id="bus-official" href="https://m.gbis.go.kr/search" target="_blank" rel="noopener noreferrer" data-text="busOfficial">경기버스정보에서 보기</a>
+          </div>
+          <details id="bus-manual">
+            <summary data-text="busManual">다른 정류장 검색</summary>
+            <label class="bus-search"><span data-text="busSearch">정류장 이름 또는 번호</span><input id="bus-query" type="search" inputmode="search" autocomplete="off" maxlength="60"></label>
+          </details>
+          <div id="bus-stops"></div>
+        </section>
+        <section class="push-panel panel" id="timetable-panel" aria-labelledby="timetable-title">
+          <h2 id="timetable-title" data-text="timetableNearbyTitle">내 주변 지하철역</h2>
+          <div class="timetable-fields">
+            <label class="bus-search timetable-field-wide"><span data-text="timetableQuery">역 이름 검색</span><input id="timetable-query" type="search" maxlength="60" autocomplete="off"></label>
+            <label class="bus-search timetable-field-wide"><span data-text="timetableStation">지하철역</span><select id="timetable-station"></select></label>
+            <button type="button" id="timetable-nearby" data-text="timetableNearby" hidden>내 주변 역 보기</button>
+          </div>
+          <div class="timetable-modes">
+            <button type="button" id="timetable-mode-live" aria-pressed="true" data-text="timetableLive">실시간 도착</button>
+            <button type="button" id="timetable-mode-schedule" aria-pressed="false" data-text="timetableSchedule">시간표</button>
+          </div>
+          <div id="timetable-live-panel">
+            <p id="timetable-live-status" role="status"></p>
+            <ul id="timetable-live-arrivals" class="transit-arrivals" hidden></ul>
+            <button type="button" id="timetable-live-refresh" data-text="timetableLiveRefresh" hidden>실시간 새로고침</button>
+          </div>
+          <div class="timetable-fields" id="timetable-planned-fields" hidden>
+            <label class="bus-search"><span data-text="timetableDate">탑승 날짜 (한국 시간)</span><input id="timetable-date" type="date" required></label>
+            <label class="bus-search" id="timetable-direction-field" hidden><span data-text="timetableDirection">진행 방향</span><select id="timetable-direction"></select></label>
+          </div>
+          <p id="timetable-summary" role="status" hidden></p>
+          <ul id="timetable-scheduled-arrivals" class="transit-arrivals" hidden></ul>
+          <button type="button" id="timetable-refresh" data-text="timetableRefresh" hidden>시간표 다시 불러오기</button>
+          <p class="timetable-source" id="timetable-schedule-source" hidden><span id="timetable-day-type"></span><a id="timetable-source" href="https://data.kric.go.kr/rips/M_01_01/detail.do?id=900" target="_blank" rel="noopener noreferrer">철도공단 공개 시간표</a></p>
+        </section>
       </div>
     </div>
   </main>

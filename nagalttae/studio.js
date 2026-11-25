@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const release = '1.6.3';
+  const release = '1.6.4';
   const versionLabel = document.getElementById('app-version');
   if (versionLabel) versionLabel.textContent = `v${release}`;
 

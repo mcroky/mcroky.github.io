@@ -25,7 +25,8 @@
   let minuteTimer;
   let calendarSaving = false;
   let refreshPush;
-  let refreshTransit;
+  let busBoard;
+  let timetable;
 
   function localDay(offset, now = new Date()) {
     const day = new Date(now);
@@ -115,7 +116,8 @@
       }
     }
     NagalStudio.render(locale);
-    refreshTransit?.();
+    busBoard?.render();
+    timetable?.render();
     refresh();
   }
 
@@ -163,6 +165,8 @@
     if (document.hidden) return;
     minuteTimer = setTimeout(() => {
       updateClock(readPlan());
+      busBoard?.updateTimes();
+      timetable?.updateTimes();
       scheduleClockUpdate();
     }, 60000 - Date.now() % 60000);
   }
@@ -545,7 +549,9 @@
   mountInstall();
   const push = !android && window.NagalPush?.mount({ plan: readPlan, date: () => dateInput.value, language: () => locale });
   refreshPush = push?.render;
-  refreshTransit = window.NagalTransit?.mount({ language: () => locale, reserve: push?.reserve, prep: () => el('prep').valueAsNumber });
+  const transitOptions = { language: () => locale };
+  timetable = window.NagalTimetable?.mount(transitOptions);
+  busBoard = window.NagalTransit?.mount({ ...transitOptions, onPosition: timetable?.receivePosition });
   mountClockTransfer();
   window.NagalMobile?.mount({plan: readPlan, date: () => dateInput.value, dateLabel: appointmentDate,
     rows: eventRows, strings: () => copy, language: () => locale, notify});
