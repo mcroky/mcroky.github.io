@@ -12,6 +12,31 @@ function logReminder(record) {
   try { console.log(record); } catch { /* Logging cannot interrupt a reservation or delivery. */ }
 }
 
+const applePushReasons = new Set([
+  'BadTtl', 'BadUrgency', 'BadWebPushRequest', 'BadWebPushTopic', 'VapidPkHashMismatch',
+  'IdleTimeout', 'BadAuthorizationHeader', 'BadJwtToken', 'BadVapidPublicKey', 'BadPath',
+  'MethodNotAllowed', 'PayloadTooLarge', 'TooManyRequests', 'InternalServerError', 'ServiceUnavailable', 'Shutdown'
+]);
+
+async function logAppleRejection(response, reminder) {
+  let reason = null;
+  let reasonStatus = 'missing_or_invalid';
+  try {
+    const body = await readInput(response);
+    if (typeof body?.reason === 'string') {
+      if (applePushReasons.has(body.reason)) {
+        reason = body.reason;
+        reasonStatus = 'recorded';
+      } else {
+        reasonStatus = 'unrecognized';
+      }
+    }
+  } catch {
+    reasonStatus = 'unreadable';
+  }
+  logReminder({ event: 'reminder_apple_rejection', ...reminder, reason, reasonStatus });
+}
+
 export class PushIdentity extends DurableObject {
   async keys() {
     return this.ctx.blockConcurrencyWhile(async () => {
@@ -85,6 +110,7 @@ export class ReminderDevice extends DurableObject {
         let status = 204;
         let providerStatus = null;
         let outcome = 'expired';
+        let appleRejection = null;
         if (Date.now() < event.at + grace) {
           try {
             const vapid = await identity(this.env).keys();
@@ -101,14 +127,18 @@ export class ReminderDevice extends DurableObject {
               });
               status = providerStatus = reply.status;
               outcome = reply.ok ? 'provider_accepted' : 'provider_rejected';
+              if (!reply.ok && new URL(plan.subscription.endpoint).hostname === 'web.push.apple.com') {
+                appleRejection = reply;
+              }
             }
           } catch { status = 503; outcome = 'send_error'; }
         }
         const remaining = afterAttempt(plan, event, status, Date.now());
         // Record the provider result even if committing the next queue state fails.
-        logReminder({ event: 'reminder_delivery', reservationId: plan.revision,
-          reminder: event.kind, scheduledAt: event.at, outcome, providerStatus,
+        const reminder = { reservationId: plan.revision, reminder: event.kind, scheduledAt: event.at };
+        logReminder({ event: 'reminder_delivery', ...reminder, outcome, providerStatus,
           retryPlanned: remaining?.events.some(item => item.kind === event.kind) ?? false });
+        if (appleRejection) this.ctx.waitUntil(logAppleRejection(appleRejection, { ...reminder, providerStatus }));
         plan = remaining;
         await this.save(plan, crypto.randomUUID());
       }

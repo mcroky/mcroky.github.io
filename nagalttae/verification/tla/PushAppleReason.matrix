@@ -1,0 +1,13 @@
+spec PushAppleReason.tla
+check INVARIANTS TypeOK AppleRejectionsOnly CapturedMetadata SafeReasons DeliveryIndependent CommitDoesNotWait
+check PROPERTIES ReaderDoesNotWrite
+reach QueueCanAdvance | one attempt
+reach Recognized | one attempt
+reach Unknown | one attempt
+reach Missing | one attempt
+reach Unreadable | one attempt
+reach OtherFailure | one attempt
+reach LaterReservationKeepsEarlierReason | two attempts
+reach TwoReaders | two attempts
+run one attempt | Reservations=1 Attempts=1
+run two attempts | Reservations=2 Attempts=2

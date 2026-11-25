@@ -1,0 +1,48 @@
+mutation emit a disposition outside the documented diagnostic states
+detects TypeOK
+only one attempt
+- CASE p = "recognized" -> "recorded"
++ CASE p = "recognized" -> "raw_response"
+
+mutation schedule a diagnostic parser for another provider
+detects AppleRejectionsOnly
+only one attempt
+- /\ diagnostic' = IF IsAppleRejection(input)
++ /\ diagnostic' = IF IsAppleRejection(input) \/ input = "other_bad"
+
+mutation report an old rejection against the current replacement reservation
+detects CapturedMetadata
+only two attempts
+- [meta |-> diagnostic[i].meta,
++ [meta |-> [diagnostic[i].meta EXCEPT !.reservationId = queue.active],
+
+mutation record an unrecognized provider string verbatim
+detects SafeReasons
+only one attempt
+- IF p = "recognized" THEN "BadTtl" ELSE "none"
++ IF p = "recognized" THEN "BadTtl" ELSE IF p = "unknown" THEN "opaque-token" ELSE "none"
+
+mutation omit the documented reason from a valid diagnostic body
+detects SafeReasons
+only one attempt
+- IF p = "recognized" THEN "BadTtl" ELSE "none"
++ "none"
+
+mutation classify rejected HTTP replies as accepted in the standard log
+detects DeliveryIndependent
+only one attempt
+- outcome |-> DeliveryOutcome(input), retry |-> Retry(input)
++ outcome |-> "provider_accepted", retry |-> Retry(input)
+
+mutation wait for the optional reader before committing the reminder queue
+detects CommitDoesNotWait
+only one attempt
+- /\ phase = "commit"
++ /\ phase = "commit" /\ diagnostic[count].disposition # "reading"
+
+mutation update the queue when the diagnostic reader finishes
+detects ReaderDoesNotWrite
+only one attempt
+- /\ UNCHANGED <<queue, phase, count, attempted, delivery>>
++ /\ queue' = NewQueue(queue.last, 0, {})
++ /\ UNCHANGED <<phase, count, attempted, delivery>>

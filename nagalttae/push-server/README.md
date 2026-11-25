@@ -31,5 +31,8 @@ Cloudflare에서 `nagalttae-push`의 **Observability**를 열고 `event`로 검�
 | `reminder_schedule` | 저장·동일 요청 재시도·거절, HTTP 상태, 저장된 예정 시각과 대기 중인 알림. 교체 시 기존 ID도 기록 |
 | `reminder_cancel` | 취소·활성 예약 없음·거절, HTTP 상태, 취소 요청 당시 활성 일정의 ID와 예정 시각 |
 | `reminder_delivery` | 준비·출발 종류, 예정 시각, 공급자 수락·거절·예외·기한 만료, 공급자 HTTP 상태, 재시도 예정 여부 |
+| `reminder_apple_rejection` | Apple이 거절한 알림의 예약 ID·종류·예정 시각, HTTP 상태, Apple 문서에 있는 `reason`과 확인 결과 |
 
 `provider_accepted`는 푸시 서비스가 요청을 수락한 상태다. 기기 화면 표시 여부는 푸시 서비스 응답에 포함되지 않는다. 구독 URL, 암호화 키, 요청 본문, IP 주소, 푸시 공급자 응답 본문은 위 로그에 담지 않는다. 저장 기간은 [Cloudflare Workers Logs의 플랜별 보관 기간](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#pricing)을 따른다. `node test-audit.mjs`로 실제 Workers 런타임에서 로그 필드와 상태 전이를 검사한다.
+
+Apple 오류의 `reasonStatus`는 `recorded`, `missing_or_invalid`, `unrecognized`, `unreadable` 중 하나다. `reason`은 문서에 명시된 값만 기록한다. 같은 예약 ID와 `scheduledAt`으로 발송 결과와 대조한다. 진단 로그는 응답 읽기를 기다리는 동안 예약 처리나 다음 알림 저장을 지연시키지 않는다. [Apple 웹 푸시 오류 응답](https://developer.apple.com/documentation/usernotifications/sending-web-push-notifications-in-web-apps-and-browsers)
