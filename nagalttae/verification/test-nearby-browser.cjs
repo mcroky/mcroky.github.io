@@ -49,7 +49,7 @@ async function run() {
       await page.getByRole('button', { name: /e편한세상정문/ }).click();
       assert.match(await page.locator('#bus-station-name').innerText(), /08528/);
       await denied.setGeolocation({ latitude: 0, longitude: 0 });
-      await denied.grantPermissions(['geolocation']);
+      await denied.grantPermissions(['geolocation'], { origin: new URL(url).origin });
       await page.locator('#bus-locate').click();
       await page.waitForFunction(() => document.getElementById('bus-status').textContent.includes('3km'));
       assert.ok(await page.locator('#bus-board').isHidden());
