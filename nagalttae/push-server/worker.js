@@ -1,5 +1,8 @@
 import { DurableObject } from 'cloudflare:workers';
 import { busResponse } from './anseong.js';
+import { railArrivalsResponse } from './rail-arrivals.js';
+import { seoulResponse } from './seoul.js';
+import { tagoResponse } from './tago.js';
 import { generateVAPIDKeys, generateRequestDetails } from 'web-push';
 import { afterAttempt, change, grace, horizon, snapshot, validSubscription } from './schedule.js';
 
@@ -140,6 +143,12 @@ export default {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers });
     const route = new URL(request.url).pathname;
     if (request.method === 'GET' && /^\/anseong\/arrivals\/\d{9}$/.test(route)) return busResponse(request, env, headers);
+    const seoul = /^\/seoul\/arrivals\/(SEB\d{9})\/(\d{5})$/.exec(route);
+    if (request.method === 'GET' && seoul) return seoulResponse(request, env, headers, seoul[1], seoul[2]);
+    const tago = /^\/tago\/arrivals\/(\d{1,9})\/([A-Za-z0-9_-]{1,30})$/.exec(route);
+    if (request.method === 'GET' && tago) return tagoResponse(request, env, headers, tago[1], tago[2]);
+    const rail = /^\/rail\/arrivals\/([A-Za-z0-9-]{1,20}:[A-Za-z0-9-]{1,20})$/.exec(route);
+    if (request.method === 'GET' && rail) return railArrivalsResponse(request, env, headers, rail[1]);
     if (route === '/key' && request.method === 'GET') {
       const { publicKey } = await identity(env).keys();
       return reply({ publicKey });

@@ -1,4 +1,5 @@
 import index from '../anseong-stops.json' with { type: 'json' };
+import { tagoResponse } from './tago.js';
 
 const stations = new Set(index.stops.map(stop => stop[0]));
 const endpoint = 'https://apis.data.go.kr/6410000/busarrivalservice/v2/getBusArrivalListv2';
@@ -33,7 +34,7 @@ export async function busResponse(request, env, headers) {
   const station = new URL(request.url).pathname.split('/').pop();
   const reply = (data, status) => Response.json(data, { status, headers });
   if (!stations.has(station)) return reply({}, 404);
-  if (!env.GBIS_SERVICE_KEY) return reply({ code: 'notConfigured' }, 503);
+  if (!env.GBIS_SERVICE_KEY?.trim()) return tagoResponse(request, env, headers, '31220', 'GGB' + station, station);
   const cacheKey = new Request(new URL('/anseong/cache/' + station, request.url).href);
   const cached = await caches.default.match(cacheKey);
   if (cached) return reply(await cached.json(), 200);
@@ -43,7 +44,7 @@ export async function busResponse(request, env, headers) {
     const url = new URL(endpoint);
     const secret = env.GBIS_SERVICE_KEY.trim();
     url.search = new URLSearchParams({ serviceKey: secret.includes('%') ? decodeURIComponent(secret) : secret, stationId: station, format: 'json' });
-    const res = await fetch(url, { redirect: 'error', signal: AbortSignal.timeout(7000) });
+    const res = await fetch(url, { redirect: 'manual', signal: AbortSignal.timeout(7000) });
     if (!res.ok) throw new Error('upstream');
     const data = readArrivals(await res.json(), station, Date.now());
     await caches.default.put(cacheKey, Response.json(data, { headers: { 'Cache-Control': 'public, max-age=30' } }));

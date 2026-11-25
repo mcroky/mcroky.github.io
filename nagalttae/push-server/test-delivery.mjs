@@ -22,10 +22,46 @@ const delivered = [];
 const mf = new Miniflare(convertV4MiniflareOptions({
   name: 'push-test',
   modules: true, script: bundle, compatibilityDate: config.compatibility_date,
-  bindings: config.vars,
+  bindings: { ...config.vars, TAGO_SERVICE_KEY: 'mock-tago-key', GBIS_SERVICE_KEY: 'mock-gbis-key', SEOUL_SUBWAY_SAMPLE: '1' },
   durableObjects: Object.fromEntries(config.durable_objects.bindings.map(b => [b.name, { className: b.class_name, useSQLite: true }])),
-  ratelimits: { WRITES: config.ratelimits[0] },
+  ratelimits: Object.fromEntries(config.ratelimits.map(limit => [limit.name, limit])),
   outboundService: async req => {
+    const url = new URL(req.url);
+    if (url.hostname === 'swopenapi.seoul.go.kr') {
+      assert.equal(decodeURIComponent(url.pathname), '/api/subway/sample/json/realtimeStationArrival/0/5/서울');
+      const recptnDt = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 19).replace('T', ' ');
+      return Response.json({ errorMessage: { code:'INFO-000' }, realtimeArrivalList: [
+        { statnNm:'서울', subwayId:'1001', recptnDt, barvlDt:'600', arvlCd:'99', trainLineNm:'광운대행', btrainNo:'0640', updnLine:'상행' },
+        { statnNm:'서울', subwayId:'1004', recptnDt, barvlDt:'630', arvlCd:'99', trainLineNm:'사당행', btrainNo:'0400', updnLine:'하행' }
+      ] });
+    }
+    if (url.hostname === 'topis.seoul.go.kr') {
+      assert.equal(url.pathname, '/map/getBusStn.do');
+      assert.equal(req.method, 'POST');
+      assert.equal(await req.text(), 'url=%2FgetStationByUidDetourAt&arsId=08528');
+      return Response.json({ rows: [{ arsId: '08528', stId: '107900045', rtNm: '성북09', adirection: '미아사거리역',
+        arrmsg1: '곧 도착', traTime1: '29', arrmsg2: '출발대기', traTime2: '0' }] });
+    }
+    if (url.pathname.endsWith('/getBusArrivalListv2')) {
+      assert.equal(url.hostname, 'apis.data.go.kr');
+      assert.equal(url.searchParams.get('stationId'), '231000018');
+      assert.equal(url.searchParams.get('serviceKey'), 'mock-gbis-key');
+      const queryTime = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 19);
+      return Response.json({ response: {
+        msgHeader: { resultCode: 0, queryTime },
+        msgBody: { busArrivalList: [{ stationId: 231000018, routeName: '380', predictTimeSec1: 300 }] }
+      } });
+    }
+    if (url.hostname === 'apis.data.go.kr') {
+      assert.equal(url.pathname, '/1613000/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList');
+      assert.equal(url.searchParams.get('cityCode'), '25');
+      assert.equal(url.searchParams.get('nodeId'), 'DJB8001793');
+      assert.equal(url.searchParams.get('serviceKey'), 'mock-tago-key');
+      return Response.json({ response: {
+        header: { resultCode: '00' },
+        body: { items: { item: { nodeid: 'DJB8001793', routeno: '5', arrtime: 180 } }, totalCount: 1 }
+      } });
+    }
     assert.equal(req.url, subscription.endpoint);
     assert.match(req.headers.get('Authorization'), /^vapid t=/);
     assert.equal(req.headers.get('Content-Encoding'), 'aes128gcm');
@@ -41,7 +77,7 @@ async function call(route, fields, status = 200) {
   if (fields) Object.assign(init, { method: 'POST', headers: { ...init.headers, 'Content-Type': 'application/json' },
     body: JSON.stringify({ subscription, ...fields }) });
   const reply = await mf.dispatchFetch('https://service.test/' + route, init);
-  assert.equal(reply.status, status, route);
+  assert.equal(reply.status, status, route + ' ' + (reply.status === status ? '' : await reply.text()));
   return reply.json();
 }
 try {
@@ -49,6 +85,24 @@ try {
   assert.equal(keys[0].publicKey.length, 87);
   assert.deepEqual(keys[0], keys[1]);
   assert.equal((await mf.dispatchFetch('https://service.test/key', { headers: { Origin: 'https://unknown.test' } })).status, 403);
+  const tago = await call('tago/arrivals/25/DJB8001793');
+  assert.equal(tago.station, 'DJB8001793');
+  assert.equal(tago.source, 'TAGO');
+  assert.equal(tago.arrivals[0].at - tago.updated, 180000);
+  const gbis = await call('anseong/arrivals/231000018');
+  assert.equal(gbis.station, '231000018');
+  assert.equal(gbis.arrivals[0].name, '380');
+  assert.equal(gbis.arrivals[0].at - gbis.updated, 300000);
+  const seoul = await call('seoul/arrivals/SEB107900045/08528');
+  assert.equal(seoul.station, 'SEB107900045');
+  assert.equal(seoul.source, 'TOPIS');
+  assert.equal(seoul.arrivals[0].name, '성북09');
+  assert.equal(seoul.arrivals[0].at, seoul.updated);
+  const rail = await call('rail/arrivals/I4101:0133');
+  assert.equal(rail.station, 'I4101:0133');
+  assert.deepEqual(rail.arrivals.map(row => row.direction), ['광운대행']);
+  assert.equal(rail.arrivals[0].at - rail.updated, 600000);
+  assert.deepEqual(await call('rail/arrivals/S2601:0113', undefined, 422), { code: 'unsupported' });
   await call('status', { subscription: { ...subscription, endpoint: 'http://127.0.0.1/' } }, 400);
   const ready = Date.now() + 1600, leave = ready + 900;
   const first = { expected: null, ready, leave, locale: 'ko' };
@@ -70,5 +124,5 @@ try {
   assert.equal(canceled.plan, null);
   await call('schedule', second, 409);
   assert.equal((await call('status', {})).plan, null);
-  console.log('PASS workerd: stable VAPID identity, two timed encrypted pushes decrypted by recipient, replay and cancellation.');
+  console.log('PASS workerd: TAGO, GBIS and TOPIS routing, stable VAPID identity, encrypted push delivery, replay and cancellation.');
 } finally { await mf.dispose(); }

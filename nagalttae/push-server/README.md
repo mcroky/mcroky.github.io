@@ -1,16 +1,24 @@
 # 나갈때 웹 푸시
 
-## 안성 버스
+## 버스 도착정보
 
-브라우저가 안성 정류장 목록으로 거리를 계산한다. 서버에는 사용자가 선택한 정류소 ID를 보낸다. 실시간 도착 API는 공공데이터포털에서 **경기도_버스도착정보 조회** 활용 승인을 받은 뒤 이 디렉터리에서 `npx wrangler secret put GBIS_SERVICE_KEY`의 비공개 입력창으로 등록한다. 같은 Worker의 Cloudflare 대시보드 설정에서도 Secret으로 등록할 수 있다. 다음 조회부터 적용된다. 배차 정보는 정류소별 30초 동안 공유하며 원천 조회 시각을 함께 표시한다.
+브라우저가 전국 정류장 목록으로 거리를 계산하고 도착 요청에 정류소 ID와 도시코드를 사용한다. 제주 등 지원 지역의 도착 정보는 [국토교통부 TAGO 버스도착정보](https://www.data.go.kr/data/15098530/openapi.do)에서 조회한다. TAGO 도착 요청이 코드 99를 반환하면 한 번 더 조회한다. 안성 정류장은 `GBIS_SERVICE_KEY`가 설정되어 있으면 경기버스정보를 이용하고, 그 외에는 TAGO를 조회한다. 서울의 번호가 있는 정류장은 [서울시 TOPIS 공개 지도](https://topis.seoul.go.kr/map/openBusMap.do)의 정류장 조회를 이용하고, 응답에서 ARS 번호와 정류장 ID를 함께 대조한다. 도착 정보는 정류소별 30초 동안 캐시한다.
 
-정류소의 시군은 [국토교통부 전국 버스정류장 위치정보](https://www.data.go.kr/data/15067528/fileData.do) 2026-11-09 자료에서 확인하고, [경기버스정보](https://gbis.go.kr/)의 정류소정보 및 노선경유정보 다운로드(2026-11-25 조회)와 ID로 연결했다. 세 파일을 갱신하려면 `python ../verification/import-anseong-stops.py <전국 CSV> <정류소 XLSX> <노선경유 XLSX>`를 실행한 뒤 웹앱 캐시와 Worker를 함께 갱신한다.
+GitHub Actions **Deploy Nagalttae Worker**의 수동 실행으로 Worker 코드와 `TAGO_SERVICE_KEY`를 함께 반영한다. GitHub 저장소 `mcroky/mcroky.github.io`의 Actions Secrets에 `TAGO_SERVICE_KEY`, `CF_WORKER_DEPLOY_TOKEN`을, Actions Variables에 `CLOUDFLARE_ACCOUNT_ID`를 등록한다. 이 워크플로는 기본 브랜치에 워크플로 정의가 올라간 뒤 수동으로 실행할 수 있고, 서버 코드는 `feature/nagalttae-web-push`에서 가져온다.
+
+정류소의 시군과 도시코드는 [국토교통부 전국 버스정류장 위치정보](https://www.data.go.kr/data/15067528/fileData.do) 2026-11-09 자료에서 가져왔다. 안성 정류장에는 [경기버스정보](https://gbis.go.kr/)의 정류소정보 및 노선경유정보(2026-11-25 조회)를 ID로 연결했다. 데이터를 갱신할 때는 `python ../verification/import-anseong-stops.py <전국 CSV> <정류소 XLSX> <노선경유 XLSX>`와 `python ../verification/import-nearby-stops.py <전국 CSV>`를 순서대로 실행하고 웹앱 캐시를 갱신한다.
+
+## 지하철 실시간 도착정보
+
+서울시 제공 범위의 지하철 도착 예측을 역·노선별로 조회합니다. 서울 열린데이터광장에서 발급한 지하철 인증키를 GitHub Actions Secret `SEOUL_SUBWAY_SERVICE_KEY`로 등록하면 Worker 배포 설정에서 바인딩합니다. Worker는 서울시가 명시한 HTTP 원본 주소에만 요청하며 응답의 수신 시각을 기준으로 남은 시간을 보정합니다. [서울시 지하철 실시간 도착정보](https://data.seoul.go.kr/dataList/OA-12764/A/1/datasetView.do)
+
+로컬에서 키 없이 검증하려면 Worker를 `npm run dev -- --port 8791 --var APP_ORIGIN:http://127.0.0.1:8792 --var SEOUL_SUBWAY_SAMPLE:1`로 실행합니다. 서울역의 공개 샘플 데이터가 연결됩니다.
 
 ## 웹 푸시
 
 Cloudflare Worker가 브라우저 구독별로 준비·출발 알림 한 일정을 보관한다. 사용자가 예약할 때 구독 정보, 두 시각과 표시 언어를 저장한다. 취소하거나 마지막 알림 전송을 마치면 해당 데이터를 삭제한다. 지연된 요청이 취소된 일정을 되살리지 못하도록 임의의 버전 표식은 30일간 남긴다. 전송용 VAPID 키는 첫 실행 시 전용 Durable Object에서 생성해 보관한다.
 
-이 디렉터리에서 `npm ci`를 실행한 뒤 `npm run deploy`로 전용 Worker를 배포한다. Wrangler가 출력한 공개 주소를 `node configure-site.mjs <Worker 주소>`에 전달하면 나갈때 사이트에서 공개 키를 조회할 수 있는지 확인한 뒤 웹앱 설정과 오프라인 캐시를 갱신한다. GitHub Pages에는 갱신된 정적 앱 파일을 배포한다.
+운영 Worker는 위 수동 워크플로로 배포한다. Worker 주소가 바뀌면 `node configure-site.mjs <Worker 주소>`로 사이트의 푸시 공개 키 조회를 확인하고 웹앱 설정과 오프라인 캐시를 갱신한다. GitHub Pages에는 갱신된 정적 앱 파일을 배포한다.
 
 로컬에서는 `npm run dev -- --port 8791 --var APP_ORIGIN:http://127.0.0.1:8792`로 Worker를 실행한다. `node ../verification/test-push-browser.cjs`는 별도 Chrome 프로필에서 예약·변경·취소와 앱을 닫은 뒤 알림 표시를 확인한다. 이 검사에는 Playwright가 필요하며 `NAGAL_PLAYWRIGHT`로 설치 경로를 지정할 수 있다. 실제 푸시 공급자를 거치려면 테스트에 `--real`을 추가한다. `node test-delivery.mjs`는 로컬 Workers 런타임에서 두 시각에 전송한 암호문을 테스트 수신기가 복호화하는지 검사한다.
 
