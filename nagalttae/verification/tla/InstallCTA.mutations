@@ -1,0 +1,71 @@
+mutation cache the next unissued event id
+detects TypeOK
+only one event
+- /\ offer' = issued'
++ /\ offer' = issued' + 1
+
+mutation leave a consumed beforeinstallprompt cached
+detects OneUse
+only one event
+- ELSE /\ offer' = 0
++ ELSE /\ offer' = offer
+
+mutation allow another visible control dispatch during an unresolved prompt
+detects Guidance
+only one event
+-    /\ ~topDisabled
++    /\ TRUE
+
+mutation allow the other button while the native prompt is open
+detects ControlsLocked
+only one event
+- /\ topDisabled' = TRUE /\ inlineDisabled' = TRUE
++ /\ topDisabled' = TRUE /\ inlineDisabled' = FALSE
+
+mutation keep the inline control disabled after a prompt exception
+detects ControlsLocked
+only one event
+- /\ topDisabled' = FALSE /\ inlineDisabled' = FALSE
++ /\ topDisabled' = FALSE /\ inlineDisabled' = (result = "error")
+
+mutation keep showing the inline invitation after install or standalone change
+detects Visibility
+only no event
+- /\ inlineHidden' = topHidden'
++ /\ inlineHidden' = FALSE
+
+mutation fail to hide the installation buttons on accepted choice
+detects Visibility
+only one event
+- /\ installed' = (installed \/ result = "accepted")
++ /\ installed' = installed
+
+mutation leave an already open guide visible when switching into standalone mode
+detects GuideCurrent
+only no event
+- /\ guide' = IF hide THEN "closed" ELSE guide
++ /\ guide' = guide
+
+mutation reopen the guide on a late rejected prompt after installation
+detects GuideCurrent
+only one event
+- result = "error" /\ ~topHidden THEN "error"
++ result = "error" THEN "error"
+
+mutation omit the manual guide when the browser has no event to offer
+detects Guidance
+only no event
+- THEN /\ guide' = "manual"
++ THEN /\ guide' = "closed"
+
+mutation silently swallow a prompt failure while both controls are visible
+detects Guidance
+only one event
+- THEN "error" ELSE guide
++ THEN "closed" ELSE guide
+
+mutation discard a new browser offer when an earlier installation attempt settles
+detects LatestOffer
+only two events
+- /\ UNCHANGED <<issued,offer,spent,reused,standalone>>
++ /\ offer' = 0 /\ UNCHANGED <<issued,spent,reused,standalone>>

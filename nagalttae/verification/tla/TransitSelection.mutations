@@ -1,0 +1,50 @@
+mutation let a location completion win after a newer user action
+detects LatestLocation
+-     /\ LET writes == r[2] = generation
+-            allowed == r[1] = serial /\ mode = "locate"
++     /\ LET writes == TRUE
++            allowed == r[1] = serial /\ mode = "locate"
+
+mutation preserve the previous generation while typing a search
+detects LatestLocation
+-     /\ generation' = generation+1
++     /\ generation' = generation
+
+mutation accept an older successful arrival response for the same stop
+detects LatestBoard
+-            writeOK == r[2] = generation /\ stationOK
++            writeOK == stationOK
+
+mutation display a late arrival failure at the same stop
+detects LatestBoard
+-            writeError == r[2] = generation /\ stationOK
++            writeError == stationOK
+
+mutation preserve the previously selected stop during a manual search
+detects EmptySearch
+-     /\ mode' = "query" /\ selected' = 0 /\ board' = Empty
++     /\ mode' = "query" /\ selected' = selected /\ board' = Empty
+
+mutation preserve the previous arrival display during a manual search
+detects EmptySearch
+-     /\ mode' = "query" /\ selected' = 0 /\ board' = Empty
++     /\ mode' = "query" /\ selected' = 0 /\ board' = board
+
+mutation apply a stale nearby dataset after a manual search
+detects LatestCatalog
+-     /\ LET writes == r[2] = generation
+-            allowed == r[1] = serial /\ mode = (IF r[3] = "nearby" THEN "locate" ELSE "query")
++     /\ LET writes == r[3] = "nearby" \/ r[2] = generation
++            allowed == r[1] = serial /\ mode = (IF r[3] = "nearby" THEN "locate" ELSE "query")
+
+mutation show a stale manual result or error after a newer search
+detects LatestCatalog
+-     /\ LET writes == r[2] = generation
+-            allowed == r[1] = serial /\ mode = (IF r[3] = "nearby" THEN "locate" ELSE "query")
++     /\ LET writes == r[3] = "query" \/ r[2] = generation
++            allowed == r[1] = serial /\ mode = (IF r[3] = "nearby" THEN "locate" ELSE "query")
+
+mutation render a successful payload reporting the wrong station ID
+detects SameStationBody
+-            acceptBody == bodyStop = r[4]
++            acceptBody == TRUE

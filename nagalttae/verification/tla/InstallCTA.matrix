@@ -1,0 +1,12 @@
+spec InstallCTA.tla
+check INVARIANTS TypeOK OneUse LatestOffer ControlsLocked Visibility GuideCurrent Guidance
+reach ManualWithNoOffers | no event
+reach TopPrompt | one event
+reach InlinePrompt | one event
+reach RetryAfterSpend | one event
+reach FailureWhileHidden | one event
+reach FreshOfferWhileBusy | two events
+run no event | MaxOffers=0
+run one event | MaxOffers=1
+run two events | MaxOffers=2
+run three events | MaxOffers=3

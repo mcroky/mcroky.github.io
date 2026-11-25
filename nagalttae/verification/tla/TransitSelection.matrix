@@ -1,0 +1,13 @@
+spec TransitSelection.tla
+check INVARIANTS LatestLocation LatestCatalog LatestBoard SameStationBody EmptySearch
+reach GeoAfterSearch | three
+reach GeoErrorAfterSearch | three
+reach GeoAfterSelection | three
+reach OldSameStop | three
+reach OldOtherStop | three
+reach ArrivalAfterSearch | three
+reach StaleNearbyCatalog | three
+reach StaleQueryCatalog | three
+reach RejectedForeignBody | three
+run three actions | Steps=3
+run repeated actions | Steps=4

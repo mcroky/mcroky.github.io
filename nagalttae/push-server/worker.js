@@ -1,4 +1,5 @@
 import { DurableObject } from 'cloudflare:workers';
+import { busResponse } from './anseong.js';
 import { generateVAPIDKeys, generateRequestDetails } from 'web-push';
 import { afterAttempt, change, grace, horizon, snapshot, validSubscription } from './schedule.js';
 
@@ -113,6 +114,7 @@ export default {
       'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Max-Age': '600' });
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers });
     const route = new URL(request.url).pathname;
+    if (request.method === 'GET' && /^\/anseong\/arrivals\/\d{9}$/.test(route)) return busResponse(request, env, headers);
     if (route === '/key' && request.method === 'GET') {
       const { publicKey } = await identity(env).keys();
       return reply({ publicKey });

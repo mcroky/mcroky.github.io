@@ -1,0 +1,8 @@
+spec TransitRide.tla
+check INVARIANTS SelectionCorrect ChoicePreserved HiddenWhileWaiting
+reach OverlapKnown | two
+reach MissingKnown | two
+reach SecondPosition | two
+reach MissingIdentity | two
+run two trip identities | Trips=2
+run three trip identities | Trips=3

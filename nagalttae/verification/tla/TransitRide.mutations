@@ -1,0 +1,24 @@
+mutation lose the persistent trip on a second refresh before any data returns
+detects ChoicePreserved
+-            /\ key' = key /\ wanted' = wanted
++            /\ key' = (IF phase = "waiting" THEN Unset ELSE key) /\ wanted' = wanted
+
+mutation silently switch to the first trip when the selected one disappears
+detects SelectionCorrect
+-          IN IF matches = {} THEN 0
++          IN IF matches = {} THEN IF Len(b)>0 THEN 1 ELSE 0
+
+mutation keep the old vehicle after selecting another station
+detects ChoicePreserved
+-          /\ key' = Unset /\ wanted' = Unset /\ hit' = "fresh"
++          /\ key' = key /\ wanted' = Unset /\ hit' = "fresh"
+
+mutation select the first trip when the previous vehicle has no stable ID
+detects SelectionCorrect
+-     ELSE IF k = Anonymous THEN 0
++     ELSE IF k = Anonymous THEN IF Len(b)>0 THEN 1 ELSE 0
+
+mutation keep showing the previous timetable while fetching new arrivals
+detects HiddenWhileWaiting
+- Refresh == /\ phase' = "waiting" /\ rows' = <<>> /\ index' = 0 /\ expected' = 0
++ Refresh == /\ phase' = "waiting" /\ rows' = rows /\ index' = 0 /\ expected' = 0
