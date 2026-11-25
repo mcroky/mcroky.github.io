@@ -18,9 +18,14 @@ test('private code, protected cookie and server-side log query', async () => {
       } };
     } } };
   const get = cookie => new Request(url + '?day=2026-11-25', { headers: { Cookie: cookie } });
-  const post = value => new Request(url, { method: 'POST', body: 'code=' + value, headers: {
-    Origin: url.slice(0,-1), 'Content-Type':'application/x-www-form-urlencoded', 'Content-Length': String(value.length + 5) } });
-  assert.match(await (await viewer.fetch(get(''), env)).text(), /전용 코드/);
+  const post = (value, origin = new URL(url).origin) => new Request(url, { method: 'POST', body: 'code=' + value, headers: {
+    Origin: origin, 'Content-Type': 'application/x-www-form-urlencoded' } });
+  const form = await viewer.fetch(get(''), env);
+  assert.match(await form.text(), /전용 코드/);
+  assert.equal(form.headers.get('Referrer-Policy'), 'same-origin');
+  assert.equal((await viewer.fetch(post(code, 'null'), env)).status, 400);
+  assert.equal((await viewer.fetch(post(code, 'https://other.invalid'), env)).status, 400);
+  assert.equal((await viewer.fetch(post(code + '&padding=' + 'x'.repeat(128)), env)).status, 400);
   assert.equal((await viewer.fetch(post('x'.repeat(43)), env)).status, 403);
   assert.equal((await viewer.fetch(post(code), {})).status, 403);
   const redirect = await viewer.fetch(post(code), env);

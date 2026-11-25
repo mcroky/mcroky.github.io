@@ -4,13 +4,13 @@ CONSTANT Count, Configured
 VARIABLES requests
 vars == <<requests>>
 
-\* Source read at push-server/admin/viewer.mjs blob cddddd29b25be5826bd661acbb16f379da03c063,
-\* lines 17-73. Models routes, code/cookie checks, read-only audit queries and output.
+\* Source read at push-server/admin/viewer.mjs blob c5fdc23d09d5a3d39f61b7278160384100f30029.
+\* Models routes, code/cookie checks, read-only audit queries and output.
 \* "match" is a credential whose digest equals the configured server digest.
 \* "claim" is a caller-controlled non-cookie value on GET. Blank settings and
 \* credential-check failures provide no authority. Each GET independently
 \* verifies its submitted cookie. A valid cookie may have been issued before
-\* this bounded execution. validInput abstracts POST form transport checks
+\* this bounded execution. validInput abstracts POST origin, type and bounded body checks
 \* or GET date/page validation. "failed" includes platform handling of an
 \* exception during checking. The model assumes correct cryptographic comparison,
 \* omits cookie transport details and backend filtering, and uses symbolic

@@ -28,8 +28,31 @@ function row(entry) {
 const response = (body, status = 200, html = false) => new Response(body, { status, headers: {
   'Cache-Control': 'private, no-store', 'Content-Type': (html ? 'text/html' : 'text/plain') + '; charset=utf-8',
   'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'",
-  'Referrer-Policy': 'no-referrer', 'X-Content-Type-Options': 'nosniff'
+  // A native same-origin form POST needs to retain its Origin header.
+  'Referrer-Policy': 'same-origin', 'X-Content-Type-Options': 'nosniff'
 } });
+
+async function submittedCode(request) {
+  const reader = request.body?.getReader();
+  if (!reader) return null;
+  const bytes = new Uint8Array(128);
+  let size = 0;
+  try {
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) return new URLSearchParams(new TextDecoder().decode(bytes.subarray(0, size))).get('code') ?? '';
+      if (size + value.byteLength > bytes.byteLength) {
+        await reader.cancel();
+        return null;
+      }
+      bytes.set(value, size);
+      size += value.byteLength;
+    }
+  } catch {
+    return null;
+  }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -37,9 +60,10 @@ export default {
     const submitted = request.method === 'POST';
     let code = /(?:^|;\s*)__Host-reminder-code=([A-Za-z0-9_-]{43})(?:;|$)/.exec(request.headers.get('Cookie') ?? '')?.[1];
     if (submitted) {
-      if (request.headers.get('Origin') !== url.origin || !request.headers.get('Content-Type')?.startsWith('application/x-www-form-urlencoded') ||
-          Number(request.headers.get('Content-Length') ?? Infinity) > 128) return response('잘못된 요청입니다.', 400);
-      code = new URLSearchParams(await request.text()).get('code');
+      if (request.headers.get('Origin') !== url.origin || !request.headers.get('Content-Type')?.startsWith('application/x-www-form-urlencoded'))
+        return response('잘못된 요청입니다. 기록 화면을 다시 열어 주세요.', 400);
+      code = await submittedCode(request);
+      if (code === null) return response('코드 입력을 확인해 주세요.', 400);
     }
     let valid = false;
     if (/^[A-Za-z0-9_-]{43}$/.test(code ?? '') && /^[a-f0-9]{64}$/.test(env.ADMIN_CODE_SHA256 ?? '')) {
