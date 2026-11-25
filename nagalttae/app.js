@@ -237,6 +237,7 @@
   function mountInstall() {
     if (android || !window.isSecureContext || location.protocol === 'file:' || !('serviceWorker' in navigator)) return;
     const button = el('install-app');
+    const refresh = el('refresh-app');
     const invite = el('push-install');
     const inviteButton = el('push-install-button');
     const dialog = el('install-dialog');
@@ -245,7 +246,8 @@
     let installPrompt;
     let installed = false;
     const updateButton = () => {
-      button.hidden = installed || standalone.matches || navigator.standalone === true;
+      refresh.hidden = !(standalone.matches || navigator.standalone === true);
+      button.hidden = installed || !refresh.hidden;
       invite.hidden = button.hidden;
       if (button.hidden && dialog.open) dialog.close();
       el('push-install-browser').hidden = appleMobile;
@@ -292,8 +294,25 @@
     };
     button.addEventListener('click', install);
     inviteButton.addEventListener('click', install);
+    refresh.addEventListener('click', () => location.reload());
     updateButton();
-    navigator.serviceWorker.register('./sw.js').catch(error => console.warn('Offline mode unavailable:', error));
+
+    const workers = navigator.serviceWorker;
+    const reloading = performance.getEntriesByType('navigation')[0]?.type === 'reload';
+    if (reloading) {
+      const checkVersion = () => workers.controller?.postMessage('nagal-shell-version');
+      workers.addEventListener('controllerchange', checkVersion);
+      workers.addEventListener('message', event => {
+        if (event.source === workers.controller && event.data?.type === 'nagal-shell-version' &&
+            `v${event.data.version}` !== el('app-version').textContent) location.reload();
+      });
+      checkVersion();
+    }
+    workers.register('./sw.js').then(registration => {
+      if (reloading && registration.active) return registration.update();
+    }).catch(error => {
+      if (!workers.controller) console.warn('Offline mode unavailable:', error);
+    });
   }
 
   function mountClockTransfer() {

@@ -70,6 +70,7 @@
         <h1 data-text="heading">언제 나가야 할까?</h1>
         <p class="intro-text" data-text="intro">약속 시간에 맞춰 준비할 때와 나갈 때를 확인하세요.</p>
         <button id="install-app" type="button" aria-haspopup="dialog" hidden><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg><span data-text="installApp">앱 설치</span></button>
+        <button id="refresh-app" type="button" data-text="refreshApp" hidden>새로고침</button>
       </div>
       <div class="still-life" aria-hidden="true"><img src="morning.webp" alt="" fetchpriority="high"></div>
     </section>
@@ -140,6 +141,7 @@
           <div id="bus-board" hidden>
             <h3 id="bus-station-name"></h3>
             <p id="bus-arrivals" role="status" aria-live="polite"></p>
+            <ul id="bus-next" hidden></ul>
             <div id="bus-trip" hidden>
               <label class="bus-search"><span data-text="busRide">탈 버스</span><select id="bus-ride"></select></label>
               <label class="bus-search"><span data-text="busWalk">정류장까지 걸리는 시간(분)</span><input id="bus-walk" type="number" min="0" max="180" step="1" inputmode="numeric"></label>

@@ -1,27 +1,27 @@
 'use strict';
 
 // Refresh the release key and integrity table together when publishing the shell.
-const release = '1.6.1-7a82546f7f10dc9c0ac2';
+const release = '1.6.2-5ed0e79aa734cb9bbd3e';
 const integrity = {
-  'transit.js': 'sha256-8w5s1Wjpi+CkGghutx5TVtJoJ/kjzOmHSLwr5YzNGvc= sha256-TDloRsEtud/3qqgCm5llk4LgCa/QptAxf6Q+BSIRBbY=',
-  'stops/33.json': 'sha256-HwDuOGxvcl0IpfwFpgpvh37bsjp7knv6i4kwb5WuxoY= sha256-WacoD4kddv4o3ODRdhkHv8jz0ACT+NczCS6IQkcDS28=',
-  'stops/34.json': 'sha256-7iipr8X/bk8pZBK+r7a6/Gg93Aox9NisUvELxB+xRmo= sha256-Aw+6Ytut+2WhRoS0//L29wAWty6/ev0tgIV4UrcZ6OI=',
-  'stops/35.json': 'sha256-G00VxUPmhmlZNEAUH1LOhdOU2yKw9fK9p59ln9lwlOc= sha256-mkoqJqtLSOiFtDqBksAmGkBk2HTadj5tZaLk8aLYq4k=',
-  'stops/36.json': 'sha256-GjV3yCBDDao/532x0vtYvRcfhhw3/HOAefsGwUagPuU= sha256-y5LlOVGKN35m6kcvuunOZS16fPgSw73RCnfLQPz/0a0=',
-  'stops/37.json': 'sha256-3WwJeUUxszDVlHIeER1IcoswX48QcK3qXJdVJA30OAQ= sha256-qu+szQZNeo8g3mad5yblas0zN3MxwbhikM5zXP/qRE0=',
-  'stops/38.json': 'sha256-Gqixoeq6lmbHykdS99I4WaGivGALH5Od3xkkhPjqlTA= sha256-d3QAxWehcGOulkJjxy4ICLvur3ayzeofdB172FwbMNc=',
-  'index.html': 'sha256-2MvqrP7Gxkz2xgOcI0m2Fxb2jLLeHcEFR5jCYR+KZLw= sha256-dF3Z1FEAcRn6IUpnefm3vJMTszd0CDFRla2ZJGP2+gY=',
-  'app.css': 'sha256-L0mibkDGQuxDD+NwzU9Bx25bZftSeTgg3MVHfhUZVtA= sha256-nmCzmbbVYxI2R1pgMK5MM5KujDGFcrsMzocO1Ct1g4I=',
+  'transit.js': 'sha256-jaIzBW6zN8yiICTksLPsWMx4seHQRYYZHCQ0kVMjsE8= sha256-qAGvrOG1c6HxdBZ39W8FEFsQCwXW+L2vCoYn2bvvBwI=',
+  'stops/33.json': 'sha256-4YVFTRBkV5hNOQKkqoyoxSFrxeivBKTZgUfY9LM2YCo= sha256-VaWO1X2o9qODKaBcDQMzTJR9CRDk6K7TBU4tk0Kmjtw=',
+  'stops/34.json': 'sha256-vP5dX7ZLRzqiAg3pMu15J6q8VNsliE3JQjydNz9QBJg= sha256-w1BU9ccKs2mUhmVA8eOl5OjGOVDfH/vG1Aw8gXOwaYA=',
+  'stops/35.json': 'sha256-9Bpha4yrcpvrFPmGT8hnTNQgL+yS9d+pJeEK5TbF6QE= sha256-jeBdcndfXJAEwyqjlmVodw1rrbCUJzrVV++91Mw1rUY=',
+  'stops/36.json': 'sha256-6GuXDUn548ko1xNg6r0yBgdvKVF/7swVVdflZAMZ5Uo= sha256-AC0eOO7GBYzFU0xCxOE0JvtwkXUBiNksbmBfCA5u+9c=',
+  'stops/37.json': 'sha256-/PmSLtUL13RCtbkZsPXB4lBnXI7KafvfrZY+GXe+eXI= sha256-ttiSAjnKLva690TUui5T/cbDkuo+ycXxo4bXT+TbOjE=',
+  'stops/38.json': 'sha256-PFsr3OVqBuEYUH+X9Z/7JRGxXu7Dca7nemAjT2dARp4= sha256-zYN1oxOq9bSy0EFZOBt3TFSXLAAya+ABrfGFPrf7i+A=',
+  'index.html': 'sha256-MnH3ozDY0d7RDlsuVvLTvs6e2IYztoFggmgrDPuoWzs= sha256-mTVFQv9Jbp7NLIIWiT0UMS11KNzSiDQGsd5ScN3vv1M=',
+  'app.css': 'sha256-1dQTG+y4ptD4KhABSppEI1b9EncMbs0KaKVBYs2YmDc= sha256-3I73waQHfsPQ1AscyILa5mXWy54Mrv9tN1iRDkpovs4=',
   'studio.css': 'sha256-HnrBTsqr4PFz8UC2eRdNVUGVKHqWrui6bkYCUfwPiAw= sha256-oEwz56SiGgy82iE/GQn5+P/iGQRyLsbqP7AMWZaKueM=',
   'planner.js': 'sha256-EGPZadTtp0CWz/MDkWVdZtLx3sW5M/N0ZLOYkYOic+k= sha256-Ol3M2ylwgGau7CBWbYMvjF9IQaXMZ8Isw1q1EVjAV2A=',
   'session-plan.js': 'sha256-CSzAjNxzz6Aa5d+pnkoTv1gQ6fIlkpT4iz/9XnZlbrA= sha256-biIHVpnKd1VhhNHCRD5yxUogJm3yGvLMhbgpsXxME28=',
   'calendar.js': 'sha256-/BDTcmEPzbxusr01YjPnsuXjhhzAU819F4pQqWd6dcw= sha256-G1Y7VZnAfWUCRUT3I6Rc1PHWKTxQFXqbIHDIovjuBWQ=',
-  'locale.js': 'sha256-2kxYE+XLXrrDXw6wwDsr9OIS+p1WslCeqQHoH3INVEU= sha256-SE8UHSr3I/dPGImvNr9y9hAel1l6iTLwQJPnrx8wboQ=',
-  'studio.js': 'sha256-5VisoiWiT2/GwBdNIIwXeN74+v3Ax3DVAsTM/WdlSIk= sha256-e/Y1ex8dF89pQZlL0gQVWx56m7OUxkrHklTHNpgFiiI=',
+  'locale.js': 'sha256-4m/vzjwLM92XadqEaUQBfcgQe/G9jUQWfbPrmnrdDkM= sha256-Gffj3hRetY3YZP49bhvk75aaaNVCkvhBeHANcHjEcMk=',
+  'studio.js': 'sha256-Ky58tYxQGblHUm9punyex0VB3y1dHC1Nc4tifvcP38M= sha256-QLh1uFikChQjMInCvuD76+RVzB64vrsVvYiBD6s7s6E=',
   'ticket-image.js': 'sha256-AQEBfUUFDxPS6uFumo0wSUraTq/MTg4tplStID2bdhI= sha256-CZxo+Z10pBza0m7L/5GZmHitGSu/7QzjM74hcON8uB4=',
   'android-ui.js': 'sha256-YmKIXtwdq/RPFv7cC3+JjvOeB0zjsdrMZjDJd/nsxaQ= sha256-djaulnBQGBVhbRA00bVHPBJ39OUam1+AaqjKpxNm5xc=',
   'push.js': 'sha256-3lSjtHx+RcyawQJ990hGvA5/SoFbA/Jl3+/RH6XK4Es= sha256-oPxt8TKIcn1969fHXVQStdmtDinAxT5ZmSz6QpXqaxc=',
-  'app.js': 'sha256-OQ4J6Z5Oc8I0rn3yGvAu/qKOTtdQfJfKX7Hg1FeUA2g= sha256-vuCVY2n8OicawbuWoE7TBITdAzOsiwHbKyJoKnN09JU=',
+  'app.js': 'sha256-8BiRIRxEZs+E8vscscN0fdwHG1hUetkDcE9Jrk7lXys= sha256-8QDTM+bIj3t2ULVoiEUojgUaSsPdD+DISuAENIDUiHc=',
   'icon.svg': 'sha256-/k7BE8OXeXKDtJrWQkmsriwD8ltdH4NPAppriIxU9yM= sha256-3cq8vvg4OzZB+PCctkZAKyA2nmCqqRarEh2NIG/O9c8=',
   'morning.webp': 'sha256-DbCuu0GEGWdIj6hxYfEkSxSOh4APYPQ44LLGmClOIaA=',
   'manifest.webmanifest': 'sha256-74FM068Knjz3Pjt5YVDuD+WBUJMu/SD02tCCVnltVJQ= sha256-tkvYfr0+2AZrWhc+UozWaXZyCyxMw7/GJvM4JkQWYto=',
@@ -34,8 +34,19 @@ const integrity = {
 const scope = new URL(self.registration.scope);
 const cachePrefix = 'nagalttae-shell:' + encodeURIComponent(scope.href) + ':';
 const cacheName = cachePrefix + release;
+const pagesCacheName = 'nagalttae-pages:' + encodeURIComponent(scope.href);
 const indexURL = new URL('index.html', scope).href;
+const stateURL = new URL('.shell/active', scope).href;
+const pagesURL = new URL('.shell/pages/', scope).href;
 const resources = new Map(Object.entries(integrity).map(([path, hash]) => [new URL(path, scope).href, hash]));
+
+function pageURL(id) {
+  return pagesURL + encodeURIComponent(id);
+}
+
+async function pageCache(pages, id) {
+  return id && (await pages.match(pageURL(id)))?.text();
+}
 
 function pinnedRequest(url, hash) {
   if (!hash) throw new Error('Missing release integrity for ' + url);
@@ -49,17 +60,51 @@ self.addEventListener('install', event => {
     // addAll commits the list atomically, and SRI rejects a partially deployed release.
     const cache = await caches.open(cacheName);
     await cache.addAll(requests);
+    await self.skipWaiting();
   })());
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
+    const pages = await caches.open(pagesCacheName);
     const owned = (await caches.keys()).filter(key => key.startsWith(cachePrefix) && key !== cacheName);
-    await Promise.all(owned.map(key => caches.delete(key)));
+    const state = await (await pages.match(stateURL))?.json();
+    let previous = state?.current;
+    if (!previous) {
+      // Before page pins existed, activation kept only the active release's complete cache.
+      for (const key of owned) {
+        if (await caches.match(indexURL, { cacheName: key })) {
+          previous = key;
+          break;
+        }
+      }
+    }
+    const legacy = state ? state.legacy : previous || null;
+    const keep = new Set([previous, legacy]);
+    await pages.put(stateURL, Response.json({ current: cacheName, legacy }));
+    const pins = (await pages.keys()).filter(request => request.url.startsWith(pagesURL));
+    // A reserved client may take time to start. Uncertain results keep its release.
+    let timer;
+    const pending = new Promise(resolve => { timer = setTimeout(() => resolve(true), 250); });
+    try {
+      await Promise.all(pins.map(async request => {
+        const id = decodeURIComponent(request.url.slice(pagesURL.length));
+        const present = await Promise.race([self.clients.get(id).then(Boolean, () => true), pending]);
+        if (present) keep.add(await (await pages.match(request))?.text());
+        else await pages.delete(request);
+      }));
+    } finally {
+      clearTimeout(timer);
+    }
+    await Promise.all(owned.filter(key => !keep.has(key)).map(key => caches.delete(key)));
   })());
 });
 
-async function navigation(url) {
+async function navigation(url, clientId) {
+  if (clientId) {
+    const pages = await caches.open(pagesCacheName);
+    await pages.put(pageURL(clientId), new Response(cacheName));
+  }
   try {
     const response = await fetch(pinnedRequest(url, integrity['index.html']));
     if (response.ok) return response;
@@ -67,9 +112,19 @@ async function navigation(url) {
   return (await caches.match(indexURL, { cacheName })) || Response.error();
 }
 
-async function asset(url) {
-  const cached = await caches.match(url, { cacheName });
-  return cached || fetch(pinnedRequest(url, resources.get(url)));
+async function asset(request, url, clientId) {
+  let selected = cacheName;
+  if (clientId) {
+    const pages = await caches.open(pagesCacheName);
+    const pinned = await pageCache(pages, clientId);
+    const legacy = pinned ? null : (await (await pages.match(stateURL))?.json())?.legacy;
+    selected = pinned || legacy || cacheName;
+  }
+  const cached = await caches.match(url, { cacheName: selected });
+  if (cached) return cached;
+  const hash = resources.get(url);
+  if (!hash) return fetch(request);
+  return selected === cacheName ? fetch(pinnedRequest(url, hash)) : Response.error();
 }
 
 self.addEventListener('fetch', event => {
@@ -79,14 +134,17 @@ self.addEventListener('fetch', event => {
   if (url.origin !== scope.origin || !url.pathname.startsWith(scope.pathname)) return;
   const file = url.origin + url.pathname;
   if (request.mode === 'navigate') {
-    if (file === scope.href || file === indexURL) event.respondWith(navigation(url.href));
+    if (file === scope.href || file === indexURL) event.respondWith(navigation(url.href, event.resultingClientId));
     return;
   }
-  if (resources.has(file)) event.respondWith(asset(file));
+  if (resources.has(file) || event.clientId) event.respondWith(asset(request, file, event.clientId));
 });
 
 self.addEventListener('message', event => {
   if (event.data === 'nagal-push-version') event.ports[0]?.postMessage('nagal-push-v1');
+  if (event.data === 'nagal-shell-version') {
+    event.source?.postMessage({ type: 'nagal-shell-version', version: release.split('-')[0] });
+  }
 });
 
 const reminderText = {

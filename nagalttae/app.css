@@ -42,8 +42,8 @@ button, a, input, select { touch-action: manipulation; }
 h1, h2, p { margin: 0; }
 h1 { font-size: clamp(38px, 4.4vw, 62px); font-weight: 840; letter-spacing: -.079em; line-height: 1.19; word-break: keep-all; }
 .intro-text { margin-top: 13px; color: var(--muted); font-size: 16px; line-height: 1.65; letter-spacing: -.035em; word-break: keep-all; }
-#install-app { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; margin-top: 13px; padding: 8px 14px; border: 1px solid #cedabe; border-radius: 9px; background: #e4ecd7; color: #254f38; font-size: 13px; font-weight: 750; }
-#install-app:hover { background: #d9e5c6; }
+#install-app, #refresh-app { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; margin-top: 13px; padding: 8px 14px; border: 1px solid #cedabe; border-radius: 9px; background: #e4ecd7; color: #254f38; font-size: 13px; font-weight: 750; }
+#install-app:hover, #refresh-app:hover { background: #d9e5c6; }
 #install-app .ic { width: 16px; height: 16px; }
 .still-life { position: absolute; inset: 0 0 0 auto; width: 43%; z-index: -1; overflow: hidden; mask-image: linear-gradient(to right, transparent, #000 29%); }
 .still-life img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; display: block; }
@@ -149,6 +149,9 @@ h2 { font-size: 20px; letter-spacing: -.055em; font-weight: 780; }
 #bus-stops button[aria-pressed="true"] { border-color: var(--green); background: #edf3e6; }
 #bus-board { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
 #bus-board h3 { margin: 0; font-size: 15px; }
+#bus-next { list-style: none; padding: 0; margin: 8px 0; }
+#bus-next li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+#bus-next strong { color: var(--green); white-space: nowrap; }
 #bus-official { display: inline-block; padding: 10px 4px; color: var(--green); font-size: 13px; }
 .push-panel p { margin: 7px 0 12px; line-height: 1.5; font-size: 14px; white-space: pre-line; }
 .push-controls { display: flex; flex-wrap: wrap; gap: 8px; }
