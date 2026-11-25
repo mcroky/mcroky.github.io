@@ -79,6 +79,7 @@ async function snapshot(page) {
       };
     });
     await page.goto(origin + '/index.html');
+    assert.equal(await page.evaluate(() => window.geoCount()), 0, 'collapsed transit does not request GPS');
     await page.locator('#nearby-details > summary').click();
     const click = id => page.locator('#bus-' + id).click();
     async function search(q) {
@@ -91,7 +92,7 @@ async function snapshot(page) {
     const gps = (index, ok) => settle(page, 'releaseLocation', { index, ok });
     const containsArrival = label => page.waitForFunction(s => document.querySelector('#bus-next').textContent.includes(s), label);
 
-    assert.equal(await page.evaluate(() => window.geoCount()), 1, 'mount requests GPS without a click');
+    await page.waitForFunction(() => window.geoCount() === 1);
     assert.ok(await page.locator('#bus-locate').isHidden());
     await gps(0, true);
     await page.waitForFunction(() => typeof window.releaseCatalog === 'function');

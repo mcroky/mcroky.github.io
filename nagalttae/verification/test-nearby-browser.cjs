@@ -12,7 +12,7 @@ async function run() {
   try {
     for (const [latitude, longitude, name, provider] of [
       [37.0118167, 127.2576667, '안성CGV', 'gbis.go.kr'],
-      [37.6111129, 127.0216763, 'e편한세상정문', 'map.kakao.com'],
+      [37.6111129, 127.0216763, 'e편한세상정문', 'topis.seoul.go.kr'],
       [33.503672, 126.496587, '제주국제공항입구[동]', 'map.kakao.com']
     ]) {
       const ctx = await browser.newContext({ ...mobile, permissions: ['geolocation'], geolocation: { latitude, longitude } });
@@ -28,6 +28,7 @@ async function run() {
         assert.ok(await page.locator('#bus-query').isHidden());
         assert.match(await page.locator('#bus-stops button').first().innerText(), /직선거리 0m/);
         assert.equal(new URL(await page.locator('#bus-official').getAttribute('href')).hostname, provider);
+        assert.equal(new URL(await page.locator('#bus-map').getAttribute('href')).hostname, 'map.kakao.com');
         assert.equal(lookups.some(req => req.includes(String(latitude)) || req.includes(String(longitude))), false);
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
         if (name === '제주국제공항입구[동]') {

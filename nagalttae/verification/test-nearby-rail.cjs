@@ -129,6 +129,7 @@ async function run() {
       await rows.first().waitFor();
       assert.equal(await rows.count(), 1);
       await page.clock.setFixedTime(now + 60000);
+      await page.locator('#more-details > summary').click();
       await page.locator('#language').selectOption('en');
       assert.match(await rows.first().innerText(), /광운대행.*in 8 min/s);
       await page.clock.setFixedTime(now + 61000);
