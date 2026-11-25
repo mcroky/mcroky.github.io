@@ -3,6 +3,8 @@
   const messages = {
     ko: {
       title: '휴대폰 알림', save: '준비·출발 알림 예약', replace: '이 일정으로 변경', cancel: '예약 취소', busy: '처리 중…',
+      check: '예약 조회', checking: '서버에서 예약을 확인하는 중이에요.', checked: '서버 확인', previous: '마지막으로 확인한 예약',
+      noActive: '서버에 남은 예약이 없어요.', noSubscription: '이 브라우저에 등록된 알림 구독이 없어요.',
       hint: '준비할 때와 출발할 때 이 기기로 알려드려요.', active: '예약됨', ready: '준비', leave: '출발', both: '준비·출발',
       denied: '알림 권한이 필요해요. 브라우저의 이 사이트 설정에서 알림을 허용해 주세요.',
       subscription: '브라우저가 이 기기를 푸시 서비스에 등록하지 못했어요. 인터넷 연결과 브라우저 알림 설정을 확인해 주세요.',
@@ -15,6 +17,8 @@
     },
     en: {
       title: 'Phone reminders', save: 'Schedule prep & departure', replace: 'Use this schedule', cancel: 'Cancel reminders', busy: 'Working…',
+      check: 'Check reminders', checking: 'Checking the server for reminders…', checked: 'Server checked', previous: 'Last known reminders',
+      noActive: 'No reminders are scheduled on the server.', noSubscription: 'This browser has no notification subscription.',
       hint: 'Get a notification on this device when it’s time to get ready and leave.', active: 'Scheduled', ready: 'Get ready', leave: 'Leave', both: 'Get ready & leave',
       denied: 'Allow notifications in the browser’s site settings.', unavailable: 'Couldn’t reach the reminder server. Check your connection and try again.',
       subscription: 'The browser could not register this device for push. Check your connection and browser notification settings.',
@@ -25,6 +29,8 @@
     },
     ja: {
       title: '端末の通知', save: '支度・出発の通知を予約', replace: 'この予定に変更', cancel: '予約を取り消す', busy: '処理中…',
+      check: '予約を確認', checking: 'サーバーで予約を確認しています。', checked: 'サーバー確認時刻', previous: '前回確認した予約',
+      noActive: 'サーバーに予約はありません。', noSubscription: 'このブラウザーは通知を受け取る登録をしていません。',
       hint: '支度と出発の時刻に、この端末へ通知します。', active: '予約済み', ready: '支度', leave: '出発', both: '支度・出発',
       denied: 'ブラウザのサイト設定で通知を許可してください。', unavailable: '通知サーバーに接続できません。接続を確認してもう一度お試しください。',
       subscription: '端末をプッシュサービスに登録できません。ネットワークとブラウザの通知設定を確認してください。',
@@ -35,6 +41,8 @@
     },
     zh: {
       title: '手机提醒', save: '预约准备和出发提醒', replace: '改为当前计划', cancel: '取消提醒', busy: '处理中…',
+      check: '查询预约', checking: '正在向服务器查询预约…', checked: '服务器查询时间', previous: '上次查询到的预约',
+      noActive: '服务器上没有待发送的提醒。', noSubscription: '此浏览器尚未订阅通知。',
       hint: '准备和出发时，这台设备会收到通知。', active: '已预约', ready: '准备', leave: '出发', both: '准备和出发',
       denied: '请在浏览器的网站设置中允许通知。', unavailable: '无法连接提醒服务器。请检查网络后重试。',
       subscription: '浏览器无法为这台设备注册推送。请检查网络和浏览器通知设置。',
@@ -72,7 +80,7 @@
     const api = location.hostname === '127.0.0.1' ? 'http://127.0.0.1:8791' : configured;
     if (!api || !window.isSecureContext || location.protocol === 'file:') return;
     const el = id => document.getElementById(id);
-    const save = el('push-save'), cancel = el('push-cancel');
+    const save = el('push-save'), check = el('push-check'), cancel = el('push-cancel');
     el('push-panel').hidden = false;
     const appleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const needsHome = appleMobile && !matchMedia('(display-mode: standalone)').matches && navigator.standalone !== true;
@@ -87,6 +95,8 @@
       return { render: explain };
     }
     let busy = false, current = null, revision = null, notice = '', sequence = 0;
+    let checking = false, checkedAt = null;
+    check.hidden = false;
     let timer;
     const times = () => {
       const values = plan();
@@ -98,15 +108,24 @@
       el('push-title').textContent = words.title;
       save.textContent = words[busy ? 'busy' : same ? 'saved' : current ? 'replace' : 'save'];
       save.disabled = busy || !next || Boolean(same);
+      check.textContent = words.check;
+      check.disabled = busy || checking;
       cancel.hidden = !current;
       cancel.disabled = busy;
       cancel.textContent = words.cancel;
       const status = [];
+      if (checking) status.push(words.checking);
       if (notice) status.push(words[notice] || words.unavailable);
       if (current) {
         const format = new Intl.DateTimeFormat(language(), { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-        status.push(words.active + ' · ' + current.events.map(event => words[event.kind] + ' ' + format.format(event.at)).join(' / '));
-      } else if (!notice) status.push(words.hint);
+        const label = checking || notice === 'unknown' ? words.previous : words.active;
+        status.push(label + ' · ' + current.events.map(event => words[event.kind] + ' ' + format.format(event.at)).join(' / '));
+      } else if (checkedAt !== null) status.push(words.noActive);
+      else if (!notice && !checking) status.push(words.hint);
+      if (checkedAt !== null) {
+        const format = new Intl.DateTimeFormat(language(), { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        status.push(words.checked + ' · ' + format.format(checkedAt));
+      }
       el('push-status').textContent = status.join('\n');
     }
     async function request(path, data) {
@@ -126,27 +145,52 @@
         timer = setTimeout(sync, Math.min(86400_000, Math.max(15000, next - Date.now() + 1500)));
       }
     }
-    async function sync() {
-      if (busy) return;
+    async function sync(manual = false) {
+      if (busy || checking) return;
       const id = ++sequence;
+      if (manual) {
+        checking = true;
+        checkedAt = null;
+        notice = '';
+        render();
+      }
       try {
         const reg = await navigator.serviceWorker.getRegistration(new URL('./', location.href));
         const sub = await reg?.pushManager.getSubscription();
         if (id !== sequence) return;
-        if (!sub) accept({ plan: null, revision: null });
-        else {
+        if (!sub) {
+          accept({ plan: null, revision: null });
+          checkedAt = null;
+          if (manual) notice = 'noSubscription';
+        } else {
           const result = await request('status', { subscription: sub });
           if (id !== sequence) return;
+          if (result.status !== 200 || !Object.hasOwn(result.data, 'plan')) throw new Error('unknown');
           accept(result.data);
-          if (notice === 'unknown') notice = '';
+          if (manual || checkedAt !== null) checkedAt = Date.now();
+          if (notice === 'unknown' || notice === 'noSubscription') notice = '';
         }
-      } catch { if (id === sequence) notice = 'unknown'; }
-      if (id === sequence) render();
+      } catch {
+        if (id === sequence) {
+          checkedAt = null;
+          notice = 'unknown';
+        }
+      } finally {
+        if (id === sequence) {
+          if (manual) checking = false;
+          render();
+        }
+      }
     }
     async function submit(action, selectedTimes) {
       if (busy) return;
       const next = selectedTimes || times(), lang = language(), expected = revision;
-      busy = true; sequence++; notice = ''; render();
+      busy = true;
+      checking = false;
+      checkedAt = null;
+      sequence++;
+      notice = '';
+      render();
       try {
         if (action === 'schedule') {
           if (!next || !Number.isFinite(next.ready) || !Number.isFinite(next.leave)) throw new Error('dst');
@@ -178,8 +222,9 @@
       } finally { busy = false; render(); }
     }
     save.addEventListener('click', () => submit('schedule'));
+    check.addEventListener('click', () => sync(true));
     cancel.addEventListener('click', () => submit('cancel'));
-    window.addEventListener('focus', sync);
+    window.addEventListener('focus', () => sync());
     document.addEventListener('visibilitychange', () => { if (!document.hidden) sync(); });
     render();
     sync();
