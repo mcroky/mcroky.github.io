@@ -1,0 +1,54 @@
+mutation annotate schedule replay rows as newly saved reservations
+detects OnlySavedSchedule
+- SavedSource == source.event = "schedule" /\ source.outcome = "saved" /\ source.id # ""
++ SavedSource == source.event = "schedule" /\ source.id # ""
+
+mutation derive annotations without a reservation ID
+detects OnlySavedSchedule
+- SavedSource == source.event = "schedule" /\ source.outcome = "saved" /\ source.id # ""
++ SavedSource == source.event = "schedule" /\ source.outcome = "saved"
+
+mutation flag a reminder one tick before the grace period ends
+detects OnlyDuePending
+-    LET at == Due(kind) IN at # Missing /\ now >= at + Grace }
++    LET at == Due(kind) IN at # Missing /\ now >= at + Grace - 1 }
+
+mutation skip the exact grace boundary
+detects FlagsEveryMissingKind
+-    LET at == Due(kind) IN at # Missing /\ now >= at + Grace }
++    LET at == Due(kind) IN at # Missing /\ now > at + Grace }
+
+mutation flag a row with an invalid scheduled timestamp
+detects OnlyDuePending
+-    LET at == Due(kind) IN at # Missing /\ now >= at + Grace }
++    LET at == Due(kind) IN now >= at + Grace }
+
+mutation treat a combined reminder as two separate planned kinds
+detects OnlyDuePending
+- Overdue == { kind \in source.pending :
++ Overdue == { kind \in IF source.pending = {"both"} THEN {"ready", "leave"} ELSE source.pending :
+
+mutation only accept successful provider responses as recorded results
+detects NoMarkForArchivedDelivery
+-    { record.kind : record \in { r \in Related : r.event = "delivery" /\ r.id = source.id } }
++    { record.kind : record \in { r \in Related : r.event = "delivery" /\ r.id = source.id /\ r.outcome = "provider_accepted" } }
+
+mutation a result for one kind suppresses the other kind
+detects FlagsEveryMissingKind
+- Unrecorded == IF SavedSource /\ ~Ended THEN Overdue \ Seen ELSE {}
++ Unrecorded == IF SavedSource /\ ~Ended /\ Seen = {} THEN Overdue ELSE {}
+
+mutation suppress after any cancellation request including a rejected one
+detects FlagsEveryMissingKind
+-        \/ /\ record.event = "cancel" /\ record.id = source.id /\ record.outcome = "canceled"
++        \/ /\ record.event = "cancel" /\ record.id = source.id
+
+mutation omit the previous ID when reading the archive
+detects TerminalSuppresses
+- Related == { r \in archive : r.id = source.id \/ r.previous = source.id }
++ Related == { r \in archive : r.id = source.id }
+
+mutation suppress a delivery mark on an Apple diagnostic by itself
+detects FlagsEveryMissingKind
+-    { record.kind : record \in { r \in Related : r.event = "delivery" /\ r.id = source.id } }
++    { record.kind : record \in { r \in Related : r.event \in {"delivery", "apple_rejection"} /\ r.id = source.id } }

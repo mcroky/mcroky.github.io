@@ -1,0 +1,12 @@
+spec PushUnrecorded.tla
+check INVARIANTS OnlySavedSchedule OnlyDuePending NoMarkForArchivedDelivery TerminalSuppresses FlagsEveryMissingKind
+reach Future | snapshots
+reach BeforeGrace | snapshots
+reach GraceBoundary | snapshots
+reach Partial | snapshots
+reach Combined | snapshots
+reach Canceled | snapshots
+reach Replaced | snapshots
+reach Unrelated | snapshots
+reach DiagnosticOnly | snapshots
+run snapshots |

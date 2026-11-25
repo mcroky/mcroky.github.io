@@ -13,16 +13,24 @@ const escape = value => String(value ?? '').replace(/[&<>"']/g, ch =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
 const clock = new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', hourCycle: 'h23',
   hour: '2-digit', minute: '2-digit', second: '2-digit' });
+const calendarDate = new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', month: 'long', day: 'numeric' });
 function time(value) { return Number.isFinite(value) ? clock.format(value) : ''; }
+function scheduledTime(label, value) {
+  return Number.isFinite(value) && [label, calendarDate.format(value), time(value)].filter(Boolean).join(' ');
+}
 function row(entry) {
   let item = entry.source;
   if (typeof item === 'string') { try { item = JSON.parse(item); } catch { return ''; } }
   if (!item || !Object.hasOwn(eventLabels, item.event)) return '';
-  const schedule = [item.readyAt && '준비 ' + time(item.readyAt), item.leaveAt && '출발 ' + time(item.leaveAt),
-    item.scheduledAt && (kinds[item.reminder] ?? '') + ' ' + time(item.scheduledAt)].filter(Boolean).join(' / ');
+  const schedule = item.readyAt === item.leaveAt && Number.isFinite(item.readyAt)
+    ? scheduledTime(kinds.both, item.readyAt)
+    : [scheduledTime(kinds.ready, item.readyAt), scheduledTime(kinds.leave, item.leaveAt),
+      scheduledTime(kinds[item.reminder], item.scheduledAt)].filter(Boolean).join(' / ');
   const details = [outcomes[item.outcome ?? item.reasonStatus], item.reason, item.providerStatus ?? item.httpStatus,
-    item.retryPlanned && '재시도 예정'].filter(Boolean).join(' · ');
-  return '<tr>' + [time(entry.timestamp), eventLabels[item.event], schedule, details, item.reservationId]
+    item.retryPlanned && '재시도 예정',
+    entry.unrecorded?.length && entry.unrecorded.map(kind => kinds[kind]).join('·') + ' 발송 결과 미기록'
+  ].filter(Boolean).join(' · ');
+  return '<tr>' + [scheduledTime('', entry.timestamp), eventLabels[item.event], schedule, details, item.reservationId]
     .map(cell => '<td>' + escape(cell) + '</td>').join('') + '</tr>';
 }
 const response = (body, status = 200, html = false) => new Response(body, { status, headers: {
@@ -91,8 +99,8 @@ export default {
     const link = (number, label) => '<a href="?day=' + day + '&amp;page=' + number + '">' + label + '</a>';
     return response(`<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>나갈때 알림 기록</title><style>body{font:16px/1.5 system-ui;margin:2rem auto;max-width:76rem;padding:0 1rem;color:#16362a}main{overflow:auto}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:.65rem;border-bottom:1px solid #ddd}th{white-space:nowrap;background:#eef5f0}input,button{font:inherit}a{margin-right:1rem}</style>
-<h1>나갈때 알림 기록</h1><form><label>조회일 (한국 시간) <input type="date" name="day" value="${day}" required></label> <button>조회</button></form>
-<main><table><thead><tr><th>처리 시각</th><th>기록</th><th>알림 예정</th><th>결과</th><th>예약 ID</th></tr></thead><tbody>${rows || '<tr><td colspan="5">이 페이지에 표시할 알림 기록이 없습니다.</td></tr>'}</tbody></table></main>
+<h1>나갈때 알림 기록</h1><form><label>처리일 (한국 시간) <input type="date" name="day" value="${day}" required></label> <button>조회</button></form>
+<main><table><thead><tr><th>처리 일시</th><th>기록</th><th>알림 예정</th><th>결과</th><th>예약 ID</th></tr></thead><tbody>${rows || '<tr><td colspan="5">이 페이지에 표시할 알림 기록이 없습니다.</td></tr>'}</tbody></table></main>
 <nav>${page ? link(page - 1, '이전 페이지') : ''}${entries.length > 100 ? link(page + 1, '다음 페이지') : ''}</nav></html>`, 200, true);
   }
 };

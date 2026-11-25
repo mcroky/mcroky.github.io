@@ -26,6 +26,26 @@ const applePushReasons = new Set([
   'MethodNotAllowed', 'PayloadTooLarge', 'TooManyRequests', 'InternalServerError', 'ServiceUnavailable', 'Shutdown'
 ]);
 
+function unrecordedReminders(record, sql, now) {
+  if (record.event !== 'reminder_schedule' || record.outcome !== 'saved' || !record.reservationId) return [];
+  const overdue = (record.pending ?? []).filter(kind => {
+    const at = kind === 'ready' ? record.readyAt : record.leaveAt;
+    return Number.isSafeInteger(at) && now >= at + grace;
+  });
+  if (!overdue.length) return [];
+  const seen = new Set();
+  for (const { record: json } of sql.exec(
+    "SELECT record FROM reminders WHERE json_extract(record, '$.reservationId') = ? OR json_extract(record, '$.previousReservationId') = ?",
+    record.reservationId, record.reservationId
+  )) {
+    const related = JSON.parse(json);
+    if ((related.event === 'reminder_cancel' && related.reservationId === record.reservationId && related.outcome === 'canceled') ||
+        (related.event === 'reminder_schedule' && related.previousReservationId === record.reservationId && related.outcome === 'saved')) return [];
+    if (related.event === 'reminder_delivery' && related.reservationId === record.reservationId) seen.add(related.reminder);
+  }
+  return overdue.filter(kind => !seen.has(kind));
+}
+
 async function logAppleRejection(response, reminder, env, ctx) {
   let reason = null;
   let reasonStatus = 'missing_or_invalid';
@@ -61,8 +81,15 @@ export class PushIdentity extends DurableObject {
   }
 
   async reminderPage(from, offset) {
-    return this.reminderTable().exec('SELECT at,record FROM reminders WHERE at >= ? AND at < ? ORDER BY at DESC,id DESC LIMIT 101 OFFSET ?',
-      from, from + 86400_000, offset).toArray().map(({ at, record }) => ({ timestamp: at, source: JSON.parse(record) }));
+    const sql = this.reminderTable();
+    sql.exec("CREATE INDEX IF NOT EXISTS reminder_reservation_id ON reminders(json_extract(record, '$.reservationId'))");
+    sql.exec("CREATE INDEX IF NOT EXISTS reminder_previous_id ON reminders(json_extract(record, '$.previousReservationId'))");
+    const now = Date.now();
+    return sql.exec('SELECT at,record FROM reminders WHERE at >= ? AND at < ? ORDER BY at DESC,id DESC LIMIT 101 OFFSET ?',
+      from, from + 86400_000, offset).toArray().map(({ at, record }) => {
+        const source = JSON.parse(record);
+        return { timestamp: at, source, unrecorded: unrecordedReminders(source, sql, now) };
+      });
   }
 
   async keys() {

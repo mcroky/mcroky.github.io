@@ -187,5 +187,27 @@ try {
   const archived = await archive.reminderPage(ready - 3600_000, 0);
   assert.ok(archived.some(entry => entry.source.reservationId === delayed.revision && entry.source.reason === 'BadWebPushRequest'));
   assert.ok(archived.some(entry => entry.source.reservationId === canceled.revision || entry.source.outcome === 'canceled'));
+  const due = Date.now() - 300_001;
+  const archiveSchedule = (id, times, pending) => ({
+    event: 'reminder_schedule', outcome: 'saved', reservationId: id,
+    readyAt: times[0], leaveAt: times[1], pending
+  });
+  for (const entry of [
+    archiveSchedule('no-attempt', [due, due], ['both']),
+    archiveSchedule('partial', [due - 60_000, due], ['ready', 'leave']),
+    archiveSchedule('pending', [due + 60_000, due + 60_000], ['both']),
+    archiveSchedule('canceled', [due, due], ['both']),
+    archiveSchedule('replaced', [due, due], ['both'])
+  ]) await archive.appendReminder(due - 120_000, entry);
+  await archive.appendReminder(due, { event: 'reminder_delivery', reservationId: 'partial', reminder: 'ready', outcome: 'provider_rejected' });
+  await archive.appendReminder(due - 5, { event: 'reminder_cancel', reservationId: 'canceled', outcome: 'canceled' });
+  await archive.appendReminder(due - 5, { ...archiveSchedule('other', [due, due], ['both']), previousReservationId: 'replaced' });
+  // The ready result at the next day's boundary is outside the visible page.
+  const recentById = new Map((await archive.reminderPage(due - 86400_000, 0))
+    .filter(row => row.source.event === 'reminder_schedule')
+    .map(row => [row.source.reservationId, row.unrecorded]));
+  assert.deepEqual(recentById.get('no-attempt'), ['both']);
+  assert.deepEqual(recentById.get('partial'), ['leave']);
+  for (const id of ['pending', 'canceled', 'replaced']) assert.deepEqual(recentById.get(id), [], id);
   console.log('PASS workerd: signed Apple authorization reused across recipients, ordinary push and rejection audits.');
 } finally { reasonGate.resolve(); await mf.dispose(); }

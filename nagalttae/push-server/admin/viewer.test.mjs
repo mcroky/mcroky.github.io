@@ -14,7 +14,11 @@ test('private code, protected cookie and server-side log query', async () => {
         reads++;
         assert.equal(from, Date.parse('2026-11-24T15:00:00Z'));
         assert.equal(offset, 0);
-        return [{ timestamp: from, source: { event: 'reminder_apple_rejection', reason: '<BadDeviceToken>', privateField: 'never-display' } }];
+        return [
+          { timestamp: from, source: { event: 'reminder_apple_rejection', reason: '<BadDeviceToken>', privateField: 'never-display' } },
+          { timestamp: from, source: { event: 'reminder_schedule', outcome: 'saved', readyAt: from + 86400_000,
+            leaveAt: from + 86400_000 }, unrecorded: ['both'] }
+        ];
       } };
     } } };
   const get = cookie => new Request(url + '?day=2026-11-25', { headers: { Cookie: cookie } });
@@ -37,6 +41,9 @@ test('private code, protected cookie and server-side log query', async () => {
   assert.match(page.headers.get('Cache-Control'), /no-store/);
   const html = await page.text();
   assert.match(html, /&lt;BadDeviceToken&gt;/);
+  assert.match(html, /준비·출발 발송 결과 미기록/);
+  assert.match(html, /준비·출발 11월 26일 00:00:00/);
+  assert.match(html, /11월 25일 00:00:00<\/td>/);
   assert.ok(!html.includes('never-display') && !html.includes(code));
   assert.equal(reads, 1);
 });
