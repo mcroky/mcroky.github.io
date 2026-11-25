@@ -59,6 +59,17 @@ h2 { font-size: 20px; letter-spacing: -.055em; font-weight: 780; }
 .quiet { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; background: transparent; padding: 0 3px; border: 0; font-size: 12px; color: var(--muted); white-space: nowrap; }
 .quiet:hover { color: var(--orange); }
 .quiet .ic { width: 14px; height: 14px; }
+.saved-plans { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 12px; font-size: 13px; }
+.saved-plan-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.saved-plans button { min-height: 44px; padding: 5px 11px; border: 1px solid var(--line); border-radius: 9px; background: #fffefa; color: var(--ink); font-weight: 650; }
+.saved-plans button:disabled { opacity: .55; cursor: default; }
+.saved-plans summary { min-height: 44px; align-content: center; cursor: pointer; font-weight: 700; }
+.saved-plans ul { padding: 0; margin: 0; list-style: none; }
+.saved-plans li { display: flex; align-items: center; justify-content: space-between; gap: 6px 10px; flex-wrap: wrap; padding: 8px 0; border-top: 1px solid var(--line); }
+.saved-plans li.editing-plan { border-top-color: var(--green); }
+.saved-plan-durations { display: block; color: var(--muted); }
+.saved-plans-note, #saved-plans-empty, #saved-plans-status { margin: 4px 0; color: var(--muted); }
+#saved-plans-status:empty { display: none; }
 .when { margin-top: 12px; padding: 15px 17px 13px; background: #f4f4eb; border-radius: 12px; }
 .field-label { display: block; font-size: 13px; color: #465b4c; font-weight: 650; }
 #target { display: block; width: 100%; min-width: 0; border: 0; background: transparent; font-family: "Bahnschrift", "Inter", system-ui, sans-serif; font-size: clamp(30px, 3.4vw, 42px); font-weight: 600; padding: 3px 1px; min-height: 54px; color: var(--ink); }

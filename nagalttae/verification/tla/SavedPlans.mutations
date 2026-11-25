@@ -1,0 +1,56 @@
+mutation store the empty sentinel as the revision of a new record
+detects TypeOK
+only one tab
+-      [] op.kind = "create" -> [revision |-> 1, value |-> op.value]
++      [] op.kind = "create" -> [revision |-> 0, value |-> op.value]
+
+mutation forget to reserve a fresh identifier when creating
+detects CreateAllocationsUnique
+only one tab
+-    /\ allocated' = allocated \cup {id}
++    /\ UNCHANGED allocated
+
+mutation commit an edit or deletion even when another tab changed the revision
+detects CommitRequiresCurrentRevision
+only two tabs one id
+-    ELSE records[op.id].revision # 0 /\ records[op.id].revision = op.expected
++    ELSE records[op.id].revision # 0
+
+mutation treat an already deleted record as writable
+detects CommitRequiresCurrentRevision
+only two tabs one id
+-    ELSE records[op.id].revision # 0 /\ records[op.id].revision = op.expected
++    ELSE records[op.id].revision = 0 \/ records[op.id].revision = op.expected
+
+mutation publish the write even if IndexedDB reports an abort
+detects RejectedWritesPreserveStore
+only one tab
+-       IN /\ records' = IF result = "saved" THEN [records EXCEPT ![op.id] = NewRecord(op)] ELSE records
++       IN /\ records' = IF result \in {"saved", "aborted"} THEN [records EXCEPT ![op.id] = NewRecord(op)] ELSE records
+
+mutation clear unrelated records while committing a change
+detects CommitChangesOnlyTarget
+only two tabs two ids
+-       IN /\ records' = IF result = "saved" THEN [records EXCEPT ![op.id] = NewRecord(op)] ELSE records
++       IN /\ records' = IF result = "saved" THEN [BlankStore EXCEPT ![op.id] = NewRecord(op)] ELSE records
+
+mutation replace a record without incrementing its revision
+detects CommitReflectsOperation
+only one tab
+-      [] OTHER -> [revision |-> records[op.id].revision + 1, value |-> op.value]
++      [] OTHER -> [revision |-> records[op.id].revision, value |-> op.value]
+
+mutation overwrite one tab's draft on writes to the shared schedule store
+detects DraftIsolation
+only one tab
+-     /\ pending' = [pending EXCEPT ![tab] = Idle]
+-     /\ UNCHANGED <<allocated, started, seen, drafts>>
++     /\ pending' = [pending EXCEPT ![tab] = Idle]
++     /\ drafts' = [drafts EXCEPT ![tab] = 1]
++     /\ UNCHANGED <<allocated, started, seen>>
+
+mutation retain an earlier snapshot when a tab reloads the current records
+detects ReadsReflectStore
+only one tab
+-    /\ seen' = [seen EXCEPT ![tab] = Snapshot(records, id)]
++    /\ UNCHANGED seen

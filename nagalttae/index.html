@@ -103,6 +103,19 @@
           </div>
           <div class="durations" id="durations"></div>
         </form>
+        <div class="saved-plans" aria-labelledby="saved-plans-title">
+          <div class="saved-plan-actions">
+            <button id="saved-plan-save" type="button" data-text="savePlan">이 일정 저장</button>
+            <button id="saved-plan-discard" type="button" data-text="discardPlanEdit" hidden>편집 취소</button>
+          </div>
+          <details id="saved-plans-details">
+            <summary id="saved-plans-title" data-text="savedPlans">저장한 일정</summary>
+            <p class="saved-plans-note" data-text="savedPlansNote">이 기기 브라우저에 저장돼요.</p>
+            <p id="saved-plans-empty" data-text="savedPlansEmpty" hidden>저장한 일정이 없어요.</p>
+            <ul id="saved-plans-list"></ul>
+          </details>
+          <p id="saved-plans-status" role="status"></p>
+        </div>
       </section>
       <div class="results">
         <section class="ticket" aria-labelledby="ticket-title">

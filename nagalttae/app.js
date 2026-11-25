@@ -27,6 +27,12 @@
   let refreshPush;
   let busBoard;
   let timetable;
+  let savedPlans = null;
+  let savedBusy = false;
+  let editingPlan = null;
+  let beforeEditing = null;
+  let savedNotice = '';
+  let savedRead = 0;
 
   function localDay(offset, now = new Date()) {
     const day = new Date(now);
@@ -119,6 +125,7 @@
     busBoard?.render();
     timetable?.render();
     refresh();
+    renderSavedList();
   }
 
   function formValues() {
@@ -135,6 +142,106 @@
   function updateDraft() {
     NagalDraft.save(formValues());
     refresh();
+  }
+
+  function applyFormValues(values) {
+    for (const key of ['date', 'target', ...segments.map(segment => segment.key)]) {
+      el(key).value = Number.isNaN(values[key]) ? '' : values[key];
+    }
+  }
+
+  function refreshSavedButtons(plan = readPlan()) {
+    const save = el('saved-plan-save');
+    save.textContent = copy[editingPlan ? 'updatePlan' : 'savePlan'];
+    save.disabled = savedBusy || !plan;
+    el('saved-plan-discard').hidden = !editingPlan;
+    el('saved-plan-discard').disabled = savedBusy;
+  }
+
+  function renderSavedList() {
+    const list = el('saved-plans-list');
+    list.replaceChildren();
+    el('saved-plans-empty').hidden = savedPlans?.length !== 0;
+    el('saved-plans-status').textContent = savedNotice ? copy[savedNotice] : '';
+    for (const record of savedPlans ?? []) {
+      const row = document.createElement('li');
+      const label = document.createElement('span');
+      const date = new Date(record.plan.date + 'T00:00:00Z');
+      label.textContent = formatDay(date, {year: 'numeric', month: 'short', day: 'numeric'}) + ' · ' + record.plan.target;
+      const durations = document.createElement('small');
+      durations.className = 'saved-plan-durations';
+      durations.textContent = segments.map(({key}) => copy[key] + ' ' + durationText(record.plan[key])).join(' · ');
+      label.append(durations);
+      const actions = document.createElement('div');
+      actions.className = 'saved-plan-actions';
+      for (const [key, action] of [
+        ['editPlan', () => editSavedPlan(record)],
+        ['deletePlan', () => { if (window.confirm(copy.confirmDeletePlan)) updateSavedPlan(record); }]
+      ]) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = copy[key];
+        button.disabled = savedBusy;
+        button.addEventListener('click', action);
+        actions.append(button);
+      }
+      if (editingPlan?.id === record.id) row.classList.add('editing-plan');
+      row.append(label, actions);
+      list.append(row);
+    }
+  }
+
+  function editSavedPlan(record) {
+    if (!editingPlan) beforeEditing = formValues();
+    editingPlan = record;
+    savedNotice = '';
+    applyFormValues(record.plan);
+    updateDraft();
+    renderSavedList();
+    el('target').focus();
+  }
+
+  function endSavedEdit() {
+    editingPlan = null;
+    beforeEditing = null;
+  }
+
+  async function updateSavedPlan(remove = null) {
+    if (savedBusy || (!remove && !readPlan())) return;
+    const snapshot = formValues();
+    const previous = editingPlan;
+    savedRead++;
+    savedBusy = true;
+    refreshSavedButtons();
+    renderSavedList();
+    try {
+      const stored = remove ? await NagalSavedPlans.remove(remove) : await NagalSavedPlans.save(snapshot, previous);
+      savedNotice = stored ? (remove ? 'planDeleted' : 'planSaved') : 'savedPlanConflict';
+      if (!remove || editingPlan?.id === remove.id) endSavedEdit();
+      el('saved-plans-details').open = true;
+      savedPlans = await NagalSavedPlans.list();
+    } catch {
+      savedNotice = 'savedPlanUnavailable';
+    } finally {
+      savedBusy = false;
+      refreshSavedButtons();
+      renderSavedList();
+    }
+  }
+
+  async function loadSavedPlans() {
+    if (savedBusy) return;
+    const read = ++savedRead;
+    try {
+      const plans = await NagalSavedPlans.list();
+      if (read !== savedRead) return;
+      savedPlans = plans;
+      if (savedNotice === 'savedPlanUnavailable') savedNotice = '';
+    } catch {
+      if (read !== savedRead) return;
+      savedNotice = 'savedPlanUnavailable';
+    }
+    renderSavedList();
   }
 
   function eventRows(plan) {
@@ -174,6 +281,7 @@
   function refresh() {
     const date = dateInput.valueAsDate;
     const plan = readPlan();
+    refreshSavedButtons(plan);
     refreshPush?.();
     const rows = plan ? eventRows(plan) : [];
     const includeYear = date && date.getUTCFullYear() !== new Date().getFullYear();
@@ -517,11 +625,23 @@
     }
   });
   el('reset').addEventListener('click', () => {
+    endSavedEdit();
     resetSettings();
     el('event-name').value = '';
     el('event-alarms').checked = true;
     NagalDraft.clear();
     refresh();
+    renderSavedList();
+  });
+  el('saved-plan-save').addEventListener('click', () => updateSavedPlan());
+  el('saved-plan-discard').addEventListener('click', () => {
+    if (beforeEditing) applyFormValues(beforeEditing);
+    endSavedEdit();
+    updateDraft();
+    renderSavedList();
+  });
+  el('saved-plans-details').addEventListener('toggle', event => {
+    if (event.currentTarget.open) loadSavedPlans();
   });
   for (const button of dayButtons) {
     button.addEventListener('click', () => { dateInput.value = localDay(Number(button.dataset.day)); updateDraft(); });
@@ -529,7 +649,10 @@
   form.addEventListener('input', updateDraft);
   form.addEventListener('change', updateDraft);
   form.addEventListener('submit', event => event.preventDefault());
-  window.addEventListener('focus', refresh);
+  window.addEventListener('focus', () => {
+    refresh();
+    if (el('saved-plans-details').open) loadSavedPlans();
+  });
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) refresh();
     scheduleClockUpdate();
@@ -541,9 +664,7 @@
   mountControls();
   resetSettings();
   const draft = NagalDraft.load();
-  if (draft) {
-    for (const key of ['date', 'target', ...segments.map(segment => segment.key)]) el(key).value = draft[key];
-  }
+  if (draft) applyFormValues(draft);
   try { locale = localStorage.getItem(storageKey) || 'ko'; } catch { /* Use Korean when storage is unavailable. */ }
   setLocale(locale);
   mountInstall();

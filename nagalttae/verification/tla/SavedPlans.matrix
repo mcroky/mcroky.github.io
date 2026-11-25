@@ -1,0 +1,14 @@
+spec SavedPlans.tla
+check INVARIANTS TypeOK CreateAllocationsUnique CommitRequiresCurrentRevision RejectedWritesPreserveStore CommitChangesOnlyTarget CommitReflectsOperation DraftIsolation ReadsReflectStore
+reach ConcurrentCreates | two tabs two ids
+reach TwoRecordsStored | two tabs two ids
+reach EditedOneOfTwo | two tabs two ids
+reach StaleEditRejected | two tabs one id
+reach StaleDeleteRejected | two tabs one id
+reach MissingEditRejected | two tabs one id
+reach MissingDeleteRejected | two tabs one id
+reach AbortedEdit | one tab
+reach IndependentDrafts | two tabs one id
+run one tab | Tabs=1 Ids=1 Budget=2
+run two tabs one id | Tabs=2 Ids=1 Budget=3
+run two tabs two ids | Tabs=2 Ids=2 Budget=3
