@@ -59,6 +59,12 @@ jobs:
             ['31220', 'GGB231001279'],
             ['25', 'DJB8001793'],
             ['39', 'JEB405000646'],
+            ['39', 'JEB405002036'],
+            ['39', 'JEB405002035'],
+            ['39', 'JEB405000154'],
+            ['39', 'JEB405000663'],
+            ['39', 'JEB405001478'],
+            ['39', 'JEB406001230'],
             ['11', 'SEB107900045']
           ];
           const cityRequest = request('getCtyCodeList', {});
@@ -75,7 +81,33 @@ jobs:
           const cities = await cityRequest;
           const codes = items(cities.body).map(row => String(row.citycode)).filter(c => /^\d{1,9}$/.test(c));
           console.log('NAGAL_TAGO_CHECK ' + JSON.stringify({
-            checks, cities: { http: cities.http, code: cities.code, count: codes.length, anseong: codes.includes('31220'), seoul: codes.includes('11') }
+            checks, cities: { http: cities.http, code: cities.code, count: codes.length, anseong: codes.includes('31220'), seoul: codes.includes('11'), jeju: codes.filter(c => c.startsWith('39')) }
           }));
+          const gbisUrl = new URL('https://apis.data.go.kr/6410000/busarrivalservice/v2/getBusArrivalListv2');
+          const seoulUrl = new URL('https://ws.bus.go.kr/api/rest/stationinfo/getStationByUid');
+          gbisUrl.search = new URLSearchParams({ serviceKey, stationId: '231000018', format: 'json' });
+          seoulUrl.search = new URLSearchParams({ serviceKey, arsId: '08528', resultType: 'json' });
+          async function regionalCheck(url, name) {
+            try {
+              const res = await fetch(url, { redirect: 'manual', signal: AbortSignal.timeout(8000) });
+              const raw = await res.text();
+              let code, count;
+              try {
+                const data = JSON.parse(raw);
+                const header = data.response?.msgHeader || data.msgHeader;
+                code = String(header?.resultCode ?? header?.headerCd ?? '');
+                const rows = data.response?.msgBody?.busArrivalList ?? data.msgBody?.itemList;
+                count = Array.isArray(rows) ? rows.length : rows ? 1 : 0;
+              } catch {
+                code = raw.match(/<(?:returnReasonCode|resultCode|headerCd)>(\d{1,3})<\//)?.[1];
+                count = 0;
+              }
+              return { name, http: res.status, code: /^\d{1,3}$/.test(code) ? code : null, count };
+            } catch (error) {
+              return { name, http: 0, code: error.name === 'TimeoutError' ? 'timeout' : 'connection' };
+            }
+          }
+          const regional = await Promise.all([regionalCheck(gbisUrl, 'GBIS'), regionalCheck(seoulUrl, 'Seoul')]);
+          console.log('NAGAL_REGIONAL_CHECK ' + JSON.stringify(regional));
           if (!checks.some(c => c.http === 200 && c.arrivals.length)) process.exitCode = 1;
           NODE
