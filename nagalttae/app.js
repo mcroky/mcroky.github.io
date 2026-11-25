@@ -25,6 +25,7 @@
   let minuteTimer;
   let calendarSaving = false;
   let refreshPush;
+  let refreshTransit;
 
   function localDay(offset, now = new Date()) {
     const day = new Date(now);
@@ -114,6 +115,7 @@
       }
     }
     NagalStudio.render(locale);
+    refreshTransit?.();
     refresh();
   }
 
@@ -235,6 +237,8 @@
   function mountInstall() {
     if (android || !window.isSecureContext || location.protocol === 'file:' || !('serviceWorker' in navigator)) return;
     const button = el('install-app');
+    const invite = el('push-install');
+    const inviteButton = el('push-install-button');
     const dialog = el('install-dialog');
     const standalone = matchMedia('(display-mode: standalone)');
     const appleMobile = isAppleMobile();
@@ -242,6 +246,10 @@
     let installed = false;
     const updateButton = () => {
       button.hidden = installed || standalone.matches || navigator.standalone === true;
+      invite.hidden = button.hidden;
+      if (button.hidden && dialog.open) dialog.close();
+      el('push-install-browser').hidden = appleMobile;
+      el('push-install-apple').hidden = !appleMobile;
     };
     const openGuide = fromPrompt => {
       el('install-offer').hidden = !fromPrompt;
@@ -261,14 +269,15 @@
     });
     standalone.addEventListener('change', updateButton);
     el('close-install').addEventListener('click', () => dialog.close());
-    button.addEventListener('click', async () => {
+    const install = async () => {
+      if (button.disabled) return;
       const prompt = installPrompt;
       if (!prompt) {
         openGuide(false);
         return;
       }
       installPrompt = undefined;
-      button.disabled = true;
+      button.disabled = inviteButton.disabled = true;
       try {
         const choice = await prompt.prompt();
         if (choice?.outcome === 'accepted') {
@@ -276,11 +285,13 @@
           updateButton();
         }
       } catch {
-        openGuide(true);
+        if (!button.hidden) openGuide(true);
       } finally {
-        button.disabled = false;
+        button.disabled = inviteButton.disabled = false;
       }
-    });
+    };
+    button.addEventListener('click', install);
+    inviteButton.addEventListener('click', install);
     updateButton();
     navigator.serviceWorker.register('./sw.js').catch(error => console.warn('Offline mode unavailable:', error));
   }
@@ -513,7 +524,9 @@
   try { locale = localStorage.getItem(storageKey) || 'ko'; } catch { /* Use Korean when storage is unavailable. */ }
   setLocale(locale);
   mountInstall();
-  if (!android) refreshPush = window.NagalPush?.mount({ plan: readPlan, date: () => dateInput.value, language: () => locale });
+  const push = !android && window.NagalPush?.mount({ plan: readPlan, date: () => dateInput.value, language: () => locale });
+  refreshPush = push?.render;
+  refreshTransit = window.NagalTransit?.mount({ language: () => locale, reserve: push?.reserve, prep: () => el('prep').valueAsNumber });
   mountClockTransfer();
   window.NagalMobile?.mount({plan: readPlan, date: () => dateInput.value, dateLabel: appointmentDate,
     rows: eventRows, strings: () => copy, language: () => locale, notify});

@@ -74,15 +74,17 @@
     const el = id => document.getElementById(id);
     const save = el('push-save'), cancel = el('push-cancel');
     el('push-panel').hidden = false;
-    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+    const appleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const needsHome = appleMobile && !matchMedia('(display-mode: standalone)').matches && navigator.standalone !== true;
+    if (needsHome || !('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
       save.hidden = true;
       const explain = () => {
         const words = messages[language()];
         el('push-title').textContent = words.title;
-        el('push-status').textContent = /iPhone|iPad|iPod/.test(navigator.userAgent) ? words.home : words.unsupported;
+        el('push-status').textContent = needsHome ? '' : words.unsupported;
       };
       explain();
-      return explain;
+      return { render: explain };
     }
     let busy = false, current = null, revision = null, notice = '', sequence = 0;
     let timer;
@@ -141,9 +143,9 @@
       } catch { if (id === sequence) notice = 'unknown'; }
       if (id === sequence) render();
     }
-    async function submit(action) {
+    async function submit(action, selectedTimes) {
       if (busy) return;
-      const next = times(), lang = language(), expected = revision;
+      const next = selectedTimes || times(), lang = language(), expected = revision;
       busy = true; sequence++; notice = ''; render();
       try {
         if (action === 'schedule') {
@@ -181,7 +183,7 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) sync(); });
     render();
     sync();
-    return render;
+    return { render, reserve: next => submit('schedule', next) };
   }
   globalThis.NagalPush = { mount, instant };
 })();
