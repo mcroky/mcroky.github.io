@@ -1,17 +1,17 @@
 'use strict';
 
 // Refresh the release key and integrity table together when publishing the shell.
-const release = '1.6.2-5ed0e79aa734cb9bbd3e';
+const release = '1.6.2-3ef6c6012f2eb4531973';
 const integrity = {
-  'transit.js': 'sha256-jaIzBW6zN8yiICTksLPsWMx4seHQRYYZHCQ0kVMjsE8= sha256-qAGvrOG1c6HxdBZ39W8FEFsQCwXW+L2vCoYn2bvvBwI=',
-  'stops/33.json': 'sha256-4YVFTRBkV5hNOQKkqoyoxSFrxeivBKTZgUfY9LM2YCo= sha256-VaWO1X2o9qODKaBcDQMzTJR9CRDk6K7TBU4tk0Kmjtw=',
-  'stops/34.json': 'sha256-vP5dX7ZLRzqiAg3pMu15J6q8VNsliE3JQjydNz9QBJg= sha256-w1BU9ccKs2mUhmVA8eOl5OjGOVDfH/vG1Aw8gXOwaYA=',
-  'stops/35.json': 'sha256-9Bpha4yrcpvrFPmGT8hnTNQgL+yS9d+pJeEK5TbF6QE= sha256-jeBdcndfXJAEwyqjlmVodw1rrbCUJzrVV++91Mw1rUY=',
-  'stops/36.json': 'sha256-6GuXDUn548ko1xNg6r0yBgdvKVF/7swVVdflZAMZ5Uo= sha256-AC0eOO7GBYzFU0xCxOE0JvtwkXUBiNksbmBfCA5u+9c=',
-  'stops/37.json': 'sha256-/PmSLtUL13RCtbkZsPXB4lBnXI7KafvfrZY+GXe+eXI= sha256-ttiSAjnKLva690TUui5T/cbDkuo+ycXxo4bXT+TbOjE=',
-  'stops/38.json': 'sha256-PFsr3OVqBuEYUH+X9Z/7JRGxXu7Dca7nemAjT2dARp4= sha256-zYN1oxOq9bSy0EFZOBt3TFSXLAAya+ABrfGFPrf7i+A=',
-  'index.html': 'sha256-MnH3ozDY0d7RDlsuVvLTvs6e2IYztoFggmgrDPuoWzs= sha256-mTVFQv9Jbp7NLIIWiT0UMS11KNzSiDQGsd5ScN3vv1M=',
-  'app.css': 'sha256-1dQTG+y4ptD4KhABSppEI1b9EncMbs0KaKVBYs2YmDc= sha256-3I73waQHfsPQ1AscyILa5mXWy54Mrv9tN1iRDkpovs4=',
+  'transit.js': 'sha256-8w5s1Wjpi+CkGghutx5TVtJoJ/kjzOmHSLwr5YzNGvc= sha256-TDloRsEtud/3qqgCm5llk4LgCa/QptAxf6Q+BSIRBbY=',
+  'stops/33.json': 'sha256-HwDuOGxvcl0IpfwFpgpvh37bsjp7knv6i4kwb5WuxoY= sha256-WacoD4kddv4o3ODRdhkHv8jz0ACT+NczCS6IQkcDS28=',
+  'stops/34.json': 'sha256-7iipr8X/bk8pZBK+r7a6/Gg93Aox9NisUvELxB+xRmo= sha256-Aw+6Ytut+2WhRoS0//L29wAWty6/ev0tgIV4UrcZ6OI=',
+  'stops/35.json': 'sha256-G00VxUPmhmlZNEAUH1LOhdOU2yKw9fK9p59ln9lwlOc= sha256-mkoqJqtLSOiFtDqBksAmGkBk2HTadj5tZaLk8aLYq4k=',
+  'stops/36.json': 'sha256-GjV3yCBDDao/532x0vtYvRcfhhw3/HOAefsGwUagPuU= sha256-y5LlOVGKN35m6kcvuunOZS16fPgSw73RCnfLQPz/0a0=',
+  'stops/37.json': 'sha256-3WwJeUUxszDVlHIeER1IcoswX48QcK3qXJdVJA30OAQ= sha256-qu+szQZNeo8g3mad5yblas0zN3MxwbhikM5zXP/qRE0=',
+  'stops/38.json': 'sha256-Gqixoeq6lmbHykdS99I4WaGivGALH5Od3xkkhPjqlTA= sha256-d3QAxWehcGOulkJjxy4ICLvur3ayzeofdB172FwbMNc=',
+  'index.html': 'sha256-cPYBGRkBM01TS4arPplERpb9fykSKytVM8xairja0tc= sha256-rFzcG7nJO7TCd87HICkYx2t/0iQefBhH0OGlAfENF0s=',
+  'app.css': 'sha256-MNMkWWRkMzuryxHtyRorIibrP25+U7zcoddFjGnhAYw= sha256-pU5zidHcsA3WFyNJPgUs78WUZwWBI6Fp5ptvkdSFUho=',
   'studio.css': 'sha256-HnrBTsqr4PFz8UC2eRdNVUGVKHqWrui6bkYCUfwPiAw= sha256-oEwz56SiGgy82iE/GQn5+P/iGQRyLsbqP7AMWZaKueM=',
   'planner.js': 'sha256-EGPZadTtp0CWz/MDkWVdZtLx3sW5M/N0ZLOYkYOic+k= sha256-Ol3M2ylwgGau7CBWbYMvjF9IQaXMZ8Isw1q1EVjAV2A=',
   'session-plan.js': 'sha256-CSzAjNxzz6Aa5d+pnkoTv1gQ6fIlkpT4iz/9XnZlbrA= sha256-biIHVpnKd1VhhNHCRD5yxUogJm3yGvLMhbgpsXxME28=',
@@ -39,6 +39,7 @@ const indexURL = new URL('index.html', scope).href;
 const stateURL = new URL('.shell/active', scope).href;
 const pagesURL = new URL('.shell/pages/', scope).href;
 const resources = new Map(Object.entries(integrity).map(([path, hash]) => [new URL(path, scope).href, hash]));
+const canPinPages = 'resultingClientId' in FetchEvent.prototype;
 
 function pageURL(id) {
   return pagesURL + encodeURIComponent(id);
@@ -60,14 +61,18 @@ self.addEventListener('install', event => {
     // addAll commits the list atomically, and SRI rejects a partially deployed release.
     const cache = await caches.open(cacheName);
     await cache.addAll(requests);
-    await self.skipWaiting();
+    if (canPinPages) await self.skipWaiting();
   })());
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
-    const pages = await caches.open(pagesCacheName);
     const owned = (await caches.keys()).filter(key => key.startsWith(cachePrefix) && key !== cacheName);
+    if (!canPinPages) {
+      await Promise.all(owned.map(key => caches.delete(key)));
+      return;
+    }
+    const pages = await caches.open(pagesCacheName);
     const state = await (await pages.match(stateURL))?.json();
     let previous = state?.current;
     if (!previous) {
@@ -81,7 +86,7 @@ self.addEventListener('activate', event => {
     }
     const legacy = state ? state.legacy : previous || null;
     const keep = new Set([previous, legacy]);
-    await pages.put(stateURL, Response.json({ current: cacheName, legacy }));
+    await pages.put(stateURL, new Response(JSON.stringify({ current: cacheName, legacy })));
     const pins = (await pages.keys()).filter(request => request.url.startsWith(pagesURL));
     // A reserved client may take time to start. Uncertain results keep its release.
     let timer;
@@ -134,10 +139,11 @@ self.addEventListener('fetch', event => {
   if (url.origin !== scope.origin || !url.pathname.startsWith(scope.pathname)) return;
   const file = url.origin + url.pathname;
   if (request.mode === 'navigate') {
-    if (file === scope.href || file === indexURL) event.respondWith(navigation(url.href, event.resultingClientId));
+    if (file === scope.href || file === indexURL) event.respondWith(navigation(url.href, canPinPages && event.resultingClientId));
     return;
   }
-  if (resources.has(file) || event.clientId) event.respondWith(asset(request, file, event.clientId));
+  const clientId = canPinPages && event.clientId;
+  if (resources.has(file) || clientId) event.respondWith(asset(request, file, clientId));
 });
 
 self.addEventListener('message', event => {

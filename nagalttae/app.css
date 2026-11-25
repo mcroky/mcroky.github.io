@@ -149,9 +149,6 @@ h2 { font-size: 20px; letter-spacing: -.055em; font-weight: 780; }
 #bus-stops button[aria-pressed="true"] { border-color: var(--green); background: #edf3e6; }
 #bus-board { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
 #bus-board h3 { margin: 0; font-size: 15px; }
-#bus-next { list-style: none; padding: 0; margin: 8px 0; }
-#bus-next li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
-#bus-next strong { color: var(--green); white-space: nowrap; }
 #bus-official { display: inline-block; padding: 10px 4px; color: var(--green); font-size: 13px; }
 .push-panel p { margin: 7px 0 12px; line-height: 1.5; font-size: 14px; white-space: pre-line; }
 .push-controls { display: flex; flex-wrap: wrap; gap: 8px; }
