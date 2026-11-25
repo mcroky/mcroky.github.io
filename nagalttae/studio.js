@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const release = '1.6.5';
+  const release = '1.6.6';
   const versionLabel = document.getElementById('app-version');
   if (versionLabel) versionLabel.textContent = `v${release}`;
 
@@ -60,7 +60,7 @@
         <button type="button" class="nagal-studio-close" aria-label="${words.close}" autofocus>×</button>
       </header>
       ${updates ? `
-        <p class="nagal-studio-version">${words.version}</p>
+        <div class="nagal-studio-version"><button type="button">${words.version}</button></div>
         <time datetime="2026-11-25">${date}</time>
         <p>${words.change}</p>` : `
         <p>${words.about}</p>
@@ -76,7 +76,19 @@
       dialog.remove();
       if (trigger.isConnected) trigger.focus();
     }, { once: true });
-    if (!updates) {
+    if (updates) {
+      let taps = 0;
+      let lastTap = -Infinity;
+      dialog.querySelector('.nagal-studio-version button').addEventListener('click', () => {
+        const now = performance.now();
+        if (now - lastTap > 1200) taps = 0;
+        lastTap = now;
+        if (++taps !== 5) return;
+        taps = 0;
+        dialog.close();
+        window.open('https://nagalttae-reminder-admin.cokyroky.workers.dev/', '_blank', 'noopener,noreferrer');
+      });
+    } else {
       const status = dialog.querySelector('.nagal-studio-status');
       const field = dialog.querySelector('.nagal-studio-number');
       dialog.querySelector('.nagal-studio-bank').addEventListener('click', async () => {

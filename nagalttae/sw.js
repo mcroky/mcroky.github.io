@@ -1,7 +1,7 @@
 'use strict';
 
 // Refresh the release key and integrity table together when publishing the shell.
-const release = '1.6.5-e5d6a4fdd5930b5163ee';
+const release = '1.6.6-34b78a9baddc86da770d';
 const integrity = {
   'timetable.js': 'sha256-8eJce5DFPL8IU0eZgeQSASsyaO2frVwhe6clRm34n/w= sha256-zvUdUHG+wo6Z9IQClavqu7NZgjsMvv/gF8KdrBM1c7o=',
   'timetable-data.js': 'sha256-1Q+yRMkl+euTplWIY6vlPPn7UgaP9pGrhe8JylLUHtc= sha256-YM+cvrHdzpaL69K0PCFGV5Jb6irdDVXHE74L7vQY0ik=',
@@ -14,12 +14,12 @@ const integrity = {
   'stops/38.json': 'sha256-PFsr3OVqBuEYUH+X9Z/7JRGxXu7Dca7nemAjT2dARp4= sha256-zYN1oxOq9bSy0EFZOBt3TFSXLAAya+ABrfGFPrf7i+A=',
   'index.html': 'sha256-SgqsN6ji0X0OHPJJwPFG4K1FZOFvTSqUikT4BQRoxhQ= sha256-W3OZaNYCYenQ1Xb1WrFjR/4B+YZA5pxIo5bnrjej+aw=',
   'app.css': 'sha256-f6ixNuZkymKNfFlvrwx/MPY21/itXbHznrooe7GET/w= sha256-iMhxQD3cjX4xI9hb3qeEzwFAZDAE40YVVoCyOF+y5ZM=',
-  'studio.css': 'sha256-HnrBTsqr4PFz8UC2eRdNVUGVKHqWrui6bkYCUfwPiAw= sha256-oEwz56SiGgy82iE/GQn5+P/iGQRyLsbqP7AMWZaKueM=',
+  'studio.css': 'sha256-NaHjkMVqx18x1LHIrckahbRukNb2ew+EofdhE+FyxwA= sha256-SifKpmhzaBKuPqAx8oGTtENlMwsclDJQ9D2t2CgVhXs=',
   'planner.js': 'sha256-EGPZadTtp0CWz/MDkWVdZtLx3sW5M/N0ZLOYkYOic+k= sha256-Ol3M2ylwgGau7CBWbYMvjF9IQaXMZ8Isw1q1EVjAV2A=',
   'session-plan.js': 'sha256-CSzAjNxzz6Aa5d+pnkoTv1gQ6fIlkpT4iz/9XnZlbrA= sha256-biIHVpnKd1VhhNHCRD5yxUogJm3yGvLMhbgpsXxME28=',
   'calendar.js': 'sha256-/BDTcmEPzbxusr01YjPnsuXjhhzAU819F4pQqWd6dcw= sha256-G1Y7VZnAfWUCRUT3I6Rc1PHWKTxQFXqbIHDIovjuBWQ=',
   'locale.js': 'sha256-4m/vzjwLM92XadqEaUQBfcgQe/G9jUQWfbPrmnrdDkM= sha256-Gffj3hRetY3YZP49bhvk75aaaNVCkvhBeHANcHjEcMk=',
-  'studio.js': 'sha256-Vx5/4IUA6lNiBe9Llugc9W5FTmR4e1VQ8HTYggzlKak= sha256-iHjF1/qB0FlPNZiklbGyNKtL/p/9vbexc27YFzMN/5Y=',
+  'studio.js': 'sha256-CRZMmtA6+cCrF68krh2euyg17ftXpIaENK1gYhfMwcs= sha256-Civtv4bv+hD4H/2YmOfqBYYjLOQFkN1spCkjejhkJIU=',
   'ticket-image.js': 'sha256-AQEBfUUFDxPS6uFumo0wSUraTq/MTg4tplStID2bdhI= sha256-CZxo+Z10pBza0m7L/5GZmHitGSu/7QzjM74hcON8uB4=',
   'android-ui.js': 'sha256-YmKIXtwdq/RPFv7cC3+JjvOeB0zjsdrMZjDJd/nsxaQ= sha256-djaulnBQGBVhbRA00bVHPBJ39OUam1+AaqjKpxNm5xc=',
   'push.js': 'sha256-sEi5odIwCwYHDJ76T/p5InS/pMCMVXIdjbA37tQhSO8= sha256-v6lhn/SKXW7hItipnNDktyr+FzlwD8fCmIAAb9Or1jo=',

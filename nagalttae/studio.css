@@ -120,8 +120,19 @@
 }
 
 .nagal-studio-dialog .nagal-studio-version {
-  margin-bottom: 2px;
+  margin: 12px 0 2px;
+  line-height: 1.6;
+  font-size: 0.96rem;
   font-weight: 700;
+}
+
+.nagal-studio-version button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  touch-action: manipulation;
 }
 
 .nagal-studio-choices {
