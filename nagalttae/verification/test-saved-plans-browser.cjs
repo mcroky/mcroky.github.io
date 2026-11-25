@@ -34,11 +34,18 @@ async function run() {
     });
     async function openList(page) {
       const details = page.locator('#saved-plans-details');
-      if (await details.getAttribute('open') === null) await details.locator('summary').click();
+      if (await details.getAttribute('open') === null) await page.locator('#saved-plans-open').click();
+    }
+    async function setTime(page, value) {
+      await page.locator('#time-open').click();
+      await page.locator('#target').fill(value);
+      await page.locator('#done-time').click();
     }
     async function setPlan(page, target, prep) {
+      if (await page.locator('#date-adjust').getAttribute('open') === null) await page.locator('#date-adjust summary').click();
       await page.locator('#date').fill('2026-11-28');
-      await page.locator('#target').fill(target);
+      await setTime(page, target);
+      if (await page.locator('#duration-adjust').getAttribute('open') === null) await page.locator('#duration-adjust summary').click();
       await page.locator('#prep').fill(String(prep));
       await page.locator('#travel').fill('35');
       await page.locator('#buffer').fill('12');
@@ -72,17 +79,17 @@ async function run() {
     await openList(second);
     const other = controls(second);
     await other.row('13:20').getByRole('button', { name: '편집' }).click();
-    await second.locator('#target').fill('15:15');
+    await setTime(second, '15:15');
     await other.save.click();
     await other.row('15:15').waitFor();
-    await page.locator('#target').fill('15:30');
+    await setTime(page, '15:30');
     await plan.save.click();
     await page.getByText('다른 탭에서 이 일정이 변경됐어요.', { exact: false }).waitFor();
     await plan.row('15:15').waitFor();
     assert.equal(await plan.row('15:30').count(), 0);
 
     await plan.row('15:15').getByRole('button', { name: '편집' }).click();
-    await page.locator('#target').fill('16:00');
+    await setTime(page, '16:00');
     await plan.save.click();
     await plan.row('16:00').waitFor();
     assert.equal(await plan.row('15:15').count(), 0);
@@ -93,6 +100,7 @@ async function run() {
     await plan.row('14:30').getByRole('button', { name: '삭제' }).click();
     await page.getByText('저장한 일정을 삭제했어요.').waitFor();
     assert.equal(await plan.row('14:30').count(), 0);
+    await page.locator('#more-details summary').click();
     await page.locator('#reset').click();
     await plan.row('16:00').waitFor();
     await context.setOffline(true);

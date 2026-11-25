@@ -6,6 +6,7 @@
       check: '예약 조회', checking: '서버에서 예약을 확인하는 중이에요.', checked: '서버 확인', previous: '마지막으로 확인한 예약',
       noActive: '서버에 남은 예약이 없어요.', noSubscription: '이 브라우저에 등록된 알림 구독이 없어요.',
       hint: '준비할 때와 출발할 때 이 기기로 알려드려요.', active: '예약됨', ready: '준비', leave: '출발', both: '준비·출발',
+      upcoming: '이번 예약 예정',
       denied: '알림 권한이 필요해요. 브라우저의 이 사이트 설정에서 알림을 허용해 주세요.',
       subscription: '브라우저가 이 기기를 푸시 서비스에 등록하지 못했어요. 인터넷 연결과 브라우저 알림 설정을 확인해 주세요.',
       unavailable: '알림 서버에 연결하지 못했어요. 연결을 확인하고 다시 시도해 주세요.',
@@ -20,6 +21,7 @@
       check: 'Check reminders', checking: 'Checking the server for reminders…', checked: 'Server checked', previous: 'Last known reminders',
       noActive: 'No reminders are scheduled on the server.', noSubscription: 'This browser has no notification subscription.',
       hint: 'Get a notification on this device when it’s time to get ready and leave.', active: 'Scheduled', ready: 'Get ready', leave: 'Leave', both: 'Get ready & leave',
+      upcoming: 'Reminders to schedule',
       denied: 'Allow notifications in the browser’s site settings.', unavailable: 'Couldn’t reach the reminder server. Check your connection and try again.',
       subscription: 'The browser could not register this device for push. Check your connection and browser notification settings.',
       invalid: 'Choose a departure in the next 30 days.', dst: 'This local time does not exist on that date. Adjust the time.',
@@ -32,6 +34,7 @@
       check: '予約を確認', checking: 'サーバーで予約を確認しています。', checked: 'サーバー確認時刻', previous: '前回確認した予約',
       noActive: 'サーバーに予約はありません。', noSubscription: 'このブラウザーは通知を受け取る登録をしていません。',
       hint: '支度と出発の時刻に、この端末へ通知します。', active: '予約済み', ready: '支度', leave: '出発', both: '支度・出発',
+      upcoming: '今回予約する通知',
       denied: 'ブラウザのサイト設定で通知を許可してください。', unavailable: '通知サーバーに接続できません。接続を確認してもう一度お試しください。',
       subscription: '端末をプッシュサービスに登録できません。ネットワークとブラウザの通知設定を確認してください。',
       invalid: '今から30日以内に出発する予定を選んでください。', dst: 'その日には存在しない現地時刻です。時刻を調整してください。',
@@ -44,6 +47,7 @@
       check: '查询预约', checking: '正在向服务器查询预约…', checked: '服务器查询时间', previous: '上次查询到的预约',
       noActive: '服务器上没有待发送的提醒。', noSubscription: '此浏览器尚未订阅通知。',
       hint: '准备和出发时，这台设备会收到通知。', active: '已预约', ready: '准备', leave: '出发', both: '准备和出发',
+      upcoming: '本次预约',
       denied: '请在浏览器的网站设置中允许通知。', unavailable: '无法连接提醒服务器。请检查网络后重试。',
       subscription: '浏览器无法为这台设备注册推送。请检查网络和浏览器通知设置。',
       invalid: '请选择未来30天内出发的计划。', dst: '这一天没有该本地时间，请调整时间。',
@@ -105,6 +109,15 @@
     function render() {
       const words = messages[language()], next = times();
       const same = current && next && current.ready === next.ready && current.leave === next.leave;
+      const format = new Intl.DateTimeFormat(language(), {month: 'short', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit'});
+      const now = Date.now();
+      const events = !same && next && Number.isFinite(next.ready) && next.leave > now && next.leave <= now + 30 * 86400_000
+        ? (next.ready === next.leave ? [['both', next.leave]] : [['ready', next.ready], ['leave', next.leave]])
+          .filter(([, at]) => at > now)
+        : [];
+      const preview = el('push-preview');
+      preview.hidden = !events.length;
+      preview.textContent = events.length ? [words.upcoming, ...events.map(([kind, at]) => words[kind] + ' · ' + format.format(at))].join('\n') : '';
       el('push-title').textContent = words.title;
       save.textContent = words[busy ? 'busy' : same ? 'saved' : current ? 'replace' : 'save'];
       save.disabled = busy || !next || Boolean(same);
@@ -117,7 +130,6 @@
       if (checking) status.push(words.checking);
       if (notice) status.push(words[notice] || words.unavailable);
       if (current) {
-        const format = new Intl.DateTimeFormat(language(), { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         const label = checking || notice === 'unknown' ? words.previous : words.active;
         status.push(label + ' · ' + current.events.map(event => words[event.kind] + ' ' + format.format(event.at)).join(' / '));
       } else if (checkedAt !== null) status.push(words.noActive);

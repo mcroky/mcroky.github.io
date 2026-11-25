@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const release = '1.6.7';
+  const release = '1.6.8';
   const versionLabel = document.getElementById('app-version');
   if (versionLabel) versionLabel.textContent = `v${release}`;
 
@@ -10,7 +10,7 @@
     ko: {
       nav: 'Roky Studio 안내', updates: '업데이트', feedback: '의견 보내기', books: '전자책',
       support: '후원하기', close: '닫기', newTab: '새 탭에서 열기',
-      version: `웹 버전 ${release}`, change: '일정을 이 기기에 저장하고, 저장한 일정에서 다시 열어 편집하거나 삭제할 수 있어요.',
+      version: `웹 버전 ${release}`, change: '약속 시간 행 전체를 눌러 시간을 바꾸고, 첫 화면에서 출발 시각을 바로 확인할 수 있어요.',
       choice: '더 좋은 앱을 위한 후원', about: '나갈때는 무료입니다. 원하시면 다음 업데이트를 후원할 수 있어요.',
       coffee: 'Buy Me a Coffee로 후원', bank: '카카오뱅크 계좌번호 복사', number: '카카오뱅크 계좌번호',
       copied: '계좌번호를 복사했습니다.', manual: '계좌번호를 직접 선택해 복사해 주세요.'
@@ -18,7 +18,7 @@
     en: {
       nav: 'Roky Studio links', updates: 'Updates', feedback: 'Feedback', books: 'E-books',
       support: 'Support the app', close: 'Close', newTab: 'opens in a new tab',
-      version: `Web version ${release}`, change: 'Save plans on this device, then reopen, edit, or delete them from Saved plans.',
+      version: `Web version ${release}`, change: 'Tap anywhere in the appointment time row to change the time and see when to leave on the first screen.',
       choice: 'Support development', about: 'Nagalttae is free. You can help fund future updates if you like.',
       coffee: 'Support via Buy Me a Coffee', bank: 'Copy KakaoBank account number', number: 'KakaoBank account number',
       copied: 'Account number copied.', manual: 'Select the account number and copy it manually.'
@@ -26,7 +26,7 @@
     ja: {
       nav: 'Roky Studioのリンク', updates: '更新履歴', feedback: 'ご意見', books: '電子書籍',
       support: '開発を応援', close: '閉じる', newTab: '新しいタブで開く',
-      version: `Web版 ${release}`, change: '予定をこの端末に保存し、一覧から開き直して編集・削除できます。',
+      version: `Web版 ${release}`, change: '予定時刻の行全体をタップして時刻を変更し、最初の画面で出発時刻を確認できます。',
       choice: '開発を応援する', about: 'このアプリは無料です。ご希望の方は今後の開発を応援していただけます。',
       coffee: 'Buy Me a Coffeeで応援', bank: 'カカオバンクの口座番号をコピー', number: 'カカオバンクの口座番号',
       copied: '口座番号をコピーしました。', manual: '口座番号を選択して手動でコピーしてください。'
@@ -34,7 +34,7 @@
     zh: {
       nav: 'Roky Studio 链接', updates: '更新记录', feedback: '意见反馈', books: '电子书',
       support: '支持开发', close: '关闭', newTab: '在新标签页中打开',
-      version: `网页版 ${release}`, change: '可将行程保存在此设备上，然后从列表重新打开、编辑或删除。',
+      version: `网页版 ${release}`, change: '点按约定时间一行的任意位置即可更改时间，并在首页查看出发时间。',
       choice: '支持应用开发', about: '本应用免费使用。如果愿意，你可以支持后续开发。',
       coffee: '通过 Buy Me a Coffee 支持', bank: '复制 KakaoBank 账号', number: 'KakaoBank 账号',
       copied: '账号已复制。', manual: '请选中账号并手动复制。'

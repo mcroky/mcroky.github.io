@@ -9,6 +9,9 @@
   ];
   const stops = ['ready', 'leave', 'arrive', 'target'];
   const dateInput = el('date');
+  const timeInput = el('target');
+  const timeDialog = el('time-dialog');
+  const savedDetails = el('saved-plans-details');
   const form = el('settings-form');
   const dayButtons = [...document.querySelectorAll('[data-day]')];
   const actionButtons = [...document.querySelectorAll('.actions button:not(#alarms), #clock-quick button')];
@@ -21,6 +24,7 @@
   const storageKey = 'nagalttae.language';
   let locale = 'ko';
   let copy;
+  let timeFormat;
   let toastTimer;
   let minuteTimer;
   let calendarSaving = false;
@@ -99,6 +103,7 @@
   function setLocale(value) {
     locale = Object.hasOwn(NagalCopy, value) ? value : 'ko';
     copy = NagalCopy[locale];
+    timeFormat = new Intl.DateTimeFormat(locale, {hour: 'numeric', minute: '2-digit', timeZone: 'UTC'});
     document.documentElement.lang = locale === 'zh' ? 'zh-CN' : locale;
     document.title = copy.pageTitle;
     document.querySelector('meta[name="description"]').content = copy.description;
@@ -108,10 +113,13 @@
     el('close-calendar').setAttribute('aria-label', copy.close);
     el('close-install').setAttribute('aria-label', copy.close);
     el('close-clock').setAttribute('aria-label', copy.close);
+    el('close-time').setAttribute('aria-label', copy.close);
+    el('close-reminders').setAttribute('aria-label', copy.close);
     el('event-name').placeholder = copy.appointment;
     dateInput.setAttribute('aria-label', copy.selectedDate);
     document.querySelector('.wordmark').setAttribute('aria-label', copy.appName);
     document.querySelector('.days').setAttribute('aria-label', copy.date);
+    document.querySelector('.settings').setAttribute('aria-label', copy.settings);
     for (const node of document.querySelectorAll('[data-text]')) node.textContent = copy[node.dataset.text];
     for (const {key} of segments) {
       for (const button of el(key).closest('.stepper').querySelectorAll('button')) {
@@ -198,7 +206,7 @@
     applyFormValues(record.plan);
     updateDraft();
     renderSavedList();
-    el('target').focus();
+    el('time-open').focus();
   }
 
   function endSavedEdit() {
@@ -218,7 +226,8 @@
       const stored = remove ? await NagalSavedPlans.remove(remove) : await NagalSavedPlans.save(snapshot, previous);
       savedNotice = stored ? (remove ? 'planDeleted' : 'planSaved') : 'savedPlanConflict';
       if (!remove || editingPlan?.id === remove.id) endSavedEdit();
-      el('saved-plans-details').open = true;
+      savedDetails.hidden = false;
+      savedDetails.open = true;
       savedPlans = await NagalSavedPlans.list();
     } catch {
       savedNotice = 'savedPlanUnavailable';
@@ -249,6 +258,12 @@
       const {time, dayOffset} = NagalPlanner.clockParts(plan[key]);
       return { label: copy[key], time, offset: dayOffset < 0 ? copy.earlierDay : '', dayOffset };
     });
+  }
+
+  function displayTime(value) {
+    if (!/^\d{2}:\d{2}$/.test(value ?? '')) return '--:--';
+    const [hour, minute] = value.split(':').map(Number);
+    return timeFormat.format(Date.UTC(2000, 0, 1, hour, minute));
   }
 
   function updateClock(plan) {
@@ -285,7 +300,14 @@
     refreshPush?.();
     const rows = plan ? eventRows(plan) : [];
     const includeYear = date && date.getUTCFullYear() !== new Date().getFullYear();
-    el('date-label').textContent = date ? formatDay(date, {year: includeYear ? 'numeric' : undefined, month: 'short', day: 'numeric', weekday: 'short'}) : copy.selectedDate;
+    const relativeDay = dateInput.value === localDay(0) ? copy.today : dateInput.value === localDay(1) ? copy.tomorrow : '';
+    el('date-label').textContent = date ? [relativeDay, formatDay(date,
+      {year: includeYear ? 'numeric' : undefined, month: 'short', day: 'numeric', weekday: 'short'})].filter(Boolean).join(' · ') : copy.selectedDate;
+    el('time-label').textContent = displayTime(timeInput.value);
+    el('duration-summary').textContent = segments.map(({key}) => {
+      const value = el(key).valueAsNumber;
+      return copy[key + 'Brief'] + ' ' + (el(key).validity.valid ? durationText(value) : '—');
+    }).join(' · ');
     for (const input of form.querySelectorAll('input')) {
       const invalid = !input.validity.valid;
       const error = el(input.id + '-error');
@@ -301,24 +323,13 @@
       buttons[1].disabled = input.valueAsNumber === 240;
     }
     for (const button of actionButtons) button.disabled = !plan || (calendarSaving && calendarButtons.includes(button));
-    el('depart-time').value = plan ? rows[1].time : '--:--';
-    for (const [index, id] of ['mobile-ready', 'mobile-leave'].entries()) {
-      const row = rows[index];
-      const value = el(id);
-      value.querySelector('.summary-offset').textContent = row?.offset ? row.offset + ' ' : '';
-      value.querySelector('time').textContent = row?.time ?? '--:--';
-    }
+    el('depart-time').value = displayTime(rows[1]?.time);
+    el('ready-time').textContent = [rows[0]?.offset, displayTime(rows[0]?.time)].filter(Boolean).join(' ');
     updateClock(plan);
     el('total').textContent = plan ? durationText(plan.total) : '–';
     const previousDay = Boolean(plan && rows[1].dayOffset < 0);
     el('offset-tag').hidden = !previousDay;
     el('offset-tag').textContent = previousDay ? copy.dayBefore : '';
-    const departureDate = plan ? new Date(date) : null;
-    if (departureDate) departureDate.setUTCDate(departureDate.getUTCDate() + rows[1].dayOffset);
-    el('stub-day').textContent = departureDate ? new Intl.NumberFormat(locale).format(departureDate.getUTCDate()) : '–';
-    for (const [id, options] of [['stub-month', {month:'short'}], ['stub-weekday',{weekday:'short'}]]) {
-      el(id).textContent = departureDate ? formatDay(departureDate, options) : '–';
-    }
     stops.forEach((key, index) => {
       const stop = el('stop-' + key);
       stop.querySelector('.stop-time').textContent = plan ? rows[index].time : '--:--';
@@ -640,9 +651,40 @@
     updateDraft();
     renderSavedList();
   });
-  el('saved-plans-details').addEventListener('toggle', event => {
-    if (event.currentTarget.open) loadSavedPlans();
+  const savedOpen = el('saved-plans-open');
+  savedOpen.addEventListener('click', () => {
+    if (savedDetails.open) savedDetails.open = false;
+    else {
+      savedDetails.hidden = false;
+      savedDetails.open = true;
+      savedDetails.querySelector('summary').focus();
+    }
   });
+  savedDetails.addEventListener('toggle', () => {
+    savedOpen.setAttribute('aria-expanded', String(savedDetails.open));
+    if (savedDetails.open) loadSavedPlans();
+    else {
+      if (savedDetails.contains(document.activeElement)) savedOpen.focus();
+      savedDetails.hidden = true;
+    }
+  });
+  el('time-open').addEventListener('click', () => {
+    timeDialog.showModal();
+    if (!isAppleMobile()) {
+      try { timeInput.showPicker?.(); } catch { /* The time field can still be edited. */ }
+    }
+  });
+  el('close-time').addEventListener('click', () => timeDialog.close());
+  el('done-time').addEventListener('click', () => {
+    if (timeInput.reportValidity()) timeDialog.close();
+  });
+  const reminderDialog = el('reminders-dialog');
+  const remindersOpen = el('reminders-open');
+  remindersOpen.addEventListener('click', () => {
+    refreshPush?.();
+    reminderDialog.showModal();
+  });
+  el('close-reminders').addEventListener('click', () => reminderDialog.close());
   for (const button of dayButtons) {
     button.addEventListener('click', () => { dateInput.value = localDay(Number(button.dataset.day)); updateDraft(); });
   }
@@ -670,9 +712,17 @@
   mountInstall();
   const push = !android && window.NagalPush?.mount({ plan: readPlan, date: () => dateInput.value, language: () => locale });
   refreshPush = push?.render;
-  const transitOptions = { language: () => locale };
-  timetable = window.NagalTimetable?.mount(transitOptions);
-  busBoard = window.NagalTransit?.mount({ ...transitOptions, onPosition: timetable?.receivePosition });
+  remindersOpen.hidden = !push;
+  const nearby = el('nearby-details');
+  function showNearby() {
+    if (!nearby.open) return;
+    nearby.removeEventListener('toggle', showNearby);
+    const transitOptions = { language: () => locale };
+    timetable = window.NagalTimetable?.mount(transitOptions);
+    busBoard = window.NagalTransit?.mount({ ...transitOptions, onPosition: timetable?.receivePosition });
+  }
+  nearby.addEventListener('toggle', showNearby);
+  showNearby();
   mountClockTransfer();
   window.NagalMobile?.mount({plan: readPlan, date: () => dateInput.value, dateLabel: appointmentDate,
     rows: eventRows, strings: () => copy, language: () => locale, notify});

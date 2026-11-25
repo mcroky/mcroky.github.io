@@ -62,148 +62,174 @@
       </a>
       <nav class="nav-end" aria-label="Roky Studio">
         <a class="studio-home" href="https://mcroky.github.io/roky-studio/"><span data-text="studio">Roky Studio</span><svg class="ic"><use href="#i-out"/></svg></a>
-        <label class="language"><svg class="ic"><use href="#i-globe"/></svg><select id="language" aria-label="언어"><option value="ko">한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh">简体中文</option></select><svg class="ic caret"><use href="#i-chevron"/></svg></label>
+        <button id="saved-plans-open" class="quiet" type="button" aria-controls="saved-plans-details" aria-expanded="false" data-text="savedPlans">저장한 일정</button>
       </nav>
     </div>
   </header>
   <main class="wrap">
     <section class="intro">
-      <div class="intro-content">
-        <h1 data-text="heading">언제 나가야 할까?</h1>
-        <p class="intro-text" data-text="intro">약속 시간에 맞춰 준비할 때와 나갈 때를 확인하세요.</p>
-        <button id="install-app" type="button" aria-haspopup="dialog" hidden><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg><span data-text="installApp">앱 설치</span></button>
-        <button id="refresh-app" type="button" data-text="refreshApp" hidden>새로고침</button>
-      </div>
-      <div class="still-life" aria-hidden="true"><img src="morning.webp" alt="" fetchpriority="high"></div>
+      <h1 data-text="heading">언제 나가야 할까?</h1>
+      <button id="refresh-app" type="button" data-text="refreshApp" hidden>새로고침</button>
     </section>
     <div class="workspace">
-      <section class="settings panel" aria-labelledby="settings-title">
-        <div class="section-head"><h2 id="settings-title"><svg class="ic"><use href="#i-controls"/></svg><span data-text="settings">일정 설정</span></h2><button id="reset" class="quiet" type="button"><svg class="ic"><use href="#i-reset"/></svg><span data-text="reset">초기화</span></button></div>
-        <dl class="mobile-summary" aria-live="polite" aria-atomic="true">
-          <div><dt data-text="ready">준비 시작</dt><dd id="mobile-ready"><small class="summary-offset"></small><time>--:--</time></dd></div>
-          <div><dt data-text="leaveShort">출발</dt><dd id="mobile-leave"><small class="summary-offset"></small><time>--:--</time></dd></div>
-        </dl>
+      <section class="settings panel" aria-label="일정 설정">
         <form id="settings-form" novalidate>
-          <div class="when">
-            <label class="field-label" for="target" data-text="target">약속 시간</label>
-            <input id="target" type="time" value="10:00" step="60" required>
-            <p id="target-error" class="field-error" data-text="invalidTime" role="alert" hidden></p>
+          <details id="date-adjust">
+            <summary class="control-row"><span data-text="date">약속 날짜</span><strong id="date-label"></strong><svg class="ic row-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
             <div class="date-row">
               <div class="days" role="group" aria-label="약속 날짜">
                 <button type="button" data-day="0" data-text="today">오늘</button><button type="button" data-day="1" data-text="tomorrow">내일</button>
               </div>
-              <label class="date-picker">
+              <label class="date-picker" for="date">
                 <svg class="ic"><use href="#i-calendar"/></svg>
-                <span id="date-label"></span>
+                <span data-text="selectedDate">날짜 선택</span>
                 <svg class="ic date-caret"><use href="#i-chevron"/></svg>
                 <input id="date" type="date" min="0001-01-01" max="9999-12-31" required aria-label="날짜 선택">
               </label>
             </div>
-            <p id="date-error" class="field-error" data-text="invalidDate" role="alert" hidden></p>
-          </div>
-          <div class="durations" id="durations"></div>
+          </details>
+          <p id="date-error" class="field-error" data-text="invalidDate" role="alert" hidden></p>
+          <button id="time-open" class="control-row time-row" type="button" aria-haspopup="dialog" aria-controls="time-dialog">
+            <span data-text="target">약속 시간</span><strong id="time-label">10:00</strong><span class="change-chip" data-text="changeTime">시간 변경</span>
+          </button>
+          <dialog id="time-dialog" aria-labelledby="time-title">
+            <div class="dialog-heading"><h2 id="time-title" data-text="changeTime">시간 변경</h2><button id="close-time" class="icon-button" type="button" aria-label="닫기"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+            <label class="time-editor"><span data-text="target">약속 시간</span><input id="target" type="time" value="10:00" step="60" required autofocus></label>
+            <button id="done-time" class="primary-button" type="button" data-text="timeDone">완료</button>
+          </dialog>
+          <p id="target-error" class="field-error" data-text="invalidTime" role="alert" hidden></p>
+          <details id="duration-adjust">
+            <summary class="control-row"><span id="duration-summary"></span><strong data-text="adjustTimes">조정</strong><svg class="ic row-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+            <div class="durations" id="durations"></div>
+          </details>
         </form>
-        <div class="saved-plans" aria-labelledby="saved-plans-title">
-          <div class="saved-plan-actions">
-            <button id="saved-plan-save" type="button" data-text="savePlan">이 일정 저장</button>
-            <button id="saved-plan-discard" type="button" data-text="discardPlanEdit" hidden>편집 취소</button>
+      </section>
+      <div class="results">
+        <section class="ticket" aria-labelledby="departure-label">
+          <div class="ticket-main">
+            <h2 class="departure-label" id="departure-label"><span data-text="leaveShort">출발</span> <span id="offset-tag" hidden></span></h2>
+            <div aria-live="polite" aria-atomic="true">
+              <output id="depart-time" class="depart-time" aria-labelledby="departure-label" for="target date prep travel buffer">--:--</output>
+              <p class="ready-line"><span data-text="ready">준비 시작</span> <strong id="ready-time">--:--</strong></p>
+            </div>
+            <p class="phase" id="phase-line" hidden><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg><span id="phase-text"></span></p>
           </div>
-          <details id="saved-plans-details">
-            <summary id="saved-plans-title" data-text="savedPlans">저장한 일정</summary>
+        </section>
+        <div class="main-actions">
+          <button id="reminders-open" class="primary-button" type="button" aria-haspopup="dialog" aria-controls="reminders-dialog" data-text="remindersAction" hidden>알림 예약</button>
+          <button id="alarms" class="primary-button" type="button" aria-haspopup="dialog" aria-controls="alarm-dialog" data-text="remindersAction" hidden>알림 예약</button>
+          <button id="saved-plan-save" type="button" data-text="savePlan">일정 저장</button>
+          <button id="saved-plan-discard" type="button" data-text="discardPlanEdit" hidden>편집 취소</button>
+        </div>
+        <p id="saved-plans-status" role="status"></p>
+        <details class="saved-plans panel" id="saved-plans-details" hidden>
+          <summary class="control-row"><span id="saved-plans-title" data-text="savedPlans">저장한 일정</span><svg class="ic row-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+          <div class="disclosure-content">
             <p class="saved-plans-note" data-text="savedPlansNote">이 기기 브라우저에 저장돼요.</p>
             <p id="saved-plans-empty" data-text="savedPlansEmpty" hidden>저장한 일정이 없어요.</p>
             <ul id="saved-plans-list"></ul>
+          </div>
+        </details>
+        <div class="secondary-sections panel">
+          <details class="timeline">
+            <summary class="control-row"><span data-text="scheduleDetails">상세 일정</span><svg class="ic row-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+            <div class="disclosure-content">
+              <p class="total"><span data-text="total">총 소요</span> <strong id="total">–</strong></p>
+              <ol class="stops" id="stops"></ol>
+              <div class="clock-quick" id="clock-quick" hidden>
+                <button id="clock-quick-ready" type="button" aria-controls="clock-dialog" aria-haspopup="dialog"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyReady">준비 시각 복사</span></button>
+                <button id="clock-quick-leave" type="button" aria-controls="clock-dialog" aria-haspopup="dialog"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyLeave">출발 시각 복사</span></button>
+              </div>
+            </div>
           </details>
-          <p id="saved-plans-status" role="status"></p>
-        </div>
-      </section>
-      <div class="results">
-        <section class="ticket" aria-labelledby="ticket-title">
-          <div class="ticket-main">
-            <h2 id="ticket-title"><svg class="ic"><use href="#i-ticket"/></svg><span data-text="ticket">출발 티켓</span></h2>
-            <div class="departure-label" id="departure-label"><span data-text="leave">출발 시각</span><span id="offset-tag" hidden></span></div>
-            <output id="depart-time" class="depart-time" aria-labelledby="departure-label" for="target date prep travel buffer">--:--</output>
-            <p class="phase" id="phase-line" hidden><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg><span id="phase-text"></span></p>
-          </div>
-          <div class="ticket-stub"><span id="stub-month"></span><strong id="stub-day">–</strong><span id="stub-weekday"></span><div class="barcode" aria-hidden="true"></div></div>
-        </section>
-        <section class="timeline panel" aria-labelledby="timeline-title">
-          <div class="section-head"><h2 id="timeline-title"><svg class="ic"><use href="#i-route"/></svg><span data-text="timeline">내 타임라인</span></h2><span class="total"><span data-text="total">총 소요</span> <strong id="total">–</strong></span></div>
-          <ol class="stops" id="stops"></ol>
-          <div class="clock-quick" id="clock-quick" hidden>
-            <button id="clock-quick-ready" type="button" aria-controls="clock-dialog" aria-haspopup="dialog"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyReady">준비 시각 복사</span></button>
-            <button id="clock-quick-leave" type="button" aria-controls="clock-dialog" aria-haspopup="dialog"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span data-text="clockCopyLeave">출발 시각 복사</span></button>
-          </div>
-        </section>
-        <section class="push-panel panel" id="push-panel" aria-labelledby="push-title" hidden>
-          <h2 id="push-title"></h2>
-          <div id="push-install" class="install-invite" hidden>
-            <p id="push-install-browser" data-text="pushInstallBrowser"></p>
-            <p id="push-install-apple" data-text="pushInstallApple" hidden></p>
-            <button id="push-install-button" type="button" aria-haspopup="dialog" aria-controls="install-dialog"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg><span data-text="pushInstallAction">홈 화면에 설치</span></button>
-          </div>
-          <p id="push-status" role="status" aria-live="polite"></p>
-          <div class="push-controls">
-            <button id="push-save" type="button"></button>
-            <button id="push-check" type="button" hidden></button>
-            <button id="push-cancel" type="button" hidden></button>
-          </div>
-        </section>
-        <div class="actions">
-          <button id="alarms" type="button" aria-haspopup="dialog" hidden><svg class="ic"><use href="#i-clock"/></svg><span data-text="alarmAction">알람 설정</span></button>
-          <button id="calendar-download" type="button" hidden><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg><span data-text="calendarDownloadAction">준비·출발 알림 파일 받기</span></button>
-          <button id="calendar" type="button" aria-haspopup="dialog" aria-controls="calendar-dialog" data-text="calendarOptions">캘린더 설정</button>
-          <button id="clock-transfer" type="button" aria-haspopup="dialog" hidden><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg><span data-text="clockAction">시계에 옮기기</span></button>
-          <button id="download" type="button"><svg class="ic"><use href="#i-download"/></svg><span data-text="saveTicket">티켓 이미지 저장</span></button>
-          <button id="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span data-text="copy">일정 복사</span></button>
-          <button id="share" type="button"><svg class="ic"><use href="#i-x"/></svg><span data-text="share">X에 공유</span></button>
-        </div>
-        <section id="bus-panel" class="push-panel panel" aria-labelledby="bus-heading">
-          <h2 id="bus-heading" data-text="busHeading">내 주변 정류장</h2>
-          <p id="bus-status" role="status" aria-live="polite"></p>
-          <button id="bus-locate" type="button" data-text="busLocate" hidden>현재 위치로 다시 찾기</button>
-          <div id="bus-board" hidden>
-            <h3 id="bus-station-name"></h3>
-            <p id="bus-arrivals" role="status" aria-live="polite"></p>
-            <ul id="bus-next" class="transit-arrivals" hidden></ul>
-            <button id="bus-reload" type="button" data-text="busReload">도착 정보 새로고침</button>
-            <a id="bus-official" href="https://m.gbis.go.kr/search" target="_blank" rel="noopener noreferrer" data-text="busOfficial">경기버스정보에서 보기</a>
-            <a id="bus-map" target="_blank" rel="noopener noreferrer" data-text="busMap" hidden>카카오맵에서 정류장 보기</a>
-          </div>
-          <details id="bus-manual">
-            <summary data-text="busManual">다른 정류장 검색</summary>
-            <label class="bus-search"><span data-text="busSearch">정류장 이름 또는 번호</span><input id="bus-query" type="search" inputmode="search" autocomplete="off" maxlength="60"></label>
+          <details id="nearby-details">
+            <summary class="control-row"><span data-text="nearbyTransport">주변 교통</span><svg class="ic row-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+            <div class="disclosure-content transit-content">
+              <section id="bus-panel" class="push-panel panel" aria-labelledby="bus-heading">
+                <h2 id="bus-heading" data-text="busHeading">내 주변 정류장</h2>
+                <p id="bus-status" role="status" aria-live="polite"></p>
+                <button id="bus-locate" type="button" data-text="busLocate" hidden>현재 위치로 다시 찾기</button>
+                <div id="bus-board" hidden>
+                  <h3 id="bus-station-name"></h3>
+                  <p id="bus-arrivals" role="status" aria-live="polite"></p>
+                  <ul id="bus-next" class="transit-arrivals" hidden></ul>
+                  <button id="bus-reload" type="button" data-text="busReload">도착 정보 새로고침</button>
+                  <a id="bus-official" href="https://m.gbis.go.kr/search" target="_blank" rel="noopener noreferrer" data-text="busOfficial">경기버스정보에서 보기</a>
+                  <a id="bus-map" target="_blank" rel="noopener noreferrer" data-text="busMap" hidden>카카오맵에서 정류장 보기</a>
+                </div>
+                <details id="bus-manual">
+                  <summary data-text="busManual">다른 정류장 검색</summary>
+                  <label class="bus-search"><span data-text="busSearch">정류장 이름 또는 번호</span><input id="bus-query" type="search" inputmode="search" autocomplete="off" maxlength="60"></label>
+                </details>
+                <div id="bus-stops"></div>
+              </section>
+              <section class="push-panel panel" id="timetable-panel" aria-labelledby="timetable-title">
+                <h2 id="timetable-title" data-text="timetableNearbyTitle">내 주변 지하철역</h2>
+                <div class="timetable-fields">
+                  <label class="bus-search timetable-field-wide"><span data-text="timetableQuery">역 이름 검색</span><input id="timetable-query" type="search" maxlength="60" autocomplete="off"></label>
+                  <label class="bus-search timetable-field-wide"><span data-text="timetableStation">지하철역</span><select id="timetable-station"></select></label>
+                  <button type="button" id="timetable-nearby" data-text="timetableNearby" hidden>내 주변 역 보기</button>
+                </div>
+                <div class="timetable-modes">
+                  <button type="button" id="timetable-mode-live" aria-pressed="true" data-text="timetableLive">실시간 도착</button>
+                  <button type="button" id="timetable-mode-schedule" aria-pressed="false" data-text="timetableSchedule">시간표</button>
+                </div>
+                <div id="timetable-live-panel">
+                  <p id="timetable-live-status" role="status"></p>
+                  <ul id="timetable-live-arrivals" class="transit-arrivals" hidden></ul>
+                  <button type="button" id="timetable-live-refresh" data-text="timetableLiveRefresh" hidden>실시간 새로고침</button>
+                </div>
+                <div class="timetable-fields" id="timetable-planned-fields" hidden>
+                  <label class="bus-search"><span data-text="timetableDate">탑승 날짜 (한국 시간)</span><input id="timetable-date" type="date" required></label>
+                  <label class="bus-search" id="timetable-direction-field" hidden><span data-text="timetableDirection">진행 방향</span><select id="timetable-direction"></select></label>
+                </div>
+                <p id="timetable-summary" role="status" hidden></p>
+                <ul id="timetable-scheduled-arrivals" class="transit-arrivals" hidden></ul>
+                <button type="button" id="timetable-refresh" data-text="timetableRefresh" hidden>시간표 다시 불러오기</button>
+                <p class="timetable-source" id="timetable-schedule-source" hidden><span id="timetable-day-type"></span><a id="timetable-source" href="https://data.kric.go.kr/rips/M_01_01/detail.do?id=900" target="_blank" rel="noopener noreferrer">철도공단 공개 시간표</a></p>
+              </section>
+            </div>
           </details>
-          <div id="bus-stops"></div>
-        </section>
-        <section class="push-panel panel" id="timetable-panel" aria-labelledby="timetable-title">
-          <h2 id="timetable-title" data-text="timetableNearbyTitle">내 주변 지하철역</h2>
-          <div class="timetable-fields">
-            <label class="bus-search timetable-field-wide"><span data-text="timetableQuery">역 이름 검색</span><input id="timetable-query" type="search" maxlength="60" autocomplete="off"></label>
-            <label class="bus-search timetable-field-wide"><span data-text="timetableStation">지하철역</span><select id="timetable-station"></select></label>
-            <button type="button" id="timetable-nearby" data-text="timetableNearby" hidden>내 주변 역 보기</button>
-          </div>
-          <div class="timetable-modes">
-            <button type="button" id="timetable-mode-live" aria-pressed="true" data-text="timetableLive">실시간 도착</button>
-            <button type="button" id="timetable-mode-schedule" aria-pressed="false" data-text="timetableSchedule">시간표</button>
-          </div>
-          <div id="timetable-live-panel">
-            <p id="timetable-live-status" role="status"></p>
-            <ul id="timetable-live-arrivals" class="transit-arrivals" hidden></ul>
-            <button type="button" id="timetable-live-refresh" data-text="timetableLiveRefresh" hidden>실시간 새로고침</button>
-          </div>
-          <div class="timetable-fields" id="timetable-planned-fields" hidden>
-            <label class="bus-search"><span data-text="timetableDate">탑승 날짜 (한국 시간)</span><input id="timetable-date" type="date" required></label>
-            <label class="bus-search" id="timetable-direction-field" hidden><span data-text="timetableDirection">진행 방향</span><select id="timetable-direction"></select></label>
-          </div>
-          <p id="timetable-summary" role="status" hidden></p>
-          <ul id="timetable-scheduled-arrivals" class="transit-arrivals" hidden></ul>
-          <button type="button" id="timetable-refresh" data-text="timetableRefresh" hidden>시간표 다시 불러오기</button>
-          <p class="timetable-source" id="timetable-schedule-source" hidden><span id="timetable-day-type"></span><a id="timetable-source" href="https://data.kric.go.kr/rips/M_01_01/detail.do?id=900" target="_blank" rel="noopener noreferrer">철도공단 공개 시간표</a></p>
-        </section>
+          <details id="more-details">
+            <summary class="control-row"><span data-text="moreActions">더보기</span><svg class="ic row-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+            <div class="disclosure-content">
+              <div class="actions">
+                <button id="calendar-download" type="button" hidden><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg><span data-text="calendarDownloadAction">준비·출발 알림 파일 받기</span></button>
+                <button id="calendar" type="button" aria-haspopup="dialog" aria-controls="calendar-dialog" data-text="calendarOptions">캘린더 설정</button>
+                <button id="clock-transfer" type="button" aria-haspopup="dialog" hidden><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg><span data-text="clockAction">시계에 옮기기</span></button>
+                <button id="download" type="button"><svg class="ic"><use href="#i-download"/></svg><span data-text="saveTicket">티켓 이미지 저장</span></button>
+                <button id="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span data-text="copy">일정 복사</span></button>
+                <button id="share" type="button"><svg class="ic"><use href="#i-x"/></svg><span data-text="share">X에 공유</span></button>
+              </div>
+              <div class="secondary-preferences">
+                <label class="language"><svg class="ic"><use href="#i-globe"/></svg><select id="language" aria-label="언어"><option value="ko">한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh">简体中文</option></select><svg class="ic caret"><use href="#i-chevron"/></svg></label>
+                <button id="install-app" type="button" aria-haspopup="dialog" aria-controls="install-dialog" hidden data-text="installApp">앱 설치</button>
+                <button id="reset" class="quiet" type="button" data-text="reset">초기화</button>
+              </div>
+            </div>
+          </details>
+        </div>
       </div>
     </div>
   </main>
+  <dialog id="reminders-dialog" aria-labelledby="push-title">
+    <section class="push-panel panel" id="push-panel" aria-labelledby="push-title" hidden>
+      <div class="dialog-heading"><h2 id="push-title"></h2><button id="close-reminders" class="icon-button" type="button" aria-label="닫기"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+      <p id="push-preview" hidden></p>
+      <div id="push-install" class="install-invite" hidden>
+        <p id="push-install-browser" data-text="pushInstallBrowser"></p>
+        <p id="push-install-apple" data-text="pushInstallApple" hidden></p>
+        <button id="push-install-button" type="button" aria-haspopup="dialog" aria-controls="install-dialog"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg><span data-text="pushInstallAction">홈 화면에 설치</span></button>
+      </div>
+      <p id="push-status" role="status" aria-live="polite"></p>
+      <div class="push-controls">
+        <button id="push-save" type="button"></button>
+        <button id="push-check" type="button" hidden></button>
+        <button id="push-cancel" type="button" hidden></button>
+      </div>
+    </section>
+  </dialog>
+
   <footer id="studio-footer"></footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <dialog id="clock-dialog" aria-labelledby="clock-title">
