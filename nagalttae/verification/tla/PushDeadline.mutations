@@ -1,0 +1,62 @@
+mutation track the waiting browser callback under the previous attempt number
+detects TypeOK
+only one attempt
+-           /\ pending' = IF phase = "idle" THEN pending ELSE pending \cup {Token(sequence', phase)}
++           /\ pending' = IF phase = "idle" THEN pending ELSE pending \cup {Token(sequence, phase)}
+
+mutation leave the action locked when a timeout changes its notice
+detects DeadlineUnlocks
+only one attempt
+-     /\ view' = End(TimeoutNotice, view.plan, FALSE)
++     /\ view' = [view EXCEPT !.notice = TimeoutNotice]
+
+mutation send a reservation after the abandoned browser callback completes
+detects LateCannotChange
+only one attempt
+-     /\ UNCHANGED <<sequence, view, sent, expired>>
++     /\ sent' = sent \cup {callback.id}
++     /\ UNCHANGED <<sequence, view, expired>>
+
+mutation send a reservation while worker registration has still to finish
+detects WriteAfterPreflight
+only one attempt
+-           /\ sent' = IF phase = "server" /\ view.kind = "write" THEN sent \cup {sequence} ELSE sent
++           /\ sent' = IF view.kind = "write" THEN sent \cup {sequence} ELSE sent
+
+mutation clear the previous reservation when a later lookup or reservation times out
+detects FailurePreservesPlan
+only two attempts
+-     /\ view' = End(TimeoutNotice, view.plan, FALSE)
++     /\ view' = End(TimeoutNotice, FALSE, FALSE)
+
+mutation present an ambiguous timeout as confirmed
+detects FailurePreservesPlan
+only one attempt
+-     /\ view' = End(TimeoutNotice, view.plan, FALSE)
++     /\ view' = End(TimeoutNotice, view.plan, TRUE)
+
+mutation hide the lookup advice after the server write outcome is unknown
+detects UnconfirmedWriteNeedsLookup
+only one attempt
+- ServerFailure == IF view.kind = "write" \/ view.notice = "writeUnknown" THEN "writeUnknown" ELSE "readUnknown"
++ ServerFailure == "readUnknown"
+
+mutation classify an unanswered permission prompt as an explicit denial
+detects PermissionTimeoutDistinct
+only one attempt
+- TimeoutNotice == CASE view.phase = "permission" -> "permissionTimeout"
++ TimeoutNotice == CASE view.phase = "permission" -> "denied"
+
+mutation register no expiry timer for a pending permission request
+detects AttemptReturns
+only one attempt
+- Expire ==
+-     /\ Waiting
++ Expire ==
++     /\ Waiting /\ view.phase # "permission"
+
+mutation erase the ambiguous write notice if device lookup times out
+detects UnconfirmedWriteSurvivesFailedLookup
+only two attempts
+-                    [] view.kind = "read" -> IF view.notice = "writeUnknown" THEN "writeUnknown" ELSE "lookupTimeout"
++                    [] view.kind = "read" -> "lookupTimeout"

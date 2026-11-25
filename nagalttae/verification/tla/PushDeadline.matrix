@@ -1,0 +1,13 @@
+spec PushDeadline.tla
+check INVARIANTS TypeOK DeadlineUnlocks LateCannotChange WriteAfterPreflight FailurePreservesPlan UnconfirmedWriteNeedsLookup PermissionTimeoutDistinct UnconfirmedWriteSurvivesFailedLookup
+check PROPERTIES AttemptReturns
+reach PermissionTimedOut | one attempt
+reach DeviceTimedOut | one attempt
+reach LookupTimedOut | one attempt
+reach WriteTimedOut | one attempt
+reach RetryHasLateReply | two attempts
+reach LookupAfterUnknownWrite | two attempts
+reach FailedWithKnownPlan | two attempts
+reach FailedLookupAfterUnknownWrite | two attempts
+run one attempt | Limit=1
+run two attempts | Limit=2

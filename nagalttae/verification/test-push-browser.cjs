@@ -56,7 +56,7 @@ const server = createServer(async (req, res) => {
     await page.goto(pageUrl);
     if (live) {
       assert.equal(await page.locator('meta[name="nagal-push-api"]').getAttribute('content'), api);
-      assert.equal(await page.locator('#app-version').innerText(), 'v1.6.8');
+      assert.equal(await page.locator('#app-version').innerText(), 'v1.6.9');
     }
     await page.evaluate(() => navigator.serviceWorker.ready.then(() => true));
     const reminder = page.locator('#reminders-open');

@@ -8,6 +8,14 @@
       hint: '준비할 때와 출발할 때 이 기기로 알려드려요.', active: '예약됨', ready: '준비', leave: '출발', both: '준비·출발',
       upcoming: '이번 예약 예정',
       denied: '알림 권한이 필요해요. 브라우저의 이 사이트 설정에서 알림을 허용해 주세요.',
+      permissionPending: '브라우저의 알림 요청에서 허용을 눌러 주세요.',
+      permissionNeeded: '알림 허용이 확인되지 않았어요. 다시 누른 뒤 브라우저의 알림 요청에서 허용을 선택해 주세요.',
+      permissionTimeout: '알림 권한 요청에 응답이 없어요. 브라우저에 허용 요청이 떠 있는지 확인해 주세요.',
+      devicePending: '이 기기의 알림 등록을 확인하는 중이에요.',
+      deviceTimeout: '이 기기의 알림 등록이 지연되고 있어요. 브라우저를 닫았다가 다시 열고 시도해 주세요.',
+      lookupTimeout: '이 기기의 알림 정보를 가져오지 못했어요. 브라우저를 다시 열거나 예약 조회를 다시 눌러 주세요.',
+      writePending: '서버에 알림 요청을 보내는 중이에요.',
+      writeUnknown: '알림 요청 결과를 확인하지 못했어요. 다시 시도하기 전에 예약 조회를 눌러 주세요.',
       subscription: '브라우저가 이 기기를 푸시 서비스에 등록하지 못했어요. 인터넷 연결과 브라우저 알림 설정을 확인해 주세요.',
       unavailable: '알림 서버에 연결하지 못했어요. 연결을 확인하고 다시 시도해 주세요.',
       invalid: '앞으로 30일 안에 출발하는 일정을 선택해 주세요.', dst: '이 날짜에 존재하지 않는 현지 시각이에요. 시간을 조정해 주세요.',
@@ -23,6 +31,14 @@
       hint: 'Get a notification on this device when it’s time to get ready and leave.', active: 'Scheduled', ready: 'Get ready', leave: 'Leave', both: 'Get ready & leave',
       upcoming: 'Reminders to schedule',
       denied: 'Allow notifications in the browser’s site settings.', unavailable: 'Couldn’t reach the reminder server. Check your connection and try again.',
+      permissionPending: 'Tap Allow in your browser’s notification prompt.',
+      permissionNeeded: 'Notification permission hasn’t been granted. Try again and select Allow in your browser.',
+      permissionTimeout: 'The notification permission request timed out. Check whether your browser is waiting for your answer.',
+      devicePending: 'Checking push registration on this device…',
+      deviceTimeout: 'Push registration is taking too long. Close and reopen your browser, then try again.',
+      lookupTimeout: 'Couldn’t read this device’s notification details. Reopen your browser or check reminders again.',
+      writePending: 'Sending your reminder request to the server…',
+      writeUnknown: 'Couldn’t confirm the result. Check reminders before trying again.',
       subscription: 'The browser could not register this device for push. Check your connection and browser notification settings.',
       invalid: 'Choose a departure in the next 30 days.', dst: 'This local time does not exist on that date. Adjust the time.',
       conflict: 'Another tab changed your reminders. Check the current schedule and try again.', removed: 'Reminders canceled.',
@@ -36,6 +52,14 @@
       hint: '支度と出発の時刻に、この端末へ通知します。', active: '予約済み', ready: '支度', leave: '出発', both: '支度・出発',
       upcoming: '今回予約する通知',
       denied: 'ブラウザのサイト設定で通知を許可してください。', unavailable: '通知サーバーに接続できません。接続を確認してもう一度お試しください。',
+      permissionPending: 'ブラウザの通知確認画面で「許可」を選んでください。',
+      permissionNeeded: '通知の許可を確認できませんでした。もう一度試し、ブラウザで「許可」を選んでください。',
+      permissionTimeout: '通知の許可を確認する時間が過ぎました。ブラウザに確認画面が出ていないか確認してください。',
+      devicePending: 'この端末の通知登録を確認しています。',
+      deviceTimeout: '端末の通知登録に時間がかかっています。ブラウザを閉じて開き直し、もう一度お試しください。',
+      lookupTimeout: '端末の通知情報を取得できませんでした。ブラウザを開き直すか、予約をもう一度確認してください。',
+      writePending: 'サーバーに通知のリクエストを送信しています。',
+      writeUnknown: 'リクエストの結果を確認できませんでした。もう一度試す前に予約を確認してください。',
       subscription: '端末をプッシュサービスに登録できません。ネットワークとブラウザの通知設定を確認してください。',
       invalid: '今から30日以内に出発する予定を選んでください。', dst: 'その日には存在しない現地時刻です。時刻を調整してください。',
       conflict: '別のタブで予約が変更されました。現在の予約を確認してください。', removed: '予約を取り消しました。',
@@ -49,6 +73,14 @@
       hint: '准备和出发时，这台设备会收到通知。', active: '已预约', ready: '准备', leave: '出发', both: '准备和出发',
       upcoming: '本次预约',
       denied: '请在浏览器的网站设置中允许通知。', unavailable: '无法连接提醒服务器。请检查网络后重试。',
+      permissionPending: '请在浏览器的通知提示中点按“允许”。',
+      permissionNeeded: '尚未确认通知权限。请重试，并在浏览器中选择“允许”。',
+      permissionTimeout: '等待通知权限超时。请检查浏览器是否正在等待您的选择。',
+      devicePending: '正在检查此设备的通知注册状态…',
+      deviceTimeout: '设备通知注册耗时过长。请关闭并重新打开浏览器后重试。',
+      lookupTimeout: '无法获取此设备的通知信息。请重新打开浏览器或再次查询预约。',
+      writePending: '正在向服务器发送提醒请求…',
+      writeUnknown: '未能确认请求结果。请先查询预约，再重试。',
       subscription: '浏览器无法为这台设备注册推送。请检查网络和浏览器通知设置。',
       invalid: '请选择未来30天内出发的计划。', dst: '这一天没有该本地时间，请调整时间。',
       conflict: '其他标签页已更改预约。请确认当前预约后重试。', removed: '已取消提醒。', update: '请关闭所有本应用窗口后重新打开。',
@@ -56,6 +88,22 @@
       unsupported: '此浏览器不支持推送。在 Galaxy 上请用 Chrome 打开。', home: '请在 iPhone 上添加到主屏幕，然后从图标打开。'
     }
   };
+  const permissionWait = 30_000;
+  const deviceWait = 15_000;
+
+  async function withinDeadline(start, deadline, message) {
+    const remaining = deadline - performance.now();
+    if (remaining <= 0) throw new Error(message);
+    let timer;
+    try {
+      const timeout = new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error(message)), remaining);
+      });
+      const result = await Promise.race([timeout, start()]);
+      if (performance.now() >= deadline) throw new Error(message);
+      return result;
+    } finally { clearTimeout(timer); }
+  }
 
   function instant(date, minutes) {
     const wall = new Date(Date.parse(date + 'T00:00:00Z') + minutes * 60_000);
@@ -98,7 +146,7 @@
       explain();
       return { render: explain };
     }
-    let busy = false, current = null, revision = null, notice = '', sequence = 0;
+    let busy = false, phase = '', current = null, revision = null, notice = '', sequence = 0;
     let checking = false, checkedAt = null;
     check.hidden = false;
     let timer;
@@ -108,7 +156,8 @@
     };
     function render() {
       const words = messages[language()], next = times();
-      const same = current && next && current.ready === next.ready && current.leave === next.leave;
+      const uncertain = ['unknown', 'lookupTimeout', 'writeUnknown'].includes(notice);
+      const same = !uncertain && current && next && current.ready === next.ready && current.leave === next.leave;
       const format = new Intl.DateTimeFormat(language(), {month: 'short', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit'});
       const now = Date.now();
       const events = !same && next && Number.isFinite(next.ready) && next.leave > now && next.leave <= now + 30 * 86400_000
@@ -128,17 +177,20 @@
       cancel.textContent = words.cancel;
       const status = [];
       if (checking) status.push(words.checking);
-      if (notice) status.push(words[notice] || words.unavailable);
+      else if (notice) status.push(words[notice]);
+      else if (busy) status.push(words[phase]);
       if (current) {
-        const label = checking || notice === 'unknown' ? words.previous : words.active;
+        const label = checking || uncertain ? words.previous : words.active;
         status.push(label + ' · ' + current.events.map(event => words[event.kind] + ' ' + format.format(event.at)).join(' / '));
       } else if (checkedAt !== null) status.push(words.noActive);
-      else if (!notice && !checking) status.push(words.hint);
+      else if (!notice && !checking && !busy) status.push(words.hint);
       if (checkedAt !== null) {
         const format = new Intl.DateTimeFormat(language(), { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         status.push(words.checked + ' · ' + format.format(checkedAt));
       }
-      el('push-status').textContent = status.join('\n');
+      const statusBox = el('push-status');
+      statusBox.toggleAttribute('data-notice', Boolean(notice && notice !== 'removed' && !checking));
+      statusBox.textContent = status.join('\n');
     }
     async function request(path, data) {
       const init = { cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer', signal: AbortSignal.timeout(10000) };
@@ -163,12 +215,16 @@
       if (manual) {
         checking = true;
         checkedAt = null;
-        notice = '';
+        if (notice !== 'writeUnknown') notice = '';
         render();
       }
       try {
-        const reg = await navigator.serviceWorker.getRegistration(new URL('./', location.href));
-        const sub = await reg?.pushManager.getSubscription();
+        const deadline = performance.now() + deviceWait;
+        const reg = await withinDeadline(
+          () => navigator.serviceWorker.getRegistration(new URL('./', location.href)), deadline, 'lookupTimeout'
+        );
+        if (id !== sequence) return;
+        const sub = reg && await withinDeadline(() => reg.pushManager.getSubscription(), deadline, 'lookupTimeout');
         if (id !== sequence) return;
         if (!sub) {
           accept({ plan: null, revision: null });
@@ -179,13 +235,13 @@
           if (id !== sequence) return;
           if (result.status !== 200 || !Object.hasOwn(result.data, 'plan')) throw new Error('unknown');
           accept(result.data);
-          if (manual || checkedAt !== null) checkedAt = Date.now();
-          if (notice === 'unknown' || notice === 'noSubscription') notice = '';
+          if (manual || checkedAt !== null || notice === 'writeUnknown') checkedAt = Date.now();
+          if (['unknown', 'noSubscription', 'lookupTimeout', 'writeUnknown'].includes(notice)) notice = '';
         }
-      } catch {
+      } catch (error) {
         if (id === sequence) {
           checkedAt = null;
-          notice = 'unknown';
+          if (notice !== 'writeUnknown') notice = error?.message === 'lookupTimeout' ? 'lookupTimeout' : 'unknown';
         }
       } finally {
         if (id === sequence) {
@@ -198,6 +254,7 @@
       if (busy) return;
       const next = selectedTimes || times(), lang = language(), expected = revision;
       busy = true;
+      phase = 'devicePending';
       checking = false;
       checkedAt = null;
       sequence++;
@@ -207,30 +264,52 @@
         if (action === 'schedule') {
           if (!next || !Number.isFinite(next.ready) || !Number.isFinite(next.leave)) throw new Error('dst');
           if (next.leave <= Date.now() || next.leave > Date.now() + 30 * 86400_000) throw new Error('invalid');
-          if (Notification.permission !== 'granted' && await Notification.requestPermission() !== 'granted') throw new Error('denied');
+          if (Notification.permission === 'denied') throw new Error('denied');
+          if (Notification.permission !== 'granted') {
+            phase = 'permissionPending';
+            render();
+            const permission = await withinDeadline(
+              () => Notification.requestPermission(), performance.now() + permissionWait, 'permissionTimeout'
+            );
+            if (permission === 'denied') throw new Error('denied');
+            if (permission !== 'granted') throw new Error('permissionNeeded');
+            phase = 'devicePending';
+            render();
+          }
         }
-        const reg = await navigator.serviceWorker.register('./sw.js');
-        const active = await new Promise((resolve, reject) => {
-          const timer = setTimeout(() => reject(new Error('update')), 10000);
-          navigator.serviceWorker.ready.then(r => { clearTimeout(timer); resolve(r); });
-        });
+        const deadline = performance.now() + deviceWait;
+        const waitForDevice = start => withinDeadline(start, deadline, 'deviceTimeout');
+        const reg = await waitForDevice(() => navigator.serviceWorker.register('./sw.js'));
+        const readyDeadline = Math.min(deadline, performance.now() + 10_000);
+        const active = await withinDeadline(() => navigator.serviceWorker.ready, readyDeadline, 'update');
         if (active.scope !== reg.scope) throw new Error('update');
-        await usableRegistration(active);
-        let subscription = await reg.pushManager.getSubscription();
+        await waitForDevice(() => usableRegistration(active));
+        let subscription = await waitForDevice(() => reg.pushManager.getSubscription());
         if (!subscription && action === 'schedule') {
-          const { data } = await request('key');
+          const { data } = await waitForDevice(() => request('key'));
           const key = Uint8Array.from(atob(data.publicKey.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
-          try { subscription = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key }); }
-          catch (error) { throw new Error(error.name === 'NotAllowedError' ? 'denied' : 'subscription'); }
+          subscription = await waitForDevice(async () => {
+            try { return await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key }); }
+            catch {
+              throw new Error(Notification.permission === 'denied' ? 'denied' : 'subscription');
+            }
+          });
         }
         if (!subscription) throw new Error('unknown');
-        const result = await request(action, { subscription, expected, ...(action === 'schedule' && { ...next, locale: lang }) });
+        phase = 'writePending';
+        render();
+        let result;
+        try {
+          result = await request(action, { subscription, expected, ...(action === 'schedule' && { ...next, locale: lang }) });
+        } catch (error) {
+          throw new Error(error?.message === 'limited' ? 'limited' : 'writeUnknown');
+        }
         accept(result.data);
         if (result.status === 409) notice = 'conflict';
         else if (result.status === 422) notice = 'invalid';
         else if (action === 'cancel') notice = 'removed';
       } catch (error) {
-        notice = error.name === 'NotAllowedError' ? 'denied' : Object.hasOwn(messages.ko, error.message) ? error.message : 'unavailable';
+        notice = Object.hasOwn(messages.ko, error?.message) ? error.message : 'unavailable';
       } finally { busy = false; render(); }
     }
     save.addEventListener('click', () => submit('schedule'));

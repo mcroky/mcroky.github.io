@@ -33,11 +33,16 @@ async function run() {
         window.locationChecks++;
         failure({code: 1});
       };
+      Object.defineProperty(Notification, 'permission', { get: () => 'granted' });
+      const register = navigator.serviceWorker.register.bind(navigator.serviceWorker);
+      navigator.serviceWorker.register = (...args) => window.delayPushRegistration
+        ? new Promise(resolve => { window.finishPushRegistration = resolve; })
+        : register(...args);
     });
     const page = await context.newPage();
     await page.clock.setFixedTime(new Date('2026-11-25T08:00:00Z'));
     await page.goto(url);
-    assert.equal(await page.locator('#app-version').textContent(), 'v1.6.8');
+    assert.equal(await page.locator('#app-version').textContent(), 'v1.6.9');
     const timeRow = page.locator('#time-open');
     const timeDialog = page.locator('#time-dialog');
     for (const selector of ['#durations', '#stops', '#bus-panel', '#copy', '#saved-plans-details']) {
@@ -63,6 +68,23 @@ async function run() {
     await page.locator('#date-adjust summary').click();
     await page.locator('#reminders-open').click();
     assert.match(await page.locator('#push-preview').innerText(), /11월 25일.*5:30.*11월 25일.*5:50/s);
+    await page.clock.install({ time: new Date('2026-11-25T08:00:00Z') });
+    const pushWrites = [];
+    page.on('request', request => {
+      if (request.method() === 'POST' && new URL(request.url()).pathname === '/schedule') pushWrites.push(request);
+    });
+    await page.evaluate(() => { window.delayPushRegistration = true; });
+    await page.locator('#push-save').click();
+    assert.ok(await page.locator('#push-check').isDisabled());
+    await page.clock.fastForward(15_001);
+    const notice = page.locator('#push-status[data-notice]');
+    await notice.waitFor({ state: 'visible' });
+    assert.match(await notice.innerText(), /알림 등록이 지연/);
+    assert.ok(await page.locator('#push-save').isEnabled());
+    assert.ok(await page.locator('#push-check').isEnabled());
+    assert.ok(await notice.evaluate(element => getComputedStyle(element).borderTopWidth === '1px'));
+    await page.evaluate(() => window.finishPushRegistration());
+    assert.deepEqual(pushWrites, []);
     await page.locator('#close-reminders').click();
     const actions = await page.locator('.main-actions').boundingBox();
     assert.ok(actions.y + actions.height <= 630);
