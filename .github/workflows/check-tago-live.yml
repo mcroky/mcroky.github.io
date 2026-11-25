@@ -1,0 +1,81 @@
+name: Check live TAGO bus arrivals
+
+on:
+  push:
+    branches:
+      - verify/nagalttae-tago-live-20261125
+    paths:
+      - .github/workflows/check-tago-live.yml
+
+permissions: {}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Request public arrival predictions using the repository secret
+        env:
+          TAGO_SERVICE_KEY: ${{ secrets.TAGO_SERVICE_KEY }}
+        run: |
+          node --input-type=module <<'NODE'
+          const supplied = process.env.TAGO_SERVICE_KEY?.trim();
+          if (!supplied) {
+            console.error('TAGO_SERVICE_KEY is unavailable to this job.');
+            process.exit(1);
+          }
+          let serviceKey;
+          try { serviceKey = supplied.includes('%') ? decodeURIComponent(supplied) : supplied; }
+          catch {
+            console.error('TAGO_SERVICE_KEY has invalid percent encoding.');
+            process.exit(1);
+          }
+          const base = 'https://apis.data.go.kr/1613000/ArvlInfoInqireService/';
+          async function request(method, parameters) {
+            try {
+              const url = new URL(method, base);
+              url.search = new URLSearchParams({ serviceKey, _type: 'json', ...parameters });
+              const res = await fetch(url, { redirect: 'manual', signal: AbortSignal.timeout(9500) });
+              const raw = await res.text();
+              try {
+                const payload = JSON.parse(raw).response;
+                const code = String(payload?.header?.resultCode ?? '');
+                return { http: res.status, code: /^\d{1,3}$/.test(code) ? code : null, body: payload?.body };
+              } catch {
+                const code = raw.match(/<(?:returnReasonCode|resultCode)>(\d{1,3})<\//)?.[1] ?? null;
+                return { http: res.status, code };
+              }
+            } catch (error) {
+              return { http: 0, code: error.name === 'TimeoutError' ? 'timeout' : 'connection' };
+            }
+          }
+          const items = body => {
+            const item = body?.items?.item;
+            return Array.isArray(item) ? item : item && typeof item === 'object' ? [item] : [];
+          };
+          const fixtures = [
+            ['31220', 'GGB231000018'],
+            ['31220', 'GGB231001274'],
+            ['31220', 'GGB231001279'],
+            ['25', 'DJB8001793'],
+            ['39', 'JEB405000646'],
+            ['11', 'SEB107900045']
+          ];
+          const cityRequest = request('getCtyCodeList', {});
+          const checks = await Promise.all(fixtures.map(async ([city, node]) => {
+            const result = await request('getSttnAcctoArvlPrearngeInfoList', { cityCode: city, nodeId: node, numOfRows: '40', pageNo: '1' });
+            const arrivals = items(result.body).flatMap(r => {
+              const route = String(r?.routeno ?? '').trim(), seconds = Number(r?.arrtime);
+              if (r?.nodeid !== node || !/^[0-9A-Za-z가-힣()·-]{1,32}$/u.test(route) ||
+                  !/^\d+$/.test(String(r.arrtime)) || seconds > 86400) return [];
+              return [{ route, seconds }];
+            }).sort((a, b) => a.seconds - b.seconds).slice(0, 8);
+            return { city, node, http: result.http, code: result.code, checkedAt: new Date().toISOString(), arrivals };
+          }));
+          const cities = await cityRequest;
+          const codes = items(cities.body).map(row => String(row.citycode)).filter(c => /^\d{1,9}$/.test(c));
+          console.log('NAGAL_TAGO_CHECK ' + JSON.stringify({
+            checks, cities: { http: cities.http, code: cities.code, count: codes.length, anseong: codes.includes('31220'), seoul: codes.includes('11') }
+          }));
+          if (!checks.some(c => c.http === 200 && c.arrivals.length)) process.exitCode = 1;
+          NODE
