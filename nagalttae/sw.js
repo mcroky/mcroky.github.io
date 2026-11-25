@@ -1,25 +1,25 @@
 'use strict';
 
 // Refresh the release key and integrity table together when publishing the shell.
-const release = '1.6.4-324652c78a6c0df0a701';
+const release = '1.6.5-e5d6a4fdd5930b5163ee';
 const integrity = {
   'timetable.js': 'sha256-8eJce5DFPL8IU0eZgeQSASsyaO2frVwhe6clRm34n/w= sha256-zvUdUHG+wo6Z9IQClavqu7NZgjsMvv/gF8KdrBM1c7o=',
   'timetable-data.js': 'sha256-1Q+yRMkl+euTplWIY6vlPPn7UgaP9pGrhe8JylLUHtc= sha256-YM+cvrHdzpaL69K0PCFGV5Jb6irdDVXHE74L7vQY0ik=',
-  'transit.js': 'sha256-gwoINhBpMDN6f5/jPSb+hfxIfBe2uddLXZE1JJ1hO+w= sha256-vNSFctgW/sZGw4nQ+OnaQfz25QZz7mrwt4aqnh3OeVs=',
+  'transit.js': 'sha256-+AL6lhJYwGgn1tAbF41PJLu4X+Eku8rAGoi0Cz4Ihh0= sha256-oS5DzVTvZgh4UsdtwPGrb0/lHh0ClLX0HtruWhQatrY=',
   'stops/33.json': 'sha256-4YVFTRBkV5hNOQKkqoyoxSFrxeivBKTZgUfY9LM2YCo= sha256-VaWO1X2o9qODKaBcDQMzTJR9CRDk6K7TBU4tk0Kmjtw=',
   'stops/34.json': 'sha256-vP5dX7ZLRzqiAg3pMu15J6q8VNsliE3JQjydNz9QBJg= sha256-w1BU9ccKs2mUhmVA8eOl5OjGOVDfH/vG1Aw8gXOwaYA=',
   'stops/35.json': 'sha256-9Bpha4yrcpvrFPmGT8hnTNQgL+yS9d+pJeEK5TbF6QE= sha256-jeBdcndfXJAEwyqjlmVodw1rrbCUJzrVV++91Mw1rUY=',
   'stops/36.json': 'sha256-6GuXDUn548ko1xNg6r0yBgdvKVF/7swVVdflZAMZ5Uo= sha256-AC0eOO7GBYzFU0xCxOE0JvtwkXUBiNksbmBfCA5u+9c=',
   'stops/37.json': 'sha256-/PmSLtUL13RCtbkZsPXB4lBnXI7KafvfrZY+GXe+eXI= sha256-ttiSAjnKLva690TUui5T/cbDkuo+ycXxo4bXT+TbOjE=',
   'stops/38.json': 'sha256-PFsr3OVqBuEYUH+X9Z/7JRGxXu7Dca7nemAjT2dARp4= sha256-zYN1oxOq9bSy0EFZOBt3TFSXLAAya+ABrfGFPrf7i+A=',
-  'index.html': 'sha256-i+TfQ1U6137YidNaKdtuVHb95iWAYLk4GbWgS4nUNPU= sha256-jBR+lFtt/lGH65V6VIGik0wGxsSXBDWWPtFEJbKaHtU=',
-  'app.css': 'sha256-iqjLFPxO5PsTH27kGYlf9xXLxUXjQC1M4NLaoWi+RNo= sha256-s6Lk0D8qYz6UJNs23n88BBqhCx2jxUSSUqXIFgQgw6Q=',
+  'index.html': 'sha256-SgqsN6ji0X0OHPJJwPFG4K1FZOFvTSqUikT4BQRoxhQ= sha256-W3OZaNYCYenQ1Xb1WrFjR/4B+YZA5pxIo5bnrjej+aw=',
+  'app.css': 'sha256-f6ixNuZkymKNfFlvrwx/MPY21/itXbHznrooe7GET/w= sha256-iMhxQD3cjX4xI9hb3qeEzwFAZDAE40YVVoCyOF+y5ZM=',
   'studio.css': 'sha256-HnrBTsqr4PFz8UC2eRdNVUGVKHqWrui6bkYCUfwPiAw= sha256-oEwz56SiGgy82iE/GQn5+P/iGQRyLsbqP7AMWZaKueM=',
   'planner.js': 'sha256-EGPZadTtp0CWz/MDkWVdZtLx3sW5M/N0ZLOYkYOic+k= sha256-Ol3M2ylwgGau7CBWbYMvjF9IQaXMZ8Isw1q1EVjAV2A=',
   'session-plan.js': 'sha256-CSzAjNxzz6Aa5d+pnkoTv1gQ6fIlkpT4iz/9XnZlbrA= sha256-biIHVpnKd1VhhNHCRD5yxUogJm3yGvLMhbgpsXxME28=',
   'calendar.js': 'sha256-/BDTcmEPzbxusr01YjPnsuXjhhzAU819F4pQqWd6dcw= sha256-G1Y7VZnAfWUCRUT3I6Rc1PHWKTxQFXqbIHDIovjuBWQ=',
   'locale.js': 'sha256-4m/vzjwLM92XadqEaUQBfcgQe/G9jUQWfbPrmnrdDkM= sha256-Gffj3hRetY3YZP49bhvk75aaaNVCkvhBeHANcHjEcMk=',
-  'studio.js': 'sha256-OK5A+gaFkNOd4lXLSgskcRFbqkzgRzQgNke16ciD3sk= sha256-PX400AbK5T856U4K3aNrPuWyU+YQBxaZk2d3n0WCDHw=',
+  'studio.js': 'sha256-Vx5/4IUA6lNiBe9Llugc9W5FTmR4e1VQ8HTYggzlKak= sha256-iHjF1/qB0FlPNZiklbGyNKtL/p/9vbexc27YFzMN/5Y=',
   'ticket-image.js': 'sha256-AQEBfUUFDxPS6uFumo0wSUraTq/MTg4tplStID2bdhI= sha256-CZxo+Z10pBza0m7L/5GZmHitGSu/7QzjM74hcON8uB4=',
   'android-ui.js': 'sha256-YmKIXtwdq/RPFv7cC3+JjvOeB0zjsdrMZjDJd/nsxaQ= sha256-djaulnBQGBVhbRA00bVHPBJ39OUam1+AaqjKpxNm5xc=',
   'push.js': 'sha256-sEi5odIwCwYHDJ76T/p5InS/pMCMVXIdjbA37tQhSO8= sha256-v6lhn/SKXW7hItipnNDktyr+FzlwD8fCmIAAb9Or1jo=',

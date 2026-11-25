@@ -8,7 +8,7 @@
       locating:'현재 위치에서 가까운 정류장을 찾고 있어요.', denied:'주변 정류장을 보려면 위치를 허용해 주세요. 이름이나 번호로도 찾을 수 있어요.', unavailable:'현재 위치를 확인하지 못했어요. 다시 시도하거나 정류장을 검색해 주세요.', far:'반경 3km 안에 등록된 정류장이 없어요.', mapOnly:'이 정류장의 실시간 도착 정보는 아직 제공되지 않아요.',
       none:'일치하는 정류장이 없어요.', loading:'도착 정보를 확인하고 있어요.', failed:'도착 정보를 불러오지 못했어요. 새로고침하거나 아래 링크에서 정류장을 확인해 주세요.',
       dataError:'정류장 목록을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.', pending:'앱 내 실시간 도착 정보를 준비 중이에요.',
-      empty:'현재 도착 예측이 제공되는 버스가 없어요.', updated:'{v} 기준', busProvider:'경기버스정보', unsupportedCity:'이 지역의 실시간 버스 도착 정보는 TAGO에서 제공하지 않아요.', authRejected:'도착정보 조회 연결을 확인하고 있어요. 잠시 후 다시 시도해 주세요.', near:'직선거리 {v}m', bound:'{v} 방면', soon:'곧 도착', mins:'{v}분 뒤',
+      empty:'연결된 데이터에서 이 정류장의 도착 예측을 받지 못했어요.', updated:'{v} 기준', busProvider:'경기버스정보', unsupportedCity:'이 지역의 실시간 버스 도착 정보는 TAGO에서 제공하지 않아요.', authRejected:'도착정보 조회 연결을 확인하고 있어요. 잠시 후 다시 시도해 주세요.', near:'직선거리 {v}m', bound:'{v} 방면', soon:'곧 도착', mins:'{v}분 뒤',
       stale:'도착 정보가 오래됐어요. 새로고침해 주세요.'
     },
     en: {
@@ -17,7 +17,7 @@
       busHeading:'Nearby stops', busLocate:'Retry my location', busManual:'Search for another stop', busMap:'View stop on Kakao Map', busSearch:'Stop name or number', busReload:'Refresh arrivals', busSeoul:'Open Seoul TOPIS', busOfficial:'Open Gyeonggi Bus Info',
       locating:'Finding stops near your location…', denied:'Allow location access to see nearby stops, or search by name or number.', unavailable:'Could not get your location. Try again or search for a stop.', far:'No listed stops within 3 km.', mapOnly:'Live arrivals are not available for this stop yet.',
       none:'No matching stops.', loading:'Checking arrivals…', failed:'Couldn’t load live arrivals. Refresh or check the stop using the link below.', dataError:'Could not load stops. Check your connection.',
-      pending:'In-app live arrivals are being set up.', empty:'No predicted arrivals for this stop.', updated:'updated {v}', busProvider:'Gyeonggi Bus Info', unsupportedCity:'TAGO does not provide live bus arrivals for this area.', authRejected:'The arrival feed could not be authorized. Try again later.', near:'{v} m straight-line distance',
+      pending:'In-app live arrivals are being set up.', empty:'The connected data source returned no predictions for this stop.', updated:'updated {v}', busProvider:'Gyeonggi Bus Info', unsupportedCity:'TAGO does not provide live bus arrivals for this area.', authRejected:'The arrival feed could not be authorized. Try again later.', near:'{v} m straight-line distance',
       bound:'Toward {v}', soon:'Due', mins:'in {v} min', stale:'This prediction has expired. Refresh arrivals.'
     },
     ja: {
@@ -26,7 +26,7 @@
       busHeading:'近くの停留所', busLocate:'現在地で再検索', busManual:'別の停留所を検索', busMap:'カカオマップで停留所を見る', busSearch:'停留所名または番号', busReload:'到着情報を更新', busSeoul:'ソウルTOPISで見る', busOfficial:'京畿バス情報で見る',
       locating:'現在地の近くの停留所を検索中…', denied:'現在地の利用を許可するか、停留所名・番号で検索してください。', unavailable:'現在地を取得できませんでした。再試行するか停留所を検索してください。', far:'3km以内に登録された停留所がありません。', mapOnly:'この停留所のリアルタイム到着情報はまだ利用できません。',
       none:'該当する停留所がありません。', loading:'到着情報を確認中…', failed:'到着情報を取得できません。更新するか、下のリンクで停留所をご確認ください。', dataError:'停留所を読み込めません。接続を確認してください。',
-      pending:'アプリ内のリアルタイム到着情報は準備中です。', empty:'到着予測がありません。', updated:'{v}時点', busProvider:'京畿バス情報', unsupportedCity:'この地域のリアルタイム到着情報はTAGOで提供されていません。', authRejected:'到着情報の接続を確認中です。しばらくしてから再試行してください。', near:'直線距離{v}m', bound:'{v}方面', soon:'まもなく到着', mins:'{v}分後',
+      pending:'アプリ内のリアルタイム到着情報は準備中です。', empty:'接続先のデータから、この停留所の到着予測を取得できませんでした。', updated:'{v}時点', busProvider:'京畿バス情報', unsupportedCity:'この地域のリアルタイム到着情報はTAGOで提供されていません。', authRejected:'到着情報の接続を確認中です。しばらくしてから再試行してください。', near:'直線距離{v}m', bound:'{v}方面', soon:'まもなく到着', mins:'{v}分後',
       stale:'情報が古くなりました。更新してください。'
     },
     zh: {
@@ -35,7 +35,7 @@
       busHeading:'附近的公交站', busLocate:'重新定位', busManual:'搜索其他公交站', busMap:'在 Kakao 地图上查看车站', busSearch:'站名或站号', busReload:'刷新到站信息', busSeoul:'在首尔 TOPIS 查看', busOfficial:'打开京畿公交信息',
       locating:'正在查找当前位置附近的车站…', denied:'请允许访问位置，或按站名、站号搜索。', unavailable:'无法获取当前位置，请重试或搜索车站。', far:'3公里内没有已收录的车站。', mapOnly:'此车站暂未提供实时到站信息。', none:'没有匹配的车站。',
       loading:'正在获取到站信息…', failed:'无法获取到站信息。请刷新或通过下方链接查看车站。', dataError:'无法加载车站列表，请检查网络。',
-      pending:'应用内实时到站功能正在准备中。', empty:'目前没有预计到站班次。', updated:'{v} 更新', busProvider:'京畿公交信息', unsupportedCity:'TAGO 暂未提供该地区的实时公交到站信息。', authRejected:'到站信息连接正在确认，请稍后再试。', near:'直线距离{v}米', bound:'开往{v}', soon:'即将到站', mins:'{v}分钟后',
+      pending:'应用内实时到站功能正在准备中。', empty:'当前数据源未返回该车站的到站预测。', updated:'{v} 更新', busProvider:'京畿公交信息', unsupportedCity:'TAGO 暂未提供该地区的实时公交到站信息。', authRejected:'到站信息连接正在确认，请稍后再试。', near:'直线距离{v}米', bound:'开往{v}', soon:'即将到站', mins:'{v}分钟后',
       stale:'到站信息已过期，请刷新。'
     }
   };
@@ -50,6 +50,34 @@
 
   function isSeoulStop(stop) {
     return stop[7] === '11' && /^SEB\d{9}$/.test(stop[0]) && /^\d{5}$/.test(stop[2]);
+  }
+
+  function isGyeonggiStop(stop) {
+    return Boolean(stop[6]) || (/^GGB\d+$/.test(stop[0]) && /^경기도(?: |$)/.test(stop[5]));
+  }
+
+  function regionalStopKey(stop) {
+    if (!stop[7] || !/^\d+$/.test(stop[2])) return null;
+    return JSON.stringify([stop[7], stop[2].replace(/^0+(?=\d)/, ''), stop[1]]);
+  }
+
+  function indexStops(stops) {
+    const imports = stops.filter(stop => /^GGB\d+$/.test(stop[0]) && !isGyeonggiStop(stop));
+    const candidates = new Map();
+    for (const stop of imports) {
+      const key = regionalStopKey(stop);
+      if (key) candidates.set(key, []);
+    }
+    if (!candidates.size) return { stops, aliases: new Map() };
+    for (const stop of stops) {
+      if (!/^GGB\d+$/.test(stop[0])) candidates.get(regionalStopKey(stop))?.push(stop);
+    }
+    const aliases = new Map();
+    for (const stop of imports) {
+      const nearby = candidates.get(regionalStopKey(stop))?.filter(other => distance(stop[3], stop[4], other) <= 35);
+      if (nearby?.length === 1) aliases.set(stop[0].toLowerCase(), nearby[0]);
+    }
+    return { stops: stops.filter(stop => !aliases.has(stop[0].toLowerCase())), aliases };
   }
 
   function arrivalView(data, now) {
@@ -88,9 +116,14 @@
       if (!station) return;
       el('station-name').textContent = [station[1], station[2]].filter(Boolean).join(' · ');
       const local = Boolean(station[6]);
-      const gyeonggi = local || /^GGB\d+$/.test(station[0]);
+      const gyeonggi = isGyeonggiStop(station);
       const seoul = isSeoulStop(station);
       const link = el('official');
+      const map = el('map');
+      map.href = station[2]
+        ? 'https://map.kakao.com/link/search/' + encodeURIComponent(station[1] + ' ' + station[2])
+        : 'https://map.kakao.com/link/map/' + encodeURIComponent(station[1]) + ',' + station[3] + ',' + station[4];
+      map.textContent = w.busMap;
       if (gyeonggi) {
         const official = new URL('https://gbis.go.kr/gbis2014/schBus.action');
         official.search = new URLSearchParams({cmd:'mainSearchText', gubun:'stationInfo', searchText:station[2] || station[1], stationId:station[0].replace(/^GGB/, '')});
@@ -98,7 +131,7 @@
       } else if (seoul) {
         link.href = 'https://topis.seoul.go.kr/map/openBusMap.do';
       } else {
-        link.href = 'https://map.kakao.com/link/map/' + encodeURIComponent(station[1]) + ',' + station[3] + ',' + station[4];
+        link.href = map.href;
       }
       link.textContent = gyeonggi ? w.busOfficial : seoul ? w.busSeoul : w.busMap;
       el('reload').hidden = !local && !station[7];
@@ -109,11 +142,17 @@
       const w = words();
       const now = Date.now();
       const { stale, arrivals } = arrivalView(data, now);
-      const message = boardStatus || (stale ? 'stale' : data && !arrivals.length ? 'empty' : '');
+      let message = boardStatus;
+      if (!message && data) {
+        if (stale || (data.arrivals.length && !arrivals.length)) message = 'stale';
+        else if (!arrivals.length) message = 'empty';
+      }
       const source = ['TOPIS', 'TAGO'].includes(data?.source) ? data.source : w.busProvider;
       el('arrivals').textContent = [w[message], data ? source + ' · ' + label('updated', time(data.updated)) : ''].filter(Boolean).join('\n');
       const next = el('next');
       next.hidden = !arrivals.length;
+      const map = el('map');
+      map.hidden = !message || message === 'loading' || map.href === el('official').href;
       next.replaceChildren(...arrivals.slice(0, 6).map(entry => {
         const row = document.createElement('li');
         const route = document.createElement('span');
@@ -140,7 +179,7 @@
             stop[5] = areas[area];
             stop[7] = cityCodes?.[area];
           }
-          return stops;
+          return indexStops(stops);
         }).catch(error => { datasets.delete(band); throw error; });
         datasets.set(band, request);
       }
@@ -206,7 +245,7 @@
         onPosition?.({latitude, longitude});
         const groups = await Promise.all(nearbyBands(latitude).map(readBand));
         if (id !== generation) return;
-        matches = groups.flatMap(rows => rows.filter(stop => Math.abs(latitude - stop[3]) <= 0.03)
+        matches = groups.flatMap(({stops}) => stops.filter(stop => Math.abs(latitude - stop[3]) <= 0.03)
           .map(stop => ({ stop, meters:distance(latitude, longitude, stop) }))).filter(x => x.meters <= 3000)
           .sort((a,b) => a.meters - b.meters).slice(0,5);
         status = matches.length ? '' : 'far';
@@ -226,8 +265,10 @@
         if (id !== generation) return;
         const exact = [], partial = [];
         const terms = query.split(/\s+/);
-        for (const rows of groups) {
-          for (const stop of rows) {
+        for (const {stops, aliases} of groups) {
+          const alias = aliases.get(query);
+          if (alias) exact.push({stop: alias});
+          for (const stop of stops) {
             const name = stop[1].toLowerCase();
             if (stop[2] === query || name === query || stop[0].toLowerCase() === query) exact.push({stop});
             else if (partial.length < 8 && terms.every(term =>
@@ -244,5 +285,5 @@
     locate();
     return { render, updateTimes: renderArrivals };
   }
-  globalThis.NagalTransit = { mount, distance, arrivalView };
+  globalThis.NagalTransit = { mount, distance, arrivalView, indexStops };
 })();
